@@ -1,0 +1,1 @@
+# extension-hierarchy-navigator-sandboxed
