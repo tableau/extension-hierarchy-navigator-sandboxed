@@ -1,0 +1,73 @@
+{
+  "name": "extension-hierarchy-navigator",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@types/concurrently": "^4.1.0",
+    "@types/http-server": "^0.10.0",
+    "concurrently": "^5.0.0",
+    "extend": "^3.0.2",
+    "http-server": "^0.12.0",
+    "parcel-bundler": "^1.12.3",
+    "react-simple-tree-menu": "^1.1.9"
+  },
+  "scripts": {
+    "watch-compile": "rm -rf docs && npx nodemon --ignore docs --watch src -e tsx,js,html,css --exec 'npm run parcel-build-sandbox-dev'",
+    "start-sandbox": "nodemon --watch docs -d 1 -e html,js,json,css,png --exec 'npx tabextsandbox --config sandbox-config.json'",
+    "build": "npm run lint && npm run clean && npm run parcel-build-sandbox-production && cp ./src/hierarchynavigator-1.0.trex ./docs",
+    "parcel-build-sandbox-dev": "parcel build src/* --public-url '.' --out-dir docs",
+    "parcel-watch-sandbox-dev": "parcel watch src/* --public-url '.' --out-dir docs",
+    "parcel-build-sandbox-production": "parcel build src/*.html --public-url '.' --out-dir docs --no-source-maps",
+    "parcel-server-no-sandbox": "parcel serve src/*.html --public-url '/sandbox/extension-hierarchy-navigator-sandboxed' --port 8765 --out-dir docs",
+    "start": "npm run build && npx tabextsandbox --config sandbox-config.json",
+    "clean": "rm -rf docs",
+    "lint": "npm run jslint && npm run tslint",
+    "jslint": "semistandard ./src/*/*.js",
+    "tslint": "./node_modules/.bin/tslint --config ./tslint.json ./*/*.ts*"
+  },
+  "devDependencies": {
+    "@tableau/extensions-api-types": "^1.3.1",
+    "@tableau/tabextsandbox": "^1.1.0",
+    "@tableau/tableau-ui": "^2.1.0",
+    "@types/jquery": "^3.3.29",
+    "@types/node": "^12.12.14",
+    "@types/react": "^16.9.15",
+    "@types/react-dom": "^16.9.4",
+    "@types/react-router-dom": "^5.1.3",
+    "@types/reactstrap": "^8.0.6",
+    "babel-core": "^6.26.3",
+    "babel-polyfill": "^6.26.0",
+    "css-loader": "^3.2.1",
+    "cssnano": "^4.1.10",
+    "nodemon": "^2.0.1",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "react-router-dom": "^5.0.1",
+    "react-switch": "^5.0.0",
+    "reactstrap": "^8.2.0",
+    "semistandard": "^14.2.0",
+    "source-map-loader": "^0.2.4",
+    "style-loader": "^1.0.1",
+    "ts-loader": "^6.2.1",
+    "tslint": "^5.20.1",
+    "tslint-config-prettier": "^1.10.0",
+    "tslint-react": "^4.1.0",
+    "typescript": "^3.7.3"
+  },
+  "homepage": "https://tableau.github.io/extension-hierarchy-navigator-sandboxed",
+  "semistandard": {
+    "env": {
+      "jquery": true,
+      "browser": true,
+      "tableau": true
+    },
+    "globals": [
+      "tableau"
+    ],
+    "ignore": [
+      "/lib",
+      "/docs",
+      "tableau.extensions.*.latest.js"
+    ]
+  }
+}

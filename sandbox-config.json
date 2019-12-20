@@ -1,0 +1,8 @@
+{
+  "port": 8765,
+  "extensions": {
+    "extension-hierarchy-navigator-sandboxed": {
+      "path": "./docs"
+    }
+  }
+}

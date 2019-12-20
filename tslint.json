@@ -1,0 +1,18 @@
+{
+  "extends": ["tslint:recommended", "tslint-react", "tslint-config-prettier"],
+  "rules": {
+    "quotemark": [true, "single"],
+    "interface-name": [true, "never-prefix"],
+    "interface-over-type-literal": false,
+    "one-variable-per-declaration": false,
+    "no-console": false
+  },
+  "linterOptions": {
+    "exclude": [
+      "config/**/*.js",
+      "node_modules/**/*.ts",
+      "coverage/lcov-report/*.js",
+      "public/**/*.js"
+    ]
+  }
+}
