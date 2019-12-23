@@ -1,5 +1,5 @@
 # Hierarchy Navigator
-This extension allows you to visualize your recursive data in a Tableau Dashboard.  Two way interactivity with other dashboard components can be realized via two parameters.  
+This extension allows you to visualize your recursive data (or 2 columns of non-recursive data) in a Tableau Dashboard.  Two way interactivity with other dashboard components can be realized via two parameters.  
 
 ## How to use an Extension
 Follow the below steps to configure the extension.
@@ -8,19 +8,28 @@ Follow the below steps to configure the extension.
 
 ### Setting up the worksheet source
 Load a source sheet with your recursive data. 
-*  The data must have a parent/child relationship.
+*  The ideal data will have a parent/child relationship.  This Extension will also work with 2 columns of data that are non-recursive.
 *  A third dimension, for the label of the child node, can optionally be added if your parent/child dimensions are id or key fields.  
-* The label for the child node can be the same as the child id or key field.
+* The label for the child node can be the same as the child id or key field.  The label field should be set to the same as the child id if you data is not-recursive.
 * Only the child label will be displayed in the resulting visualization.  A parent label isn't needed or used.  
 * This sheet can be hidden from the dashboard and the minimal amount of visualization (eg bar charts will load faster than a long table).
 
-### Setting up parameters
-This extension requires two parameters of data type `String` and Allowable values `All`.
-* The first parameter will hold the value of the currently selected label.
-* The other parameter will hold the value of the currently selected id/key.
-* If you only have two dimension fields in the data you will still need to setup and configure two parameters.  In this scenario, you can ignore the parameter that you will not use.
+### Setting up optional parameters
+This extension can use up to two parameters of data type `String` and Allowable values `All`.
+* The first optional parameter will hold the value of the currently selected label.
+* The other optional parameter will hold the value of the currently selected id/key.
 * Both parameters are bi-directional.  If you choose a value in the hierarchy it will populate the parameters.  If you type in a value (or have the parameter populated via another sheet) it will load the correct member in the hierarchy.
 * If an invalid (not present in the hierarchy) value is typed in either parameter it will be ignored.
+
+### Setting up an optional filter
+This parameter can populate a filter for the current node and its children nodes.
+* The available filters will be shown if they are created on the child id or child label field.
+* Filtering out the data will not affect the Extension because the Extension caches the data.  
+* The Extension will set the filter to "all" values before it loads.
+
+
+### Adding an optional "Enable mark selection" feature
+This extension can emulate selecting marks with a mouse.  It will select the current node and its children node.  This feature is useful for enabling Dashboard Actions that can add further capabilities and interactions in your dashboard. 
 
 ### Adding the extension to the dashboard
 * Add the worksheet with the hierarchy data to the dashboard.
@@ -37,8 +46,10 @@ The configuration has three parts: Sheets and Fields, Parameters, and Display
   * Select the field that represents the Parent ID (or key or label)
   * Select the field that represents the Child ID (or key or label)
   * Select the field that represents the Child Label (can be the same as the Child ID)
-* Parameters
-  * Select the two parameters you created above
+* Interactions
+  * Enable/disable any parameters you created above
+  * Enable/disable the filter if you created one
+  * Enable/disable mark selection
 * Display
   * Select the background color for the extension object
 
@@ -46,7 +57,6 @@ The configuration has three parts: Sheets and Fields, Parameters, and Display
 * There is a known issues in Tableau 2018.2 running on Mac computers where the native dropdown (when selecting the parameter) cannot be chosen with the mouse.  Please use the keyboard to select the parameter.
 * If you add a blank sheet to the dashboard and try to configure the extension you will receive an error.
 * If you type in invalid values into the parameters they will just be ignored.
-* Access to underlying data is limited to 10,000 rows.
 * The only color that can be changed is the background color.
 
 

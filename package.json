@@ -9,13 +9,13 @@
     "extend": "^3.0.2",
     "http-server": "^0.12.0",
     "parcel-bundler": "^1.12.3",
-    "react-simple-tree-menu": "^1.1.9"
+    "react-simple-tree-menu": "^1.1.12"
   },
   "scripts": {
-    "watch-compile": "rm -rf docs && npx nodemon --ignore docs --watch src -e tsx,js,html,css --exec 'npm run parcel-build-sandbox-dev'",
+    "watch-compile": "npx nodemon --ignore docs --watch src -e tsx,js,html,css --exec 'npm run parcel-build-sandbox-dev'",
     "start-sandbox": "nodemon --watch docs -d 1 -e html,js,json,css,png --exec 'npx tabextsandbox --config sandbox-config.json'",
-    "build": "npm run lint && npm run clean && npm run parcel-build-sandbox-production && cp ./src/hierarchynavigator-1.0.trex ./docs",
-    "parcel-build-sandbox-dev": "parcel build src/* --public-url '.' --out-dir docs",
+    "build": "npm run lint && npm run clean && npm run parcel-build-sandbox-production && cp ./src/hierarchynavigator-1.0.trex ./docs && cp ./src/*.twbx ./docs",
+    "parcel-build-sandbox-dev": "rm -rf docs && parcel build src/* --public-url '.' --out-dir docs",
     "parcel-watch-sandbox-dev": "parcel watch src/* --public-url '.' --out-dir docs",
     "parcel-build-sandbox-production": "parcel build src/*.html --public-url '.' --out-dir docs --no-source-maps",
     "parcel-server-no-sandbox": "parcel serve src/*.html --public-url '/sandbox/extension-hierarchy-navigator-sandboxed' --port 8765 --out-dir docs",

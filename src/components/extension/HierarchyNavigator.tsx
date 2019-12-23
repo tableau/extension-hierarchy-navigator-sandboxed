@@ -1,13 +1,11 @@
 import 'babel-polyfill';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import TreeMenu from '../TreeMenu';
-// import '../../../node_modules/react-simple-tree-menu/dist/main.css'
+import TreeMenu from 'react-simple-tree-menu';
 import '../../css/style.css';
-import { IField, SelectedWorksheet, IParameter, IFilterType, defaultSelectedProps, defaultParameter, ISelectedProps, ISelectedParameters } from '../config/Interfaces';
-import { Button } from '@tableau/tableau-ui';
-//import { FilterType, DataType, ParameterValueType, TableauEventType, SelectionUpdateType, FilterUpdateType, ErrorCodes } from '@tableau/extensions-api-types/ExternalContract/Namespaces/Tableau';
+import { defaultSelectedProps,ISelectedProps } from '../config/Interfaces';
 import {Extensions} from '@tableau/extensions-api-types/ExternalContract/Namespaces/Extensions'
+const extend=require("extend");
 const debug=true;
 
 declare global {
@@ -18,11 +16,6 @@ interface Settings {
     txtColor: string,
     configComplete: boolean,
     selectedProps: ISelectedProps,
-    //selectedChildLabel: string,
-    //selectedParameter: { key: string, keyEnabled: boolean, text: string, textEnabled: boolean; },
-    // selectedParentID: string;
-    // selectedChildID: string;
-    // selectedSheet: string,
 }
 
 interface State {
@@ -103,12 +96,9 @@ class Hierarchy {
     public setCurrentIDFromDashboard(ID: string) {
         if(debug) console.log(`in setCurrentIDfromDash`);
         let node;
-        // let matchType='int';
-        // if(this._hn.state.extensionSettings.selectedProps.worksheet.childId.dataType===DataType.String) { matchType==='string'; }
-        // note: probably should remove INT param since all values will be stored as string
         for(var el of this._pathMap) {
-            console.log(`el.key: ${ el.key.toString() } ID: ${ ID.toString() }  =:${ el.key.toString()===ID.toString() }`);
-            console.log(`el.key: ${ el.key } ID: ${ ID }  =:${ el.key===ID }`);
+            if (debug) console.log(`el.key: ${ el.key.toString() } ID: ${ ID.toString() }  =:${ el.key.toString()===ID.toString() }`);
+            if (debug) console.log(`el.key: ${ el.key } ID: ${ ID }  =:${ el.key===ID }`);
             if(el.key===ID) {
                 node=el;
                 if(debug) console.log(`found node ${ JSON.stringify(el) }`);
@@ -146,7 +136,7 @@ class Hierarchy {
         }
     }
     public setSelectedFromExtension(label: string, key: string) {
-        console.log(`setSelectedFromExtension`);
+        if (debug) console.log(`setSelectedFromExtension`);
         this.currentSelected=label;
         this.currentID=key;
         this._hn.paramHandler.setParamDataFromExtension();
@@ -163,19 +153,22 @@ class Hierarchy {
                 this.buildPathMap(el.nodes, _path===''? el.key:`${ _path }/${ el.key }`);
         }
     }
-    public getChildren() {
-        console.log(`child of current`);
-        console.log(`this._childOf`)
-        console.log(this._childOf)
-        console.log(`this._currentID: ${this._currentID}`)
-        console.log(JSON.stringify(this._childOf[this._currentID]));
+    public getChildren(type:string) {
+        // if (debug) console.log(`child of current`);
+        // if (debug) console.log(`this._childOf`)
+        // if (debug) console.log(this._childOf)
+        if (debug) console.log(`getting children for this._currentID: ${this._currentID}`)
+        if (debug) console.log(JSON.stringify(this._childOf[this._currentID]));
         if(!this._childOf[this._currentID].length) return [this._currentID];
         const reducer=(accumulator:any[], currentValue:any) => {
             if(currentValue.nodes.length) accumulator=currentValue.nodes.reduce(reducer, accumulator);
-            return [currentValue.key, ...accumulator];
+            if (type==='id'){return [currentValue.key, ...accumulator];}
+            else {return [currentValue.label, ...accumulator];}
         };
         let arr=this._childOf[this._currentID];
-        return arr.reduce(reducer, [arr[0].parent, arr[0].key]);
+        if (type==='id') {return arr.reduce(reducer, [arr[0].parent, arr[0].key]);}
+        else {
+            return arr.reduce(reducer, [this.currentSelected, arr[0].label]);}
     }
     // credit to https://stackoverflow.com/a/58136016/7386278
     public buildHierarchy() {
@@ -192,23 +185,20 @@ class Hierarchy {
             const _hasParent=!(parent==='Null'||parseInt(parent)===0||parent==='');
             _hasParent? (this._childOf[parent]=this._childOf[parent]||[]).push(item):tree.push(item);
         });
-        // if (debug) console.log(`this._childOf`)
-        // if (debug) console.log(this._childOf)
-        if (debug) console.log(`done with building hier...`)
-        if (debug) console.log(JSON.stringify(tree));
+
         
         // logic if parent/child are not recursive
         // props to Santiago Sanchez, SC Extraodinaire 12/19/19
         if(!tree.length&&Object.keys(this._childOf).length) {
-            console.log(`found non-recursive hierarchy`)
+            if (debug) console.log(`found non-recursive hierarchy`)
             let alreadyFound:string[]=[];
             for(let el in this._childOf) {
-                console.log(this._childOf[el].length);
+                if (debug) console.log(this._childOf[el].length);
                 if(this._childOf[el].length) {
                     for(var i=0;i<this._childOf[el].length;i++) {
-                        console.log(i);
-                        console.log(this._childOf[el][i].parent);
-                        let { parent, key }=this._childOf[el][i];
+                        if (debug) console.log(i);
+                        if (debug) console.log(this._childOf[el][i].parent);
+                        let { parent }=this._childOf[el][i];
                         if(!alreadyFound.includes(parent)) {
                             alreadyFound.push(parent);
                             tree.push({ parent: '', key: parent, label: parent, nodes:this._childOf[parent] });
@@ -234,12 +224,10 @@ class Hierarchy {
             else return 0;
         }
         tree=tree.sort(compare);
-        // if (tree.length && tree.length){
         for(let i=0;i<tree.length;i++) {
             if(tree[i].nodes&&tree[i].nodes.length>=2)
                 tree[i].nodes=this.sortTree(tree[i].nodes);
         }
-        // }
         return tree;
     }
 
@@ -253,7 +241,6 @@ class Hierarchy {
     public findRowByChild(child: string): Tree {
         for(const row of this.data) {
             if(parseInt(row.key)<25) {
-
                 if(debug) console.log(`row...row.label===child ${ row.label.toLowerCase()===child.toLowerCase() } -- row.label ${ row.label } and child ${ child }`);
                 if(debug) console.log(row);
             }
@@ -264,7 +251,6 @@ class Hierarchy {
         }
         return { key: '', label: '', parent: '', nodes: [] };
     }
-
 }
 
 class EventHandler {
@@ -276,15 +262,11 @@ class EventHandler {
     private _childLabelParamEnabled: boolean;
     private _filterEnabled: boolean;
     private _worksheet: any;
-    // private _parameters: ISelectedParameters;
-    // private _selectedProps: ISelectedProps;
     private _hn: HierarchyNavigator;
     constructor(HN: HierarchyNavigator) {
-        ;
         this._hn=HN;
         this._dashboard=HN.dashboard;
         this._temporaryEventHandlers=[];
-        // this._selectedProps=this._hn.state.extensionSettings.selectedProps;
     }
     public get childIdParam(): any { return this._childIdParam; }
     public get childLabelParam(): any { return this._childLabelParam; }
@@ -293,7 +275,7 @@ class EventHandler {
         this._childIdParamEnabled=this._hn.state.extensionSettings.selectedProps.parameters.childIdEnabled;
         this._childLabelParamEnabled=this._hn.state.extensionSettings.selectedProps.parameters.childLabelEnabled;
 
-        console.log(`this._hn.state.extensionSettings.selectedProps: ${ JSON.stringify(this._hn.state.extensionSettings.selectedProps, null, 2) }`);
+        if (debug) console.log(`this._hn.state.extensionSettings.selectedProps: ${ JSON.stringify(this._hn.state.extensionSettings.selectedProps, null, 2) }`);
         if(this._childIdParamEnabled)
             this._childIdParam=await this._hn.dashboard.findParameterAsync(this._hn.state.extensionSettings.selectedProps.parameters.childId.name);
         if(this._childLabelParamEnabled)
@@ -305,21 +287,12 @@ class EventHandler {
 
         const dashboard=window.tableau.extensions.dashboardContent!.dashboard;
         await this._hn.asyncForEach(dashboard.worksheets, async (worksheet: any) => {
-            console.log(`worksheet`);
-            console.log(worksheet);
-            console.log(`this._hn.state.extensionSettings.selectedProps.worksheet.name: ${ this._hn.state.extensionSettings.selectedProps.worksheet.name }`);
+            if (debug) console.log(`worksheet`);
+            if (debug) console.log(worksheet);
+            if (debug) console.log(`this._hn.state.extensionSettings.selectedProps.worksheet.name: ${ this._hn.state.extensionSettings.selectedProps.worksheet.name }`);
             if(worksheet.name===this._hn.state.extensionSettings.selectedProps.worksheet.name) {
-                console.log(`found worksheet`);
+                if (debug) console.log(`found worksheet`);
                 this._worksheet=worksheet;
-                /* let filters: any[]=await worksheet.getFiltersAsync();
-                console.log(`found filters:`);
-                console.log(filters);
-                for(let f=0;f>filters.length;f++) {
-                    if(filters[f].fieldName===this._hn.state.extensionSettings.selectedProps.worksheet.filter.fieldName) {
-                        this._filter=filters[f];
-                    }
-                } */
-
             }
         });
 
@@ -328,8 +301,8 @@ class EventHandler {
     public async setEventListeners() {
         await this.findParametersAndFilters();
         this.clearEventHandlers(); // just in case.
-        console.log(`setEventHandleListeners`);
-        console.log(this);
+        if (debug) console.log(`setEventHandleListeners`);
+        if (debug) console.log(this);
         if(debug) console.log(`setting event handle listeners`);
         if(this._childLabelParamEnabled)
             this._temporaryEventHandlers.push(this._childLabelParam.addEventListener(tableau.TableauEventType.ParameterChanged, this.eventDashboardChangeLabel));
@@ -344,21 +317,28 @@ class EventHandler {
         this._temporaryEventHandlers=[];
     }
     public async clearFilterAndMarksAsync() {
+        try {
         await this.findParametersAndFilters();
          if(this._hn.state.extensionSettings.selectedProps.worksheet.filter.fieldName!=='' && this._hn.state.extensionSettings.selectedProps.worksheet.filterEnabled)
-            await this._worksheet.clearFilterAsync(this._hn.state.extensionSettings.selectedProps.worksheet.filter.fieldName); 
-
-
-        console.log(`worksheet:`);
-        console.log(this._worksheet);
-        console.log(`for sheet: ${ this._hn.state.extensionSettings.selectedProps.worksheet.childId.fieldName }`);
+         {
+            if (debug) console.log(`clearing filter this._hn.state.extensionSettings.selectedProps.worksheet.filter.fieldName: ${this._hn.state.extensionSettings.selectedProps.worksheet.filter.fieldName}`)
+             await this._worksheet.clearFilterAsync(this._hn.state.extensionSettings.selectedProps.worksheet.filter.fieldName); 
+            }
+        if (debug) console.log(`worksheet:`);
+        if (debug) console.log(this._worksheet);
+        if (debug) console.log(`for sheet: ${ this._hn.state.extensionSettings.selectedProps.worksheet.childId.fieldName }`);
 
         // clear all marks selection
         await this._worksheet.selectMarksByValueAsync([{
             fieldName: this._hn.state.extensionSettings.selectedProps.worksheet.childId.fieldName,
             value: []
         }], tableau.SelectionUpdateType.Replace);
-
+    }
+    catch (err){
+        console.error(err);
+        console.log(`this.state.selectedprops`)
+        console.log(this._hn.state.extensionSettings.selectedProps)
+    }
 
     }
 
@@ -366,26 +346,18 @@ class EventHandler {
     // then send the updated value to the hierarchy for evaluation
     public eventDashboardChangeID=async (): Promise<void> => {
         await this.findParametersAndFilters();
-        // if (debug) console.log(`event change DH`);
-        // if (debug) console.log(`values... ID: ${this._keyParam.currentValue.formattedValue}, text: ${this._textParam.currentValue.formattedValue}`)
-
         this._hn.hierarchy.setCurrentIDFromDashboard(this._childIdParam.currentValue.value);
-        // this._hn.hierarchy.setCurrentIDFromDashboard(this._childIdParam.currentValue.formattedValue);
     };
     public eventDashboardChangeLabel=async (): Promise<void> => {
         await this.findParametersAndFilters();
         if(debug) console.log(`event change label`);
         if(debug) console.log(`values... label: ${ this._childLabelParam.currentValue.value }, id: ${ this._childIdParam.currentValue.value }`);
-
         this._hn.hierarchy.setCurrentLabelFromDashboard(this._childLabelParam.currentValue.value);
-        /* this._childLabelParam.currentValue.formattedValue }, id: ${ this._childIdParam.currentValue.formattedValue }`);
-
-        this._hn.hierarchy.setCurrentLabelFromDashboard(this._childLabelParam.currentValue.formattedValue); */
     };
 
     public async setParamDataFromExtension() {
-        console.log(`setting Param Data:`);
-        console.log(this);
+        if (debug) console.log(`setting Param Data:`);
+        if (debug) console.log(this);
         this.clearEventHandlers();
         await this.findParametersAndFilters();
         this._hn.setState({
@@ -396,19 +368,18 @@ class EventHandler {
         if(this._childLabelParamEnabled)
             await this._childLabelParam.changeValueAsync(this._hn.hierarchy.currentSelected);
         if(this._filterEnabled) {
-            // await this._dashboard.clearFilterAsync(this._hn.state.extensionSettings.selectedProps.worksheet.filter.fieldName)
-            console.log(`this._worksheet`);
-            console.log(this._worksheet);
-            //await this._worksheet.clearFilterAsync('Employee Number');
-            // await this._worksheet.clearFilterAsync(this._hn.state.extensionSettings.selectedProps.worksheet.filter.fieldName)
-            console.log(`children`);
-            console.log(this._hn.hierarchy.getChildren());
-            await this._worksheet.applyFilterAsync(this._hn.state.extensionSettings.selectedProps.worksheet.filter.fieldName, this._hn.hierarchy.getChildren(), FilterUpdateType.Replace);
+            if (debug) console.log(`this._worksheet`);
+            if (debug) console.log(this._worksheet);
+            if (debug) console.log(`state.selectedProps???`);
+            if (debug) console.log(this._hn.state.extensionSettings.selectedProps);
+            let type = this._hn.state.extensionSettings.selectedProps.worksheet.filter.fieldName===this._hn.state.extensionSettings.selectedProps.worksheet.childId.fieldName?'id':'label';
+            if (debug) console.log(`replacing filter (${this._hn.state.extensionSettings.selectedProps.worksheet.filter.fieldName}) with values ${JSON.stringify(this._hn.hierarchy.getChildren(type))}`)
+            await this._worksheet.applyFilterAsync(this._hn.state.extensionSettings.selectedProps.worksheet.filter.fieldName, this._hn.hierarchy.getChildren(type), tableau.FilterUpdateType.Replace);
         }
         if(this._hn.state.extensionSettings.selectedProps.worksheet.enableMarkSelection) {
             await this._worksheet.selectMarksByValueAsync([{
                 fieldName: this._hn.state.extensionSettings.selectedProps.worksheet.childId.fieldName,
-                value: this._hn.hierarchy.getChildren()
+                value: this._hn.hierarchy.getChildren('id')
             }], tableau.SelectionUpdateType.Replace);
         }
         this._hn.setState({
@@ -416,7 +387,6 @@ class EventHandler {
         });
         this.setEventListeners();
     }
-
 }
 
 
@@ -424,15 +394,13 @@ class HierarchyNavigator extends React.Component<any, State> {
 
     public dashboard: any; // object to hold the Tableau Dashboard
     private configureStr='Please configure this extension to display the formatted parameter.'; // Message to display in the main window for error/not configured
-    private message=this.configureStr; // message to be displayed to user
     public genericError='This Extension could not retrieve the parameter.  Please add a parameter or select a new one.'; // if param gets deleted or other error
     public hierarchy: Hierarchy;
     public paramHandler: EventHandler;
     public childRef: any;
-
+    private configEventHandler: any;
     public constructor(props: any) {
         super(props);
-        this.onChangeToggle=this.onChangeToggle.bind(this);
         this.loadHierarchy=this.loadHierarchy.bind(this);
         this.resetParams=this.resetParams.bind(this);
         this.configure=this.configure.bind(this);
@@ -444,11 +412,6 @@ class HierarchyNavigator extends React.Component<any, State> {
                 bgColor: '#F3F3F3',
                 configComplete: false,
                 selectedProps: defaultSelectedProps,
-                // selectedChildLabel: '',
-                // selectedChildID: '',
-                // selectedParameter: { key: '', keyEnabled: true, text: '', textEnabled: true },
-                // selectedParentID: '',
-                // selectedSheet: '',
                 txtColor: '#000000',
             },
             tree: [],
@@ -457,13 +420,11 @@ class HierarchyNavigator extends React.Component<any, State> {
         };
         this.childRef=React.createRef();
         window.tableau.extensions.initializeAsync({ configure: this.configure}).then(() => {
-            //this.configure();
             this.dashboard=window.tableau.extensions.dashboardContent!.dashboard;
             this.hierarchy=new Hierarchy(this);
             this.paramHandler=new EventHandler(this);
             this.updateExtensionBasedOnSettings();
-            // this is a persistent evt handler so we won't pass it to child function
-            window.tableau.extensions.settings.addEventListener(tableau.TableauEventType.SettingsChanged, (settingsEvent: any) => {
+            this.configEventHandler = window.tableau.extensions.settings.addEventListener(tableau.TableauEventType.SettingsChanged, (settingsEvent: any) => {
                 this.updateExtensionBasedOnSettings(settingsEvent.newSettings);
             });
         })
@@ -474,10 +435,15 @@ class HierarchyNavigator extends React.Component<any, State> {
 
     }
     componentDidMount() {
-        console.log(`component MOUNTED`);
+        if (debug) console.log(`component MOUNTED`);
     }
     componentWillUnmount() {
-        console.log(`component UNMOUNTED`);
+        if (debug) console.log(`component UNMOUNTED`);
+        this.paramHandler.clearEventHandlers();
+        if (this.configEventHandler) {
+            this.configEventHandler();
+            this.configEventHandler = undefined;
+        }
     }
     public async updateExtensionBasedOnSettings(settings?: any) {
         if(typeof settings==='undefined') {
@@ -489,15 +455,12 @@ class HierarchyNavigator extends React.Component<any, State> {
         const selectedPropsTmp=typeof settings.selectedProps==='undefined'?
             defaultSelectedProps:JSON.parse(settings.selectedProps);
         settings=Object.assign({}, settings, { selectedProps: selectedPropsTmp }, { configComplete: configCompleteTmp });
-        // if (debug) console.log(`settings are...`)
-        // if (debug) console.log(settings)
         this.setState({ extensionSettings: { ...settings } });
         if(settings.configComplete) {
             this.paramHandler.clearEventHandlers();
             await this.paramHandler.clearFilterAndMarksAsync();
             this.hierarchy.clearHierarchy();
             document.body.style.backgroundColor=settings.bgColor;
-            // document.body.style.color=settings.txtColor;
             this.loadHierarchy();
         }
         else {
@@ -507,12 +470,11 @@ class HierarchyNavigator extends React.Component<any, State> {
 
     // Pops open the configure page if extension isn't configured
     public configure=(): any => {
-        console.log(`calling CONFIGURE`);
+        if (debug) console.log(`calling CONFIGURE`);
+        this.paramHandler.clearFilterAndMarksAsync();
         if(debug) console.log(`settings in configure:`);
         if(debug) console.log(this.state);
         const popupUrl=`config.html`;
-        // if (typeof (this.state.extensionSettings) !== 'undefined' && this.state.extensionSettings.configComplete==='true'){
-
         window.tableau.extensions.ui.displayDialogAsync(popupUrl, '', { height: 525, width: 450 }).then((closePayload: string) => {
             if(debug) console.log(`returning from Configure! ${ closePayload }`);
             if(debug) console.log(`typeof return: ${ typeof closePayload }`);
@@ -520,9 +482,6 @@ class HierarchyNavigator extends React.Component<any, State> {
                 this.loadHierarchy();
             }
         }).catch((error: any) => {
-            // if(window.tableau.extensions.settings.get('configComplete')!=='true') {
-            //     this.resetParams()
-            // }
             switch(error.errorCode) {
                 case tableau.ErrorCodes.DialogClosedByUser:
                     if(debug) console.log('Dialog was closed by user.');
@@ -540,11 +499,11 @@ class HierarchyNavigator extends React.Component<any, State> {
                 <TreeMenu
                     data={this.state.tree}
                     onClickItem={({ label, key, ...props }) => {
-                        console.log(`selected... ${label}, ${key}`)
-                        console.log(props)
+                        if (debug) console.log(`selected... ${label}, ${key}`)
+                        if (debug) console.log(props)
                         this.hierarchy.setSelectedFromExtension(label, key.split('/').pop()||'');
                     }}
-                    resetOpenNodesOnDataUpdate
+                    // resetOpenNodesOnDataUpdate
                     ref={this.childRef}
                 />
                 <p>
@@ -555,17 +514,11 @@ class HierarchyNavigator extends React.Component<any, State> {
     }
     // reset all parameters
     public resetParams=(msg=this.configureStr) => {
-        this.message=msg;
         this.setState({
             extensionSettings: {
                 bgColor: '#F3F3F3',
                 configComplete: false,
-                // selectedChildLabel: '',
-                // selectedChildID: '',
                 selectedProps: defaultSelectedProps,
-                // selectedParameter: { key: '', keyEnabled: false, text: '', textEnabled: false },
-                // selectedParentID: '',
-                // selectedSheet: '',
                 txtColor: '#000000'
             }
         });
@@ -586,7 +539,6 @@ class HierarchyNavigator extends React.Component<any, State> {
             if(worksheet.name===this.state.extensionSettings.selectedProps.worksheet.name) {
                 if(debug) console.log(`found worksheet: ${ worksheet.name }`);
                 await worksheet.getSummaryDataAsync().then(async (dataTable: any) => {
-                // await worksheet.getUnderlyingDataAsync().then(async (dataTable: any) => {
                     let parentIDCol=0;
                     let childLabelCol=1;
                     let childIDCol=2;
@@ -604,88 +556,23 @@ class HierarchyNavigator extends React.Component<any, State> {
                     if(debug) console.log(`parentCol: ${ parentIDCol }  childCol: ${ childLabelCol } keyCol: ${ childIDCol }`);
                     let isSet: boolean=false;
                     dataTable.data.forEach((row: any, index: number) => {
-                        console.log(`row: ${ JSON.stringify(row) }`);
+                        // console.log(`row: ${ JSON.stringify(row) }`);
                         map.push({ parent: row[parentIDCol].formattedValue, label: row[childLabelCol].formattedValue, key: row[childIDCol].formattedValue, nodes: [] });
                         if(!isSet&&this.state.currentSelected===''&&(row[parentIDCol].formattedValue==='Null'||row[parentIDCol].formattedValue===''||row[parentIDCol].formattedValue===row[childLabelCol].formattedValue)) {
                             isSet=true;
-                            if(debug) console.log(`setting initial current selected as ${ row[childLabelCol].formattedValue } at row ${ index }`);
-                            // this.setState((prevState) => {
-                            //     return {
-                            //         currentKey: row[keyCol].formattedValue,
-                            //         currentSelected: row[childCol].formattedValue,
-                            //     }
-                            // })
                             this.hierarchy.currentSelected=row[childLabelCol].formattedValue;
                             this.hierarchy.currentID=row[childIDCol].formattedValue;
                         }
                     });
                 });
                 if(debug) console.log('done getting data...');
-                // if (debug) console.log(`first selected is ${this.state.currentSelected}`)
             }
             // })
 
         });
         if(debug) console.log(`map length... ${ map.length }`);
         this.hierarchy.data=map;
-        // this.setState({data: map});
-        // this.hier.buildHierarchy();
-        // this.registerParamHandlers();
     };
-
-
-
-
-    // this function is for a user clicks on a new element in the hierarchy
-    /*     public onChange=(e: any): void => {
-            // this.setParamData(e.target.getAttribute('data-value'))
-            this.hierarchy.setSelectedFromExtension(e.target.getAttribute('data-value'))
-        } */
-
-    // this function is when a user changes the toggle/switch
-    public onChangeToggle=(isChecked: boolean, e: any, id: any): void => {
-        // this.setState({checked: isChecked})
-        // this.setParamData(isChecked)
-    };
-
-
-
-    /*     // set the parameter value based on the new target value
-        public setParamData=async (currentTarget: string) => {
-            // this.unregisterParamHandlers();
-            this.paramHandler.clearEventHandlers();
-            const paramKey=await this.dashboard.findParameterAsync(this.state.extensionSettings.selectedParameter.key);
-            const paramText=await this.dashboard.findParameterAsync(this.state.extensionSettings.selectedProps.parameters.childLabel);
-            try {
-                // .then((param: any) => {
-                // Disable the UI first, re-enable it when returning from the promise
-                this.setState({
-                    uiDisabled: true
-                });
-                const currKey=this.hierarchy.findKeyByChild(currentTarget);
-                if (debug) console.log(`setting key ${currKey} for child ${currentTarget}`)
-                await paramKey.changeValueAsync(currKey)
-                await paramText.changeValueAsync(currentTarget);
-    
-                // .then(() => {
-                this.setState({
-                    currentKey: currKey,
-                    currentSelected: currentTarget,
-                    uiDisabled: false
-                });
-                this.hierarchy.buildHierarchy();
-                // });
-                // })
-            }
-            // .catch((err: any) => {
-            catch(err) {
-                if (debug) console.log(`Something went wrong.  Here is the error: ${err}.<p> ${err.stack}`)
-                this.resetParams(this.genericError)
-            };
-    
-        } */
-
-
 
     // helper function
     public fakeWhiteOverlay(hex: string) {

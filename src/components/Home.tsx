@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import image from '../images/TableauCheckbox.png';
+import image from '../images/TableauHierarchyNavigator.png';
 
 class Home extends React.Component<any, any> {
     public render() {
@@ -9,22 +9,18 @@ class Home extends React.Component<any, any> {
 				<div className='icontainer'>
 					<div className='box'>
 						<div className='left'>
-							<div><img src={image} /></div>
-							<h1 className='iheader'>Hierarchy Navigator Parameters v2.0</h1>
-							<span className='tagline'>One checkbox. Two values.</span>
+							<div><img src={image} width='45%'/></div>
+							<h1 className='iheader'>Hierarchy Navigator Extension</h1>
+							<span className='tagline'>Recursive Data Visualized</span>
 						</div>
 						<div className='right'>
 							<h4 className='big'>What is it?</h4>
-							<p>This extension allows you to have a Hierarchy Navigator that can toggle between two values.  </p>
-							<p>Why? Because users have been <a href='https://community.tableau.com/ideas/2834'>asking</a> for this for a long time.</p>
+							<p>This extension allows you to take recursive data and visualize it and enable interactions with other dashboard components.  </p>
+							<p>Why? Because users have been <a href='https://community.tableau.com/ideas/1083'>asking</a> for this for a long time.</p>
 							<h4 className='big'>Using the Extension</h4>
 							<ol>
-								<li>Create a parameter with a list of 2 values.</li>
-								<li>Drag in a new Extension object to your dashboard.</li>
-                                <li>Download/find the <a href='https://tableau.github.io/extension-hierarchy-navigator-sandboxed/hierarchynavigator-2.0.trex'> manifest file</a>.</li>
-								<li>Select the parameter you created above for the extension to manipulate.</li>
-								<li>Select the options as presented.</li>
-								<li>Click 'OK'.</li>
+                                <li>Download/find the <a href='https://tableau.github.io/extension-hierarchy-navigator-sandboxed/hierarchynavigator-1.0.trex'> manifest file</a>.</li>
+								<li>View the <a href=''>README</a> in the GitHub repository and/or <a href=''>download</a> the sample workbook with directions and examples.</li>
 							</ol>
 							<p><b>Note:</b> You can add as many instances of this extension as you like!</p>
 							<div className='gh' style={{paddingTop: '10px'}}>
