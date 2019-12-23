@@ -3,13 +3,13 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import TreeMenu from 'react-simple-tree-menu';
 import '../../css/style.css';
-import { defaultSelectedProps,ISelectedProps } from '../config/Interfaces';
-import {Extensions} from '@tableau/extensions-api-types/ExternalContract/Namespaces/Extensions'
+import { defaultSelectedProps, ISelectedProps } from '../config/Interfaces';
+import { Extensions } from '@tableau/extensions-api-types/ExternalContract/Namespaces/Extensions';
 const extend=require("extend");
 const debug=true;
 
 declare global {
-    interface Window { tableau: {extensions: Extensions}; }
+    interface Window { tableau: { extensions: Extensions; }; }
 }
 interface Settings {
     bgColor: string,
@@ -97,8 +97,8 @@ class Hierarchy {
         if(debug) console.log(`in setCurrentIDfromDash`);
         let node;
         for(var el of this._pathMap) {
-            if (debug) console.log(`el.key: ${ el.key.toString() } ID: ${ ID.toString() }  =:${ el.key.toString()===ID.toString() }`);
-            if (debug) console.log(`el.key: ${ el.key } ID: ${ ID }  =:${ el.key===ID }`);
+            if(debug) console.log(`el.key: ${ el.key.toString() } ID: ${ ID.toString() }  =:${ el.key.toString()===ID.toString() }`);
+            if(debug) console.log(`el.key: ${ el.key } ID: ${ ID }  =:${ el.key===ID }`);
             if(el.key===ID) {
                 node=el;
                 if(debug) console.log(`found node ${ JSON.stringify(el) }`);
@@ -136,7 +136,7 @@ class Hierarchy {
         }
     }
     public setSelectedFromExtension(label: string, key: string) {
-        if (debug) console.log(`setSelectedFromExtension`);
+        if(debug) console.log(`setSelectedFromExtension`);
         this.currentSelected=label;
         this.currentID=key;
         this._hn.paramHandler.setParamDataFromExtension();
@@ -153,22 +153,23 @@ class Hierarchy {
                 this.buildPathMap(el.nodes, _path===''? el.key:`${ _path }/${ el.key }`);
         }
     }
-    public getChildren(type:string) {
+    public getChildren(type: string) {
         // if (debug) console.log(`child of current`);
-        // if (debug) console.log(`this._childOf`)
-        // if (debug) console.log(this._childOf)
-        if (debug) console.log(`getting children for this._currentID: ${this._currentID}`)
-        if (debug) console.log(JSON.stringify(this._childOf[this._currentID]));
-        if(!this._childOf[this._currentID].length) return [this._currentID];
-        const reducer=(accumulator:any[], currentValue:any) => {
+        if(debug) console.log(`getting children for this._currentID: ${ this.currentID } and type ${ type }`);
+        if(debug) console.log(JSON.stringify(this._childOf[this.currentID],null,2));
+        if(!this._childOf[this._currentID].length) return [type==='id'? this._currentID:this.currentSelected];
+        const reducer=(accumulator: any[], currentValue: any) => {
             if(currentValue.nodes.length) accumulator=currentValue.nodes.reduce(reducer, accumulator);
-            if (type==='id'){return [currentValue.key, ...accumulator];}
-            else {return [currentValue.label, ...accumulator];}
+            if(type==='id') { return [currentValue.key, ...accumulator]; }
+            else { return [currentValue.label, ...accumulator]; }
         };
         let arr=this._childOf[this._currentID];
-        if (type==='id') {return arr.reduce(reducer, [arr[0].parent, arr[0].key]);}
+        if(type==='id') {
+            return arr.reduce(reducer, [arr[0].parent]);
+        }
         else {
-            return arr.reduce(reducer, [this.currentSelected, arr[0].label]);}
+            return arr.reduce(reducer, [this.currentSelected]);
+        }
     }
     // credit to https://stackoverflow.com/a/58136016/7386278
     public buildHierarchy() {
@@ -185,33 +186,34 @@ class Hierarchy {
             const _hasParent=!(parent==='Null'||parseInt(parent)===0||parent==='');
             _hasParent? (this._childOf[parent]=this._childOf[parent]||[]).push(item):tree.push(item);
         });
+        console.log('tree');
+        console.log(tree);
 
-        
         // logic if parent/child are not recursive
         // props to Santiago Sanchez, SC Extraodinaire 12/19/19
         if(!tree.length&&Object.keys(this._childOf).length) {
-            if (debug) console.log(`found non-recursive hierarchy`)
-            let alreadyFound:string[]=[];
+            if(debug) console.log(`found non-recursive hierarchy`);
+            let alreadyFound: string[]=[];
             for(let el in this._childOf) {
-                if (debug) console.log(this._childOf[el].length);
+                if(debug) console.log(this._childOf[el].length);
                 if(this._childOf[el].length) {
                     for(var i=0;i<this._childOf[el].length;i++) {
-                        if (debug) console.log(i);
-                        if (debug) console.log(this._childOf[el][i].parent);
+                        if(debug) console.log(i);
+                        if(debug) console.log(this._childOf[el][i].parent);
                         let { parent }=this._childOf[el][i];
                         if(!alreadyFound.includes(parent)) {
                             alreadyFound.push(parent);
-                            tree.push({ parent: '', key: parent, label: parent, nodes:this._childOf[parent] });
+                            tree.push({ parent: '', key: parent, label: parent, nodes: this._childOf[parent] });
                         }
                     }
                 }
             }
-            if (debug) console.log(`tree was not recursive... morphing!`)
-            if (debug) console.log(JSON.stringify(tree));
+            if(debug) console.log(`tree was not recursive... morphing!`);
+            if(debug) console.log(JSON.stringify(tree));
         }
-        
+
         this.tree=tree;
-        
+
     }
 
     private sortTree(tree: Tree[]): Tree[] {
@@ -275,7 +277,7 @@ class EventHandler {
         this._childIdParamEnabled=this._hn.state.extensionSettings.selectedProps.parameters.childIdEnabled;
         this._childLabelParamEnabled=this._hn.state.extensionSettings.selectedProps.parameters.childLabelEnabled;
 
-        if (debug) console.log(`this._hn.state.extensionSettings.selectedProps: ${ JSON.stringify(this._hn.state.extensionSettings.selectedProps, null, 2) }`);
+        if(debug) console.log(`this._hn.state.extensionSettings.selectedProps: ${ JSON.stringify(this._hn.state.extensionSettings.selectedProps, null, 2) }`);
         if(this._childIdParamEnabled)
             this._childIdParam=await this._hn.dashboard.findParameterAsync(this._hn.state.extensionSettings.selectedProps.parameters.childId.name);
         if(this._childLabelParamEnabled)
@@ -287,11 +289,11 @@ class EventHandler {
 
         const dashboard=window.tableau.extensions.dashboardContent!.dashboard;
         await this._hn.asyncForEach(dashboard.worksheets, async (worksheet: any) => {
-            if (debug) console.log(`worksheet`);
-            if (debug) console.log(worksheet);
-            if (debug) console.log(`this._hn.state.extensionSettings.selectedProps.worksheet.name: ${ this._hn.state.extensionSettings.selectedProps.worksheet.name }`);
+            if(debug) console.log(`worksheet`);
+            if(debug) console.log(worksheet);
+            if(debug) console.log(`this._hn.state.extensionSettings.selectedProps.worksheet.name: ${ this._hn.state.extensionSettings.selectedProps.worksheet.name }`);
             if(worksheet.name===this._hn.state.extensionSettings.selectedProps.worksheet.name) {
-                if (debug) console.log(`found worksheet`);
+                if(debug) console.log(`found worksheet`);
                 this._worksheet=worksheet;
             }
         });
@@ -299,15 +301,20 @@ class EventHandler {
     }
 
     public async setEventListeners() {
-        await this.findParametersAndFilters();
-        this.clearEventHandlers(); // just in case.
-        if (debug) console.log(`setEventHandleListeners`);
-        if (debug) console.log(this);
-        if(debug) console.log(`setting event handle listeners`);
-        if(this._childLabelParamEnabled)
-            this._temporaryEventHandlers.push(this._childLabelParam.addEventListener(tableau.TableauEventType.ParameterChanged, this.eventDashboardChangeLabel));
-        if(this._childIdParamEnabled)
-            this._temporaryEventHandlers.push(this._childIdParam.addEventListener(tableau.TableauEventType.ParameterChanged, this.eventDashboardChangeID));
+        if(this._childLabelParamEnabled||this._childLabelParamEnabled) {
+            await this.findParametersAndFilters();
+            this.clearEventHandlers(); // just in case.
+            if(debug) console.log(`setEventHandleListeners`);
+            if(debug) console.log(this);
+            if(debug) console.log(`setting event handle listeners`);
+            if(this._childLabelParamEnabled)
+                this._temporaryEventHandlers.push(this._childLabelParam.addEventListener(tableau.TableauEventType.ParameterChanged, this.eventDashboardChangeLabel));
+            if(this._childIdParamEnabled)
+                this._temporaryEventHandlers.push(this._childIdParam.addEventListener(tableau.TableauEventType.ParameterChanged, this.eventDashboardChangeID));
+        }
+        else {
+            if(debug) console.log(`skipping set event handlers because neither param is enabled.`);
+        }
     }
 
     public clearEventHandlers() {
@@ -318,27 +325,26 @@ class EventHandler {
     }
     public async clearFilterAndMarksAsync() {
         try {
-        await this.findParametersAndFilters();
-         if(this._hn.state.extensionSettings.selectedProps.worksheet.filter.fieldName!=='' && this._hn.state.extensionSettings.selectedProps.worksheet.filterEnabled)
-         {
-            if (debug) console.log(`clearing filter this._hn.state.extensionSettings.selectedProps.worksheet.filter.fieldName: ${this._hn.state.extensionSettings.selectedProps.worksheet.filter.fieldName}`)
-             await this._worksheet.clearFilterAsync(this._hn.state.extensionSettings.selectedProps.worksheet.filter.fieldName); 
+            await this.findParametersAndFilters();
+            if(this._hn.state.extensionSettings.selectedProps.worksheet.filter.fieldName!==''&&this._hn.state.extensionSettings.selectedProps.worksheet.filterEnabled) {
+                if(debug) console.log(`clearing filter this._hn.state.extensionSettings.selectedProps.worksheet.filter.fieldName: ${ this._hn.state.extensionSettings.selectedProps.worksheet.filter.fieldName }`);
+                await this._worksheet.clearFilterAsync(this._hn.state.extensionSettings.selectedProps.worksheet.filter.fieldName);
             }
-        if (debug) console.log(`worksheet:`);
-        if (debug) console.log(this._worksheet);
-        if (debug) console.log(`for sheet: ${ this._hn.state.extensionSettings.selectedProps.worksheet.childId.fieldName }`);
+            if(debug) console.log(`worksheet:`);
+            if(debug) console.log(this._worksheet);
+            if(debug) console.log(`for sheet: ${ this._hn.state.extensionSettings.selectedProps.worksheet.childId.fieldName }`);
 
-        // clear all marks selection
-        await this._worksheet.selectMarksByValueAsync([{
-            fieldName: this._hn.state.extensionSettings.selectedProps.worksheet.childId.fieldName,
-            value: []
-        }], tableau.SelectionUpdateType.Replace);
-    }
-    catch (err){
-        console.error(err);
-        console.log(`this.state.selectedprops`)
-        console.log(this._hn.state.extensionSettings.selectedProps)
-    }
+            // clear all marks selection
+            await this._worksheet.selectMarksByValueAsync([{
+                fieldName: this._hn.state.extensionSettings.selectedProps.worksheet.childId.fieldName,
+                value: []
+            }], tableau.SelectionUpdateType.Replace);
+        }
+        catch(err) {
+            console.error(err);
+            console.log(`this.state.selectedprops`);
+            console.log(this._hn.state.extensionSettings.selectedProps);
+        }
 
     }
 
@@ -356,25 +362,33 @@ class EventHandler {
     };
 
     public async setParamDataFromExtension() {
-        if (debug) console.log(`setting Param Data:`);
-        if (debug) console.log(this);
-        this.clearEventHandlers();
-        await this.findParametersAndFilters();
         this._hn.setState({
             uiDisabled: true
         });
-        if(this._childIdParamEnabled)
-            await this._childIdParam.changeValueAsync(this._hn.hierarchy.currentID);
-        if(this._childLabelParamEnabled)
-            await this._childLabelParam.changeValueAsync(this._hn.hierarchy.currentSelected);
+        await this.findParametersAndFilters();
+        if(this._childIdParamEnabled||this._childLabelParamEnabled) {
+            if(debug) console.log(`setting Param Data:`);
+            if(debug) console.log(this);
+            this.clearEventHandlers();
+            if(this._childIdParamEnabled)
+                await this._childIdParam.changeValueAsync(this._hn.hierarchy.currentID);
+            if(this._childLabelParamEnabled)
+                await this._childLabelParam.changeValueAsync(this._hn.hierarchy.currentSelected);
+        }
         if(this._filterEnabled) {
-            if (debug) console.log(`this._worksheet`);
-            if (debug) console.log(this._worksheet);
-            if (debug) console.log(`state.selectedProps???`);
-            if (debug) console.log(this._hn.state.extensionSettings.selectedProps);
-            let type = this._hn.state.extensionSettings.selectedProps.worksheet.filter.fieldName===this._hn.state.extensionSettings.selectedProps.worksheet.childId.fieldName?'id':'label';
-            if (debug) console.log(`replacing filter (${this._hn.state.extensionSettings.selectedProps.worksheet.filter.fieldName}) with values ${JSON.stringify(this._hn.hierarchy.getChildren(type))}`)
-            await this._worksheet.applyFilterAsync(this._hn.state.extensionSettings.selectedProps.worksheet.filter.fieldName, this._hn.hierarchy.getChildren(type), tableau.FilterUpdateType.Replace);
+            if(debug) console.log(`this._worksheet`);
+            if(debug) console.log(this._worksheet);
+            if(debug) console.log(`state.selectedProps???`);
+            if(debug) console.log(this._hn.state.extensionSettings.selectedProps);
+            let type=this._hn.state.extensionSettings.selectedProps.worksheet.filter.fieldName===this._hn.state.extensionSettings.selectedProps.worksheet.childId.fieldName? 'id':'label';
+            let replaceArr=this._hn.hierarchy.getChildren(type);
+            if(debug) console.log(`replacing filter (${ this._hn.state.extensionSettings.selectedProps.worksheet.filter.fieldName }) with values ${ JSON.stringify(replaceArr) }`);
+            await this._worksheet.applyFilterAsync(this._hn.state.extensionSettings.selectedProps.worksheet.filter.fieldName, replaceArr, tableau.FilterUpdateType.Replace);
+            let hmmm=await this._worksheet.getFiltersAsync();
+            console.log(`filters now...`);
+            hmmm.forEach((el: any) => {
+                console.log(el);
+            });
         }
         if(this._hn.state.extensionSettings.selectedProps.worksheet.enableMarkSelection) {
             await this._worksheet.selectMarksByValueAsync([{
@@ -419,12 +433,12 @@ class HierarchyNavigator extends React.Component<any, State> {
             openNodes: []
         };
         this.childRef=React.createRef();
-        window.tableau.extensions.initializeAsync({ configure: this.configure}).then(() => {
+        window.tableau.extensions.initializeAsync({ configure: this.configure }).then(() => {
             this.dashboard=window.tableau.extensions.dashboardContent!.dashboard;
             this.hierarchy=new Hierarchy(this);
             this.paramHandler=new EventHandler(this);
             this.updateExtensionBasedOnSettings();
-            this.configEventHandler = window.tableau.extensions.settings.addEventListener(tableau.TableauEventType.SettingsChanged, (settingsEvent: any) => {
+            this.configEventHandler=window.tableau.extensions.settings.addEventListener(tableau.TableauEventType.SettingsChanged, (settingsEvent: any) => {
                 this.updateExtensionBasedOnSettings(settingsEvent.newSettings);
             });
         })
@@ -435,14 +449,14 @@ class HierarchyNavigator extends React.Component<any, State> {
 
     }
     componentDidMount() {
-        if (debug) console.log(`component MOUNTED`);
+        if(debug) console.log(`component MOUNTED`);
     }
     componentWillUnmount() {
-        if (debug) console.log(`component UNMOUNTED`);
+        if(debug) console.log(`component UNMOUNTED`);
         this.paramHandler.clearEventHandlers();
-        if (this.configEventHandler) {
+        if(this.configEventHandler) {
             this.configEventHandler();
-            this.configEventHandler = undefined;
+            this.configEventHandler=undefined;
         }
     }
     public async updateExtensionBasedOnSettings(settings?: any) {
@@ -455,9 +469,9 @@ class HierarchyNavigator extends React.Component<any, State> {
         const selectedPropsTmp=typeof settings.selectedProps==='undefined'?
             defaultSelectedProps:JSON.parse(settings.selectedProps);
         settings=Object.assign({}, settings, { selectedProps: selectedPropsTmp }, { configComplete: configCompleteTmp });
+        this.paramHandler.clearEventHandlers();
         this.setState({ extensionSettings: { ...settings } });
         if(settings.configComplete) {
-            this.paramHandler.clearEventHandlers();
             await this.paramHandler.clearFilterAndMarksAsync();
             this.hierarchy.clearHierarchy();
             document.body.style.backgroundColor=settings.bgColor;
@@ -470,8 +484,9 @@ class HierarchyNavigator extends React.Component<any, State> {
 
     // Pops open the configure page if extension isn't configured
     public configure=(): any => {
-        if (debug) console.log(`calling CONFIGURE`);
+        if(debug) console.log(`calling CONFIGURE`);
         this.paramHandler.clearFilterAndMarksAsync();
+        this.paramHandler.clearEventHandlers();
         if(debug) console.log(`settings in configure:`);
         if(debug) console.log(this.state);
         const popupUrl=`config.html`;
@@ -499,8 +514,8 @@ class HierarchyNavigator extends React.Component<any, State> {
                 <TreeMenu
                     data={this.state.tree}
                     onClickItem={({ label, key, ...props }) => {
-                        if (debug) console.log(`selected... ${label}, ${key}`)
-                        if (debug) console.log(props)
+                        if(debug) console.log(`selected... ${ label }, ${ key }`);
+                        if(debug) console.log(props);
                         this.hierarchy.setSelectedFromExtension(label, key.split('/').pop()||'');
                     }}
                     // resetOpenNodesOnDataUpdate

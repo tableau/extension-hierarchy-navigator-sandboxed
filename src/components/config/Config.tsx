@@ -769,7 +769,7 @@ class Configure extends React.Component<any, State> {
                 else {
                     worksheetStatus=Status.notpossible;
                     _selectedProps=defaultSelectedProps;
-                    this.updateError(1, 'Err 1001. No valid sheets.  Please add a sheet that has at least two columns/dimensions.');
+                    this.updateError(1, 'Err 1001. No valid sheets.  Please add a sheet that has at least two string dimensions.');
                 }
             }
             else {

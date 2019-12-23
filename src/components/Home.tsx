@@ -20,7 +20,7 @@ class Home extends React.Component<any, any> {
 							<h4 className='big'>Using the Extension</h4>
 							<ol>
                                 <li>Download/find the <a href='https://tableau.github.io/extension-hierarchy-navigator-sandboxed/hierarchynavigator-1.0.trex'> manifest file</a>.</li>
-								<li>View the <a href=''>README</a> in the GitHub repository and/or <a href=''>download</a> the sample workbook with directions and examples.</li>
+								<li>View the <a href='https://github.com/tableau/extension-hierarchy-navigator-sandboxed'>README</a> in the GitHub repository and/or <a href='https://tableau.github.io/extension-hierarchy-navigator-sandboxed/Hierarchy%20Navigator%20Extension.twbx'>download</a> the sample workbook with directions and examples.</li>
 							</ol>
 							<p><b>Note:</b> You can add as many instances of this extension as you like!</p>
 							<div className='gh' style={{paddingTop: '10px'}}>
