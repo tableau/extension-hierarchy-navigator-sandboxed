@@ -6,6 +6,8 @@ Follow the below steps to configure the extension.
 
 ## Using the Hierarchy Navigator Extension - <a href="https://tableau.github.io/extension-hierarchy-navigator-sandboxed">Github.io Homepage</a>
 
+## Download the [manifest file](https://tableau.github.io/extension-hierarchy-navigator-sandboxed/hierarchynavigator-1.0.trex)
+
 ### Setting up the worksheet source
 Load a source sheet with your recursive data. 
 *  The ideal data will have a parent/child relationship.  This Extension will also work with 2 columns of data that are non-recursive.
@@ -33,7 +35,7 @@ This extension can emulate selecting marks with a mouse.  It will select the cur
 
 ### Adding the extension to the dashboard
 * Add the worksheet with the hierarchy data to the dashboard.
-* Download the Hierarchy Navigator [manifest file](https://tableau.github.io/extension-hierarchy-navigator-sandboxed/hierarchynavigator-2.0.trex). 
+* Download the Hierarchy Navigator [manifest file](https://tableau.github.io/extension-hierarchy-navigator-sandboxed/hierarchynavigator-1.0.trex). 
 * Open Tableau Desktop 2018.2 or higher (2018.4 or newer for sandboxed extensions).
 * Drag in the "Extension" object to a dashboard. 
 * Click "My Extensions" and find the manifest file (.trex) you downloaded above.
