@@ -6,7 +6,7 @@ Follow the below steps to configure the extension.
 
 ## Using the Hierarchy Navigator Extension - <a href="https://tableau.github.io/extension-hierarchy-navigator-sandboxed">Github.io Homepage</a>
 
-## Download the [manifest file](https://tableau.github.io/extension-hierarchy-navigator-sandboxed/hierarchynavigator-1.0.trex)
+## tl;dr. Download the [manifest file](https://tableau.github.io/extension-hierarchy-navigator-sandboxed/hierarchynavigator-1.0.trex) and [workbook with examples and directions](https://tableau.github.io/extension-hierarchy-navigator-sandboxed/Hierarchy%20Navigator%20Extension.twbx)
 
 ### Setting up the worksheet source
 Load a source sheet with your recursive data. 
