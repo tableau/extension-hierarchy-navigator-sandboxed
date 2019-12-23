@@ -1,6 +1,14 @@
 # Hierarchy Navigator
 This extension allows you to visualize your recursive data (or 2 columns of non-recursive data) in a Tableau Dashboard.  Two way interactivity with other dashboard components can be realized via two parameters.  
 
+## What does it do?
+* Creates a tree menu for selection
+* Enables search across the tree
+* Allows up to 2 parameters for bi-directional sync (for both the current node label and id)
+* Enables filtering of the original sheet without impacting the extension
+* Enables mark selection on the original sheet
+* With combinations of any of the above, you dashboard expansion possibilities are limitless!
+
 ## How to use an Extension
 Follow the below steps to configure the extension.
 
@@ -10,8 +18,8 @@ Follow the below steps to configure the extension.
 
 ### Setting up the worksheet source
 Load a source sheet with your recursive data. 
-*  The ideal data will have a parent/child relationship.  This Extension will also work with 2 columns of data that are non-recursive.
-*  A third dimension, for the label of the child node, can optionally be added if your parent/child dimensions are id or key fields.  
+* The ideal data will have a parent/child relationship.  This Extension will also work with 2 columns of data that are non-recursive.
+* A third dimension, for the label of the child node, can optionally be added if your parent/child dimensions are id or key fields.  
 * The label for the child node can be the same as the child id or key field.  The label field should be set to the same as the child id if you data is not-recursive.
 * Only the child label will be displayed in the resulting visualization.  A parent label isn't needed or used.  
 * This sheet can be hidden from the dashboard and the minimal amount of visualization (eg bar charts will load faster than a long table).
