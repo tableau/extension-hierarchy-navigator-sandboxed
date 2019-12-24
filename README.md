@@ -16,6 +16,8 @@ Follow the below steps to configure the extension.
 
 ## tl;dr. Download the [manifest file](https://tableau.github.io/extension-hierarchy-navigator-sandboxed/hierarchynavigator-1.0.trex) and [workbook with examples and directions](https://tableau.github.io/extension-hierarchy-navigator-sandboxed/Hierarchy%20Navigator%20Extension.twbx)
 
+![Animated Image](/src/images/AnimatedSample.gif)
+
 ### Setting up the worksheet source
 Load a source sheet with your recursive data. 
 * The ideal data will have a parent/child relationship.  This Extension will also work with 2 columns of data that are non-recursive.
