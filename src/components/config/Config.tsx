@@ -1,5 +1,5 @@
-import { Button, Checkbox, Tabs } from '@tableau/tableau-ui';
-import { Container, Row, Col } from 'reactstrap';
+import { Button, Checkbox } from '@tableau/tableau-ui';
+import { Button as RSButton, Container, Row, Col } from 'reactstrap';
 import 'babel-polyfill';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
@@ -92,10 +92,10 @@ class Configure extends React.Component<any, State> {
         });
     }
     componentDidMount() {
-        if (debug) console.log(`component MOUNTED`);
+        if(debug) console.log(`component MOUNTED`);
     }
     componentWillUnmount() {
-        if (debug) console.log(`component UNMOUNTED`);
+        if(debug) console.log(`component UNMOUNTED`);
     }
     public render() {
         const worksheetTitle=() => {
@@ -113,10 +113,10 @@ class Configure extends React.Component<any, State> {
         for(const sheet of this.state.availableProps.worksheets) {
             availableWorksheetArr.push(sheet.name);
         }
-        const tabs=[{ content: 'Sheet and Fields' }, { content: 'Interactions' }, { content: 'Display' }];
-        const content: React.ReactFragment[]=[];
+        const page: { name: string, content: React.ReactFragment; }[]=[{ name: 'Sheet/Fields', content: (<div></div>) }, { name: 'Interactions', content: (<div></div>) }, { name: 'Display', content: (<div></div>) }];
+
         // WORKSHEET CONTENT
-        content[0]=(
+        page[0].content=(
             <div className='sectionStyle mb-5'>
                 Worksheet and Fields
             <Selector
@@ -151,7 +151,7 @@ class Configure extends React.Component<any, State> {
         );
 
         // PARAMETERS CONTENT
-        content[1]=(
+        page[1].content=(
             <Container>
 
                 <div className='sectionStyle mb-2'>
@@ -169,7 +169,7 @@ class Configure extends React.Component<any, State> {
                     <Col>
                         <Selector
                             title={'For Id field'}
-                            status={this.state.selectedProps.parameters.childIdEnabled?(this.state.paramArr.length? Status.set:Status.notpossible):Status.notpossible} 
+                            status={this.state.selectedProps.parameters.childIdEnabled? (this.state.paramArr.length? Status.set:Status.notpossible):Status.notpossible}
                             onChange={this.changeParam}
                             list={this.state.paramArr}
                             selected={this.state.selectedProps.parameters.childId.name}
@@ -228,8 +228,8 @@ class Configure extends React.Component<any, State> {
                             onChange={this.changeFilter}
                             list={this.state.filterArr.filter(filter => {
                                 let selFields=[this.state.selectedProps.worksheet.childId.fieldName, this.state.selectedProps.worksheet.childLabel.fieldName];
-                                if (debug) console.log(`selFields: ${ selFields } and filter: ${ filter }`);
-                                if (debug) console.log(`selFields.includes(filter): ${ selFields.includes(filter) }`);
+                                if(debug) console.log(`selFields: ${ selFields } and filter: ${ filter }`);
+                                if(debug) console.log(`selFields.includes(filter): ${ selFields.includes(filter) }`);
                                 return selFields.includes(filter);
                             })}
                             selected={this.state.selectedProps.worksheet.filter.fieldName}
@@ -249,7 +249,7 @@ class Configure extends React.Component<any, State> {
             </Container>
         );
         //  COLOR CONTENT
-        content[2]=(
+        page[2].content=(
             <div>
                 <Colors bg={this.state.bgColor}
                     onBGChange={this.bgChange}
@@ -269,13 +269,52 @@ class Configure extends React.Component<any, State> {
                             {el}<br />
                         </h4>):undefined
                 )}
-                <Tabs
-                    // onTabChange={this.changeTabs}
-                    selectedTabIndex={this.state.selectedTabIndex}
-                    tabs={tabs}
-                >
-                    <span>{content[this.state.selectedTabIndex]}</span>
-                </Tabs>
+                <Container className='navcontainer'>
+                    <Row>
+                        <Col></Col>
+                        <Col>
+                            <Row>
+
+                                <RSButton type="button" className="btn btn-default btn-circle" color="primary">1
+                            </RSButton>
+                            </Row>
+                            <Row>
+                                {page[0].name}
+                            </Row>
+                        </Col>
+                        <Col>
+                            <div className='userhr'></div>
+                        </Col>
+                        <Col>
+                            <Row>
+
+                                <RSButton type="button" className="btn btn-default btn-circle" color={this.state.selectedTabIndex>=1?"primary":"secondary"}>2
+                            </RSButton>
+                            </Row>
+                            <Row>
+                                {page[1].name}
+                            </Row>
+                        </Col>
+                        <Col>
+                            <div className='userhr'></div>
+                        </Col>
+                        <Col>
+                            <Row>
+
+                                <RSButton type="button" className="btn btn-default btn-circle" color={this.state.selectedTabIndex>=2?"primary":"secondary"}>3
+                            </RSButton>
+                            </Row>
+                            <Row style={{ margin: 'auto' }}>
+                                {page[2].name}
+                            </Row>
+                        </Col>
+                        <Col></Col>
+
+                    </Row>
+
+                </Container>
+                <span>{page[this.state.selectedTabIndex].content}</span>
+
                 <div className='d-flex flex-row-reverse'>
                     <div className='p-2'>
                         {[1, 2].includes(this.state.selectedTabIndex)&&
@@ -309,9 +348,9 @@ class Configure extends React.Component<any, State> {
             if(debug) console.log(`parameters found`);
             for(const p of params) {
                 if(debug) console.log(p);
-                if(p.allowableValues.type===tableau.ParameterValueType.All && p.dataType===tableau.DataType.String) {
+                if(p.allowableValues.type===tableau.ParameterValueType.All&&p.dataType===tableau.DataType.String) {
                     // if(p.dataType===tableau.DataType.String) {
-                        paramArr.push(p.name);
+                    paramArr.push(p.name);
                     // }
                     // else if(p.dataType===tableau.DataType.Int) {
                     //     paramIntArr.push(p.name);
@@ -321,7 +360,7 @@ class Configure extends React.Component<any, State> {
             }
             if(debug) console.log(`parameterList`);
             if(debug) console.log(parameters);
-            if (debug) console.log(`paramArr: ${ JSON.stringify(paramArr) }`);
+            if(debug) console.log(`paramArr: ${ JSON.stringify(paramArr) }`);
             if(parameters.length>0) {
                 // case insensitive sort
                 parameters.sort((a, b) =>
@@ -390,8 +429,8 @@ class Configure extends React.Component<any, State> {
         try {
 
             await this.asyncForEach(dashboard.worksheets, async (worksheet: any) => {
-                if (debug) console.log(`worksheet`);
-                if (debug) console.log(worksheet);
+                if(debug) console.log(`worksheet`);
+                if(debug) console.log(worksheet);
                 const fields: IField[]=await this.getWorksheetFieldsAsync(worksheet);
                 let _filters: IFilterType[]=[];
                 if(debug) console.log('fields');
@@ -401,15 +440,15 @@ class Configure extends React.Component<any, State> {
                 fields.forEach(field => {
                     fieldArr.push(field.fieldName);
                 });
-                if (debug) console.log(`fields: ${ fieldArr }`);
+                if(debug) console.log(`fields: ${ fieldArr }`);
 
 
                 await worksheet.getFiltersAsync().then((filters: IFilterType[]) => {
-                    if (debug) console.log(`Filters!`);
+                    if(debug) console.log(`Filters!`);
                     for(var filter of filters) {
-                        if (debug) console.log(filter);
+                        if(debug) console.log(filter);
                         // if filter field name is in list of available fields, add it here
-                        if (debug) console.log(`filter.filterType==='categorical'? ${ filter.filterType==='categorical' }`);
+                        if(debug) console.log(`filter.filterType==='categorical'? ${ filter.filterType==='categorical' }`);
                         if(filter.filterType==='categorical') {
 
                             _filters.push(filter);
@@ -424,8 +463,8 @@ class Configure extends React.Component<any, State> {
 
 
             let availableProps=Object.assign({}, this.state.availableProps||defaultAvailableProps, { worksheets });
-            if (debug) console.log(`setting (in loadworksheet) availableProps`);
-            if (debug) console.log(availableProps);
+            if(debug) console.log(`setting (in loadworksheet) availableProps`);
+            if(debug) console.log(availableProps);
             this.setState((prevState) => { return { availableProps }; });
         }
         catch(e) {
@@ -436,7 +475,7 @@ class Configure extends React.Component<any, State> {
     };
 
     private setSelectedWorksheet(selectedWorksheet: string=this.state.availableProps.worksheets[0].name) {
-        if (debug) console.log(`setSelectedWorksheet (${ selectedWorksheet })`);
+        if(debug) console.log(`setSelectedWorksheet (${ selectedWorksheet })`);
         const { worksheets }=this.state.availableProps;
         if(worksheets.length) {
             let ws=worksheets.find(ws => ws.name===selectedWorksheet)||defaultWorksheet;
@@ -451,7 +490,7 @@ class Configure extends React.Component<any, State> {
     Set state.fieldArr based on a change/load of worksheet
     */
     private setFieldArrayBasedOnSelectedWorksheet(selectedWorksheet: string=this.state.availableProps.worksheets[0].name, bContinue: boolean=true) {
-        if (debug) console.log(`setFieldArrayBasedOnSelectedWorksheet ${ selectedWorksheet }`);
+        if(debug) console.log(`setFieldArrayBasedOnSelectedWorksheet ${ selectedWorksheet }`);
         const { worksheets }=this.state.availableProps;
         if(debug) console.log(`worksheets.length: ${ worksheets.length }`);
         if(debug) console.log(worksheets);
@@ -461,7 +500,7 @@ class Configure extends React.Component<any, State> {
             ws.fields.forEach(field => {
                 fieldArr.push(field.fieldName);
             });
-            if (debug) console.log(`fieldArr: ${ JSON.stringify(fieldArr) }`);
+            if(debug) console.log(`fieldArr: ${ JSON.stringify(fieldArr) }`);
             this.setState({
                 fieldArr,
                 worksheetStatus: fieldArr.length>=2? Status.set:Status.notpossible
@@ -471,7 +510,7 @@ class Configure extends React.Component<any, State> {
         }
     }
     private setSelectedFields(selectedWorksheet: string=this.state.availableProps.worksheets[0].name||'') {
-        if (debug) console.log(`setSelectedFields (${ selectedWorksheet })`);
+        if(debug) console.log(`setSelectedFields (${ selectedWorksheet })`);
         const { worksheets }=this.state.availableProps;
         if(worksheets.length&&this.state.fieldArr.length>=2) {
             let ws=worksheets.find(ws => ws.name===selectedWorksheet)||defaultWorksheet;
@@ -492,7 +531,7 @@ class Configure extends React.Component<any, State> {
     Set state.filterArr based on a change/load of a worksheet
     */
     private setFilterArrayBasedOnSelectedWorksheet(selectedWorksheet: string=this.state.availableProps.worksheets[0].name, bContinue: boolean=true) {
-        if (debug) console.log(`setFilterArrayBasedOnSelectedWorksheet (${ selectedWorksheet })`);
+        if(debug) console.log(`setFilterArrayBasedOnSelectedWorksheet (${ selectedWorksheet })`);
         const { worksheets }=this.state.availableProps;
         if(debug) console.log(`worksheets.length: ${ worksheets.length }`);
         if(debug) console.log(worksheets);
@@ -507,11 +546,11 @@ class Configure extends React.Component<any, State> {
                     _filter.fieldName=filter.fieldName;
                     _filter.filterType=filter.filterType;
                 };
-                
+
                 filterArr.push(filter.fieldName);
             });
 
-            if (debug) console.log(`filterArr: ${ JSON.stringify(filterArr) }`);
+            if(debug) console.log(`filterArr: ${ JSON.stringify(filterArr) }`);
             this.setState({ filterArr },
                 () => { if(bContinue) this.setSelectedFilterBasedOnAllowedFilters(selectedWorksheet); }
             );
@@ -523,7 +562,7 @@ class Configure extends React.Component<any, State> {
     (used also when fields are changed but not worksheet)
     */
     private setSelectedFilterBasedOnAllowedFilters(selectedWorksheet: string=this.state.availableProps.worksheets[0].name) {
-        if (debug) console.log(`setSelectedFilterBasedOnAllowedFilters (${ selectedWorksheet })`);
+        if(debug) console.log(`setSelectedFilterBasedOnAllowedFilters (${ selectedWorksheet })`);
         const { worksheets }=this.state.availableProps;
         if(debug) console.log(`worksheets.length: ${ worksheets.length }`);
         if(debug) console.log(worksheets);
@@ -532,9 +571,9 @@ class Configure extends React.Component<any, State> {
             let ws=worksheets.find(ws => ws.name===selectedWorksheet)||defaultWorksheet;
             let _filter=defaultFilter;
             for(let i=0;i<ws.filters.length;i++) {
-                if (debug) console.log(`ws.filters[${ i }]: ${ JSON.stringify(ws.filters[i]) }`);
-                if (debug) console.log(`ws.filters[${ i }].fieldName: ${ JSON.stringify(ws.filters[i].fieldName) }`);
-                if (debug) console.log(`selectedProps.worksheet: ${ JSON.stringify(selectedProps.worksheet) }`);
+                if(debug) console.log(`ws.filters[${ i }]: ${ JSON.stringify(ws.filters[i]) }`);
+                if(debug) console.log(`ws.filters[${ i }].fieldName: ${ JSON.stringify(ws.filters[i].fieldName) }`);
+                if(debug) console.log(`selectedProps.worksheet: ${ JSON.stringify(selectedProps.worksheet) }`);
                 // if filter name matches either childId or childLabel fields
                 if(ws.filters[i].fieldName===selectedProps.worksheet.childId.fieldName||ws.filters[i].fieldName===selectedProps.worksheet.childLabel.fieldName) {
                     if(_filter.fieldName==='') {
@@ -567,13 +606,13 @@ class Configure extends React.Component<any, State> {
     // Handles selection of the parent field
     private setParent=(e: React.ChangeEvent<HTMLSelectElement>): void => {
         let prevParentId=this.state.selectedProps.worksheet.parentId;
-        if (debug) console.log(`this.state.availProps`);
-        if (debug) console.log(JSON.stringify(this.state.availableProps, null, 2));
-        if (debug) console.log(`this.state.availProps`);
-        if (debug) console.log(JSON.stringify(this.state.availableProps, null, 2));
+        if(debug) console.log(`this.state.availProps`);
+        if(debug) console.log(JSON.stringify(this.state.availableProps, null, 2));
+        if(debug) console.log(`this.state.availProps`);
+        if(debug) console.log(JSON.stringify(this.state.availableProps, null, 2));
         const ws=this.state.availableProps.worksheets.find(ws => ws.name===this.state.selectedProps.worksheet.name);
         const parentId=ws!.fields.find(field => field.fieldName===e.target.value)||defaultField;
-        if (debug) console.log(`setParent: e.target.val: ${ e.target.value }, availField: ${ JSON.stringify(parentId) }`);
+        if(debug) console.log(`setParent: e.target.val: ${ e.target.value }, availField: ${ JSON.stringify(parentId) }`);
 
         if(parentId.fieldName==='') return;
 
@@ -598,7 +637,7 @@ class Configure extends React.Component<any, State> {
         let prevChildId=this.state.selectedProps.worksheet.childId;
         const ws=this.state.availableProps.worksheets.find(ws => ws.name===this.state.selectedProps.worksheet.name);
         const childField=ws!.fields.find(field => field.fieldName===e.target.value)||defaultField;
-        if (debug) console.log(`setParent: e.target.val: ${ e.target.value }, availField: ${ JSON.stringify(childField) }`);
+        if(debug) console.log(`setParent: e.target.val: ${ e.target.value }, availField: ${ JSON.stringify(childField) }`);
 
         if(childField.fieldName==='') return;
 
@@ -628,16 +667,16 @@ class Configure extends React.Component<any, State> {
         let selectedProps: ISelectedProps=extend(true, {}, this.state.selectedProps);
         selectedProps.worksheet.childLabel=childLabel;
         selectedProps.parameters=parameters;
-        if (debug) console.log(`setting from setChildLabel`);
-        if (debug) console.log(selectedProps);
+        if(debug) console.log(`setting from setChildLabel`);
+        if(debug) console.log(selectedProps);
         this.setState(
 
             { selectedProps },
             () => { this.setFilterArrayBasedOnSelectedWorksheet(selectedProps.worksheet.name); }
         );
-        if (debug) console.log(`calling setSelectedFilter...`);
-        if (debug) console.log(`after setSelectedFilter...`);
-        if (debug) console.log(this.state.selectedProps);
+        if(debug) console.log(`calling setSelectedFilter...`);
+        if(debug) console.log(`after setSelectedFilter...`);
+        if(debug) console.log(this.state.selectedProps);
     };
     private getFieldOfAvailableWorksheets(_field: string): IField {
         let availWorksheet: AvailableWorksheet=this.state.availableProps.worksheets.find(ws => ws.name===this.state.selectedProps.worksheet.name)||defaultWorksheet;
@@ -656,7 +695,7 @@ class Configure extends React.Component<any, State> {
 
         if(filter.fieldName==='') return;
         let selectedProps: ISelectedProps=extend(true, {}, this.state.selectedProps);
-        selectedProps.worksheet.filter={fieldName: filter.fieldName};
+        selectedProps.worksheet.filter={ fieldName: filter.fieldName };
         this.setState({
             selectedProps
         });
@@ -664,8 +703,8 @@ class Configure extends React.Component<any, State> {
     };
 
     private changeEnabled(e: any) {
-        if (debug) console.log(`event type change param enabled`);
-        if (debug) console.log(e);
+        if(debug) console.log(`event type change param enabled`);
+        if(debug) console.log(e);
         const target=e.target;
         const type: string|null=target.getAttribute('data-type');
         if(typeof type==='string') {
@@ -675,8 +714,8 @@ class Configure extends React.Component<any, State> {
             let lengthOfCurrentArr=this.state.paramArr.length;
             switch(type) {
                 case 'id':
-                    if (debug) console.log(`selectedProps.parameters.childId.dataType: ${ selectedProps.parameters.childId.dataType }`);
-                    if (debug) console.log(`selectedProps.parameters.childLabel.dataType: ${ selectedProps.parameters.childLabel.dataType }`);
+                    if(debug) console.log(`selectedProps.parameters.childId.dataType: ${ selectedProps.parameters.childId.dataType }`);
+                    if(debug) console.log(`selectedProps.parameters.childLabel.dataType: ${ selectedProps.parameters.childLabel.dataType }`);
                     if(!lengthOfCurrentArr) return;
                     selectedProps.parameters.childIdEnabled=e.target.checked;
                     if(selectedProps.parameters.childId.name===selectedProps.parameters.childLabel.name&&e.target.checked&&selectedProps.parameters.childLabelEnabled) {
@@ -687,18 +726,18 @@ class Configure extends React.Component<any, State> {
                     if(!lengthOfCurrentArr) return;
                     selectedProps.parameters.childLabelEnabled=e.target.checked;
                     // here we check if there is only 1 param
-                    if (debug) console.log(`lengthOfCurrentArr (${ lengthOfCurrentArr }) for label; childIdEnabled? ${ selectedProps.parameters.childIdEnabled }`);
+                    if(debug) console.log(`lengthOfCurrentArr (${ lengthOfCurrentArr }) for label; childIdEnabled? ${ selectedProps.parameters.childIdEnabled }`);
 
-                    if (debug) console.log(`selectedProps.parameters.childId.name===selectedProps.parameters.childLabel.name && e.target.checked && selectedProps.parameters.childIdEnabled: ${ selectedProps.parameters.childId.name===selectedProps.parameters.childLabel.name&&e.target.checked&&selectedProps.parameters.childIdEnabled }`);
+                    if(debug) console.log(`selectedProps.parameters.childId.name===selectedProps.parameters.childLabel.name && e.target.checked && selectedProps.parameters.childIdEnabled: ${ selectedProps.parameters.childId.name===selectedProps.parameters.childLabel.name&&e.target.checked&&selectedProps.parameters.childIdEnabled }`);
 
-                    if (debug) console.log(`selectedProps.parameters.childId.name: ${ selectedProps.parameters.childId.name }`);
-                    if (debug) console.log(`selectedProps.parameters.childLabel.name: ${ selectedProps.parameters.childLabel.name }`);
+                    if(debug) console.log(`selectedProps.parameters.childId.name: ${ selectedProps.parameters.childId.name }`);
+                    if(debug) console.log(`selectedProps.parameters.childLabel.name: ${ selectedProps.parameters.childLabel.name }`);
 
-                    if (debug) console.log(`selectedProps.parameters.childId.name===selectedProps.parameters.childLabel.name: ${ selectedProps.parameters.childId.name===selectedProps.parameters.childLabel.name }`);
+                    if(debug) console.log(`selectedProps.parameters.childId.name===selectedProps.parameters.childLabel.name: ${ selectedProps.parameters.childId.name===selectedProps.parameters.childLabel.name }`);
 
-                    if (debug) console.log(`e.target.checked: ${ e.target.checked }`);
+                    if(debug) console.log(`e.target.checked: ${ e.target.checked }`);
 
-                    if (debug) console.log(`selectedProps.parameters.childIdEnabled: ${ selectedProps.parameters.childIdEnabled }`);
+                    if(debug) console.log(`selectedProps.parameters.childIdEnabled: ${ selectedProps.parameters.childIdEnabled }`);
 
                     if(selectedProps.parameters.childId.name===selectedProps.parameters.childLabel.name&&e.target.checked&&selectedProps.parameters.childIdEnabled) {
                         selectedProps.parameters.childIdEnabled=false;
@@ -744,7 +783,7 @@ class Configure extends React.Component<any, State> {
             await this.getWorksheetsAsync();
             await this.getParamListAsync();
 
-            if (debug) console.log(`starting bLoad logic`);
+            if(debug) console.log(`starting bLoad logic`);
             // check existing  settings
             if(bLoad) {
 
@@ -752,8 +791,8 @@ class Configure extends React.Component<any, State> {
                 this.updateError(0, '');
                 let _selectedProps: ISelectedProps;
                 let worksheetStatus: Status;
-                if (debug) console.log(`current availableProps`);
-                if (debug) console.log(this.state.availableProps);
+                if(debug) console.log(`current availableProps`);
+                if(debug) console.log(this.state.availableProps);
                 // worksheet/filter/sheet logic
                 const { worksheets }=this.state.availableProps;
                 if(worksheets.length) {
@@ -764,7 +803,7 @@ class Configure extends React.Component<any, State> {
                         this.setSelectedWorksheet();
                     });
 
-                    if (debug) console.log(`what are props in VALIDATE\n${ JSON.stringify(this.state, null, 2) }`);
+                    if(debug) console.log(`what are props in VALIDATE\n${ JSON.stringify(this.state, null, 2) }`);
                 }
                 else {
                     worksheetStatus=Status.notpossible;
@@ -786,14 +825,14 @@ class Configure extends React.Component<any, State> {
                 }
 
                 if(!bFound) {
-                    if (debug) console.log(`can't validate existing worksheet - reload`);
+                    if(debug) console.log(`can't validate existing worksheet - reload`);
                     return this.validateSettings(true);
                 }
                 bFound=false;
                 // validate worksheet/fields
                 const foundWorksheet=this.state.availableProps.worksheets.find((ws) => ws.name===worksheet.name)||{ fields: [] };
                 if(foundWorksheet?.fields.length<2) {
-                    if (debug) console.log(`can't validate existing worksheet has 2+ fields - reload`);
+                    if(debug) console.log(`can't validate existing worksheet has 2+ fields - reload`);
                     return this.validateSettings(true);
                 }
                 else
@@ -805,7 +844,7 @@ class Configure extends React.Component<any, State> {
                     }
 
                 if(!bFound) {
-                    if (debug) console.log(`can't validate existing childiId field - reload`);
+                    if(debug) console.log(`can't validate existing childiId field - reload`);
                     return this.validateSettings(true);
                 }
                 bFound=false;
@@ -817,7 +856,7 @@ class Configure extends React.Component<any, State> {
                 }
 
                 if(!bFound) {
-                    if (debug) console.log(`can't validate existing parentId field - reload`);
+                    if(debug) console.log(`can't validate existing parentId field - reload`);
                     return this.validateSettings(true);
                 }
                 bFound=false;
@@ -828,7 +867,7 @@ class Configure extends React.Component<any, State> {
                     }
                 }
                 if(!bFound) {
-                    if (debug) console.log(`can't validate existing childLabel field- reload`);
+                    if(debug) console.log(`can't validate existing childLabel field- reload`);
                     return this.validateSettings(true);
                 }
                 bFound=false;
@@ -840,14 +879,14 @@ class Configure extends React.Component<any, State> {
                         }
                     }
                     if(!bFound) {
-                        if (debug) console.log(`can't validate existing worksheet filter - reload`);
+                        if(debug) console.log(`can't validate existing worksheet filter - reload`);
                         return this.validateSettings(true);
                     }
                 }
                 bFound=false;
                 // validate params, if they are enabled
                 let { childId, childLabel, childIdEnabled, childLabelEnabled }=this.state.selectedProps.parameters;
-                if (debug) console.log(`childIdEnabled? ${ childIdEnabled }`);
+                if(debug) console.log(`childIdEnabled? ${ childIdEnabled }`);
                 if(childIdEnabled) {
                     for(var availParam of this.state.paramArr) {
                         if(availParam===childId.name) {
@@ -856,7 +895,7 @@ class Configure extends React.Component<any, State> {
                         }
                     }
                     if(!bFound) {
-                        if (debug) console.log(`can't validate existing childId Param - reload`);
+                        if(debug) console.log(`can't validate existing childId Param - reload`);
                         return this.validateSettings(true);
                     }
                 }
@@ -869,7 +908,7 @@ class Configure extends React.Component<any, State> {
                         }
                     }
                     if(!bFound) {
-                        if (debug) console.log(`can't validate existing childLabel Param - reload`);
+                        if(debug) console.log(`can't validate existing childLabel Param - reload`);
                         return this.validateSettings(true);
                     }
                 }
@@ -881,10 +920,10 @@ class Configure extends React.Component<any, State> {
                 loading: false,
                 worksheetStatus: Status.set
             });
-            if (debug) console.log(`final state after load
+            if(debug) console.log(`final state after load
         ${JSON.stringify(this.state, null, 2) }
         `);
-            if (debug) console.log(this.state);
+            if(debug) console.log(this.state);
             if(debug) console.log(`successfully completed validate fields`);
         }
         catch(err) {
@@ -893,21 +932,21 @@ class Configure extends React.Component<any, State> {
         }
     }
     private setParameters() {
-        if (debug) console.log(`setParameters`);
+        if(debug) console.log(`setParameters`);
         let selectedProps: ISelectedProps=extend(true, {}, this.state.selectedProps);
-                if (debug) console.log(`2 - childId.dataType===string`);
-                if(this.state.paramArr.length>=2) {
-                    if (debug) console.log(`3 -- paramStrArr.length >= 2`);
-                    selectedProps.parameters.childId=this.state.availableProps.parameters.find(p => p.name===this.state.paramArr[0])||defaultParameter;
-                    selectedProps.parameters.childLabel=this.state.availableProps.parameters.find(p => p.name===this.state.paramArr[1])||defaultParameter;
-                }
-                else if(this.state.paramArr.length>=1) {
-                    if (debug) console.log(`4`);
-                    selectedProps.parameters.childId=this.state.availableProps.parameters.find(p => p.name===this.state.paramArr[0])||defaultParameter;
-                }
+        if(debug) console.log(`2 - childId.dataType===string`);
+        if(this.state.paramArr.length>=2) {
+            if(debug) console.log(`3 -- paramStrArr.length >= 2`);
+            selectedProps.parameters.childId=this.state.availableProps.parameters.find(p => p.name===this.state.paramArr[0])||defaultParameter;
+            selectedProps.parameters.childLabel=this.state.availableProps.parameters.find(p => p.name===this.state.paramArr[1])||defaultParameter;
+        }
+        else if(this.state.paramArr.length>=1) {
+            if(debug) console.log(`4`);
+            selectedProps.parameters.childId=this.state.availableProps.parameters.find(p => p.name===this.state.paramArr[0])||defaultParameter;
+        }
         selectedProps.parameters.childIdEnabled=false;
         selectedProps.parameters.childLabelEnabled=false;
-        if (debug) console.log(`selectedProps in SETINITIALPARAMETERS: \n${ JSON.stringify(selectedProps, null, 2) }`);
+        if(debug) console.log(`selectedProps in SETINITIALPARAMETERS: \n${ JSON.stringify(selectedProps, null, 2) }`);
         this.setState({ selectedProps }, () => { this.clearMarkSelection(); });
     }
     private clearMarkSelection() {
@@ -922,7 +961,7 @@ class Configure extends React.Component<any, State> {
 
     private changeParam=(e: React.ChangeEvent<HTMLSelectElement>): void => {
         const type: string|null=e.target.getAttribute('data-type');
-        if (debug) console.log(`all state: 
+        if(debug) console.log(`all state: 
         ${JSON.stringify(this.state, null, 2) }`);
         if(typeof type==='string') {
 
@@ -931,10 +970,10 @@ class Configure extends React.Component<any, State> {
             const { parameters: availParameters }=this.state.availableProps;
             const newParam=availParameters.find(param => param.name===e.target.value)||defaultParameter;
             const prevChildId: IParameter=extend({}, this.state.selectedProps.parameters.childId);
-            if (debug) console.log(`prevChildId: ${ JSON.stringify(prevChildId, null, 2) }`);
+            if(debug) console.log(`prevChildId: ${ JSON.stringify(prevChildId, null, 2) }`);
 
             const prevChildLabel: IParameter=this.state.selectedProps.parameters.childLabel;
-            if (debug) console.log(`prevChildLabel: ${ JSON.stringify(prevChildLabel, null, 2) }`);
+            if(debug) console.log(`prevChildLabel: ${ JSON.stringify(prevChildLabel, null, 2) }`);
             let childId=prevChildId;
             let childLabel=prevChildLabel;
             // if new value is same as existing other value than switch, but only to the same type (string/int)
@@ -955,7 +994,7 @@ class Configure extends React.Component<any, State> {
             if(debug) console.log(`childId param set to ${ JSON.stringify(prevChildId) }`);
             if(debug) console.log(`childLabel param set to ${ JSON.stringify(prevChildLabel) }`);
             const selectedProps=extend(true, {}, this.state.selectedProps, { parameters: { childId, childLabel } });
-            if (debug) console.log(`setting (finally): ${ JSON.stringify(selectedProps, null, 2) }`);
+            if(debug) console.log(`setting (finally): ${ JSON.stringify(selectedProps, null, 2) }`);
             this.setState({
                 selectedProps
             });
@@ -976,7 +1015,7 @@ class Configure extends React.Component<any, State> {
             selectedProps: defaultSelectedProps,
             worksheetStatus: Status.notset,
         });
-        if (debug) console.log(`calling validateSettings from clearSettings`);
+        if(debug) console.log(`calling validateSettings from clearSettings`);
         this.validateSettings(true);
 
 
@@ -1015,4 +1054,4 @@ class Configure extends React.Component<any, State> {
 }
 
 export default Configure;
-ReactDOM.render(<Configure />, document.getElementById('container'));
+ReactDOM.render(<Configure />, document.getElementById('app'));

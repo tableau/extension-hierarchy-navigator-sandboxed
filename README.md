@@ -1,5 +1,5 @@
 # Hierarchy Navigator
-This extension allows you to visualize your recursive data (or 2 columns of non-recursive data) in a Tableau Dashboard.  Two way interactivity with other dashboard components can be realized via two parameters.  
+This extension allows you to visualize your recursive data (or 2 columns of non-recursive data) in a Tableau Dashboard. 
 
 ## What does it do?
 * Creates a tree menu for selection
@@ -10,7 +10,7 @@ This extension allows you to visualize your recursive data (or 2 columns of non-
 * With combinations of any of the above, you dashboard expansion possibilities are limitless!
 
 ## How to use an Extension
-Follow the below steps to configure the extension.  This extension is hosted on. <a href="https://tableau.github.io/extension-hierarchy-navigator-sandboxed">Github.io Pages</a>
+Follow the below steps to configure the extension.  This extension is hosted on <a href="https://tableau.github.io/extension-hierarchy-navigator-sandboxed">Github.io Pages</a>
 
 ## tl;dr. Download the [manifest file](https://tableau.github.io/extension-hierarchy-navigator-sandboxed/hierarchynavigator-1.0.trex) and [workbook with examples and directions](https://tableau.github.io/extension-hierarchy-navigator-sandboxed/Hierarchy%20Navigator%20Extension.twbx)
 

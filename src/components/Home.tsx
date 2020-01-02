@@ -37,4 +37,4 @@ class Home extends React.Component<any, any> {
 }
 
 export default Home;
-ReactDOM.render(<Home />, document.getElementById('container'));
+ReactDOM.render(<Home />, document.getElementById('app'));

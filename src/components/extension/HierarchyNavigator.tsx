@@ -610,4 +610,4 @@ class HierarchyNavigator extends React.Component<any, State> {
     }
 }
 
-ReactDOM.render(<HierarchyNavigator />, document.getElementById('container'));
+ReactDOM.render(<HierarchyNavigator />, document.getElementById('app'));
