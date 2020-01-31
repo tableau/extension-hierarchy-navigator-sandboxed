@@ -21,6 +21,14 @@
     "esModuleInterop": true,
     "typeRoots" : ["./node_modules/@types", "./node_modules/@tableau"],
     "types": ["node", "@tableau/extensions-api-types"],
-
+    "plugins": [
+        {
+          "name": "typescript-tslint-plugin",
+          "alwaysShowRuleFailuresAsWarnings": false,
+          "ignoreDefinitionFiles": true,
+          "configFile": "../tslint.json",
+          "suppressWhileTypeErrorsPresent": false
+        }
+      ]
   }
 }

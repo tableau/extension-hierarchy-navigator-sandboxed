@@ -14,22 +14,22 @@ export interface SelectorProps {
 }
 
 // Shows if setting has not yet been configured
+// tslint:disable-next-line variable-name
 export const Selector: React.SFC<SelectorProps> = (props) => {
     const dropdownSelectProps: DropdownSelectProps = {
         className: 'dropdown-select w-100',
-        disabled: props.status === Status.notpossible,
+        disabled: props.status!==Status.set,
         kind: 'line',
         onChange: props.onChange,
         onSelect: props.onChange,
         value: props.selected,
     };
-    const labelStyle = {
-        font:'Benton Sans Light',
-        fontSize: '10px',
-        margin: 'auto', 
-        opacity: .8,
-        padding: '1px 0px 0px 0px',
-    }
+    const buttonProps: ButtonProps = {
+        disabled: props.status !== Status.set,
+        kind: 'filledGreen',
+        onClick: props.onClick,
+        style: { marginLeft: '12px' },
+    };
     const showButton = ():React.ReactFragment => {
         if (typeof props.onClick === 'function'){
             return (<Button {...buttonProps}>Set</Button>);
@@ -39,12 +39,6 @@ export const Selector: React.SFC<SelectorProps> = (props) => {
         }
     }
 
-    const buttonProps: ButtonProps = {
-        disabled: props.status === Status.notpossible,
-        kind: 'filledGreen',
-        onClick: props.onClick,
-        style: { marginLeft: '12px' },
-    };
     
     if (props.status === Status.hidden){
         return (< div/>)

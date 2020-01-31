@@ -44,7 +44,7 @@ This extension can emulate selecting marks with a mouse.  It will select the cur
 ### Adding the extension to the dashboard
 * Add the worksheet with the hierarchy data to the dashboard.
 * Download the Hierarchy Navigator [manifest file](https://tableau.github.io/extension-hierarchy-navigator-sandboxed/hierarchynavigator-1.0.trex). 
-* Open Tableau Desktop 2018.2 or higher (2018.4 or newer for sandboxed extensions).
+* Open Tableau Desktop 2018.2 or higher (2019.4 or newer for sandboxed extensions).
 * Drag in the "Extension" object to a dashboard. 
 * Click "My Extensions" and find the manifest file (.trex) you downloaded above.
 * Configure the extension (see next section).

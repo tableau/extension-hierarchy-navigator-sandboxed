@@ -242,28 +242,24 @@ select::-ms-expand {
     font-family: "Benton Sans";
     font-size: 12px;
     height: 30px;
-    opacity: .8;
     padding: 5px 0px 5px 18px 
 }
 .dropdownStyle {
     font-family: "Benton Sans";
     font-size: 12px;
     margin: auto; 
-    opacity: .8;
     padding: 5px 38px 0px 10px;
 }
 .sectionStyle {
     font-family: "Benton Sans";
     font-size: 12px;
     font-weight: "bold"; 
-    opacity: .8;
     padding: 5px 28px 0px 18px;
 }
 .labelStyle {
     font-family: "Benton Sans";
     font-size: 10px;
     margin: auto; 
-    opacity: .8;
     padding: 1px 0px 0px 0px;
 }
 

@@ -1,18 +1,26 @@
 {
-  "extends": ["tslint:recommended", "tslint-react", "tslint-config-prettier"],
+  "extends": ["tslint:recommended", "tslint-react", "tslint-config-prettier", "tslint-react-hooks"],
   "rules": {
     "quotemark": [true, "single"],
     "interface-name": [true, "never-prefix"],
     "interface-over-type-literal": false,
     "one-variable-per-declaration": false,
-    "no-console": false
+    "no-console": false,
+    "no-var-requires": false,
+    "react-hooks-nesting": "error",
+    "variable-name": {
+        "options":[
+            "allow-leading-underscore"
+        ]
+    }
   },
   "linterOptions": {
     "exclude": [
       "config/**/*.js",
       "node_modules/**/*.ts",
       "coverage/lcov-report/*.js",
-      "public/**/*.js"
+      "public/**/*.js",
+      "docs/**/*"
     ]
   }
 }

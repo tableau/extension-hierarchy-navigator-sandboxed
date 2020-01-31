@@ -1,4 +1,4 @@
-window["tableau"] =
+window.tableau =
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -48,7 +48,7 @@ window["tableau"] =
 /******/ 	// getDefaultExport function for compatibility with non-harmony modules
 /******/ 	__webpack_require__.n = function(module) {
 /******/ 		var getter = module && module.__esModule ?
-/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getDefault() { return module.default; } :
 /******/ 			function getModuleExports() { return module; };
 /******/ 		__webpack_require__.d(getter, 'a', getter);
 /******/ 		return getter;
@@ -81,86 +81,86 @@ var Tableau;
      */
     var ExtensionContext;
     (function (ExtensionContext) {
-        ExtensionContext["Desktop"] = "desktop";
-        ExtensionContext["Server"] = "server";
+        ExtensionContext.Desktop = "desktop";
+        ExtensionContext.Server = "server";
     })(ExtensionContext = Tableau.ExtensionContext || (Tableau.ExtensionContext = {}));
     /**
      * The mode in which the Extensions is currently running.
      */
     var ExtensionMode;
     (function (ExtensionMode) {
-        ExtensionMode["Authoring"] = "authoring";
-        ExtensionMode["Viewing"] = "viewing";
+        ExtensionMode.Authoring = "authoring";
+        ExtensionMode.Viewing = "viewing";
     })(ExtensionMode = Tableau.ExtensionMode || (Tableau.ExtensionMode = {}));
     var AnalyticsObjectType;
     (function (AnalyticsObjectType) {
-        AnalyticsObjectType["Cluster"] = "cluster";
-        AnalyticsObjectType["Forecast"] = "forecast";
-        AnalyticsObjectType["TrendLine"] = "trend-line";
+        AnalyticsObjectType.Cluster = "cluster";
+        AnalyticsObjectType.Forecast = "forecast";
+        AnalyticsObjectType.TrendLine = "trend-line";
     })(AnalyticsObjectType = Tableau.AnalyticsObjectType || (Tableau.AnalyticsObjectType = {}));
     var ColumnType;
     (function (ColumnType) {
-        ColumnType["Discrete"] = "discrete";
-        ColumnType["Continuous"] = "continuous";
+        ColumnType.Discrete = "discrete";
+        ColumnType.Continuous = "continuous";
     })(ColumnType = Tableau.ColumnType || (Tableau.ColumnType = {}));
     /**
      * What the object represents in a dashboard.
      */
     var DashboardObjectType;
     (function (DashboardObjectType) {
-        DashboardObjectType["Blank"] = "blank";
-        DashboardObjectType["Worksheet"] = "worksheet";
-        DashboardObjectType["QuickFilter"] = "quick-filter";
-        DashboardObjectType["ParameterControl"] = "parameter-control";
-        DashboardObjectType["PageFilter"] = "page-filter";
-        DashboardObjectType["Legend"] = "legend";
-        DashboardObjectType["Title"] = "title";
-        DashboardObjectType["Text"] = "text";
-        DashboardObjectType["Image"] = "image";
-        DashboardObjectType["WebPage"] = "web-page";
-        DashboardObjectType["Extension"] = "extension";
+        DashboardObjectType.Blank = "blank";
+        DashboardObjectType.Worksheet = "worksheet";
+        DashboardObjectType.QuickFilter = "quick-filter";
+        DashboardObjectType.ParameterControl = "parameter-control";
+        DashboardObjectType.PageFilter = "page-filter";
+        DashboardObjectType.Legend = "legend";
+        DashboardObjectType.Title = "title";
+        DashboardObjectType.Text = "text";
+        DashboardObjectType.Image = "image";
+        DashboardObjectType.WebPage = "web-page";
+        DashboardObjectType.Extension = "extension";
     })(DashboardObjectType = Tableau.DashboardObjectType || (Tableau.DashboardObjectType = {}));
     /**
      * The different types of data a value can have
      */
     var DataType;
     (function (DataType) {
-        DataType["String"] = "string";
-        DataType["Int"] = "int";
-        DataType["Float"] = "float";
-        DataType["Bool"] = "bool";
-        DataType["Date"] = "date";
-        DataType["DateTime"] = "date-time";
-        DataType["Spatial"] = "spatial";
+        DataType.String = "string";
+        DataType.Int = "int";
+        DataType.Float = "float";
+        DataType.Bool = "bool";
+        DataType.Date = "date";
+        DataType.DateTime = "date-time";
+        DataType.Spatial = "spatial";
     })(DataType = Tableau.DataType || (Tableau.DataType = {}));
     /**
      * Valid date ranges for a relative date filter.
      */
     var DateRangeType;
     (function (DateRangeType) {
-        DateRangeType["Last"] = "last";
-        DateRangeType["LastN"] = "last-n";
-        DateRangeType["Next"] = "next";
-        DateRangeType["NextN"] = "next-n";
-        DateRangeType["Current"] = "current";
-        DateRangeType["ToDate"] = "to-date";
+        DateRangeType.Last = "last";
+        DateRangeType.LastN = "last-n";
+        DateRangeType.Next = "next";
+        DateRangeType.NextN = "next-n";
+        DateRangeType.Current = "current";
+        DateRangeType.ToDate = "to-date";
     })(DateRangeType = Tableau.DateRangeType || (Tableau.DateRangeType = {}));
     var EncodingType;
     (function (EncodingType) {
-        EncodingType["Column"] = "column";
-        EncodingType["Row"] = "row";
-        EncodingType["Page"] = "page";
-        EncodingType["Filter"] = "filter";
-        EncodingType["MarksType"] = "marks-type";
-        EncodingType["MeasureValues"] = "measure-values";
-        EncodingType["Color"] = "color";
-        EncodingType["Size"] = "size";
-        EncodingType["Label"] = "label";
-        EncodingType["Detail"] = "detail";
-        EncodingType["Tooltip"] = "tooltip";
-        EncodingType["Shape"] = "shape";
-        EncodingType["Path"] = "path";
-        EncodingType["Angle"] = "angle";
+        EncodingType.Column = "column";
+        EncodingType.Row = "row";
+        EncodingType.Page = "page";
+        EncodingType.Filter = "filter";
+        EncodingType.MarksType = "marks-type";
+        EncodingType.MeasureValues = "measure-values";
+        EncodingType.Color = "color";
+        EncodingType.Size = "size";
+        EncodingType.Label = "label";
+        EncodingType.Detail = "detail";
+        EncodingType.Tooltip = "tooltip";
+        EncodingType.Shape = "shape";
+        EncodingType.Path = "path";
+        EncodingType.Angle = "angle";
     })(EncodingType = Tableau.EncodingType || (Tableau.EncodingType = {}));
     /**
      * All error codes used by the Extensions API.
@@ -170,129 +170,129 @@ var Tableau;
         /**
          * Thrown when caller attempts to execute command before initialization has completed.
          */
-        ErrorCodes["APINotInitialized"] = "api-not-initialized";
+        ErrorCodes.APINotInitialized = "api-not-initialized";
         /**
          * Thrown when caller attempts to execute command while extension is not visible.
          */
-        ErrorCodes["VisibilityError"] = "visibility-error";
+        ErrorCodes.VisibilityError = "visibility-error";
         /**
          * Only one dialog can be opened at time with the UI namespace functionality.
          */
-        ErrorCodes["DialogAlreadyOpen"] = "dialog-already-open";
+        ErrorCodes.DialogAlreadyOpen = "dialog-already-open";
         /**
          * The open dialog was closed by the user.
          */
-        ErrorCodes["DialogClosedByUser"] = "dialog-closed-by-user";
+        ErrorCodes.DialogClosedByUser = "dialog-closed-by-user";
         /**
          * An error occurred within the Tableau Extensions API. Contact Tableau Support.
          */
-        ErrorCodes["InternalError"] = "internal-error";
+        ErrorCodes.InternalError = "internal-error";
         /**
          * A dialog must start on the same domain as the parent extenion.
          */
-        ErrorCodes["InvalidDomainDialog"] = "invalid-dialog-domain";
+        ErrorCodes.InvalidDomainDialog = "invalid-dialog-domain";
         /**
          * A parameter is not the correct data type or format. The name of the parameter is specified in the Error.message field.
          */
-        ErrorCodes["InvalidParameter"] = "invalid-parameter";
+        ErrorCodes.InvalidParameter = "invalid-parameter";
         /**
          * Can occur if the extension interacts with a filter that has been removed from the worksheet.
          */
-        ErrorCodes["MissingFilter"] = "missing-filter";
+        ErrorCodes.MissingFilter = "missing-filter";
         /**
          * Can occur if the extension interacts with a parameter that has been removed from the worksheet.
          */
-        ErrorCodes["MissingParameter"] = "missing-parameter";
+        ErrorCodes.MissingParameter = "missing-parameter";
         /**
          * Internal Server Error
          */
-        ErrorCodes["ServerError"] = "server-error";
+        ErrorCodes.ServerError = "server-error";
         /**
          * Developer cannot save settings while another save is still in progress.
          */
-        ErrorCodes["SettingSaveInProgress"] = "setting-save-in-progress";
+        ErrorCodes.SettingSaveInProgress = "setting-save-in-progress";
         /**
          * An unknown event name was specified in the call to `addEventListener` or `removeEventListener`.
          */
-        ErrorCodes["UnsupportedEventName"] = "unsupported-event-name";
+        ErrorCodes.UnsupportedEventName = "unsupported-event-name";
         /**
          * A method was used for a type of data source that doesn't support that method (see getActiveTablesAsync for an example)
          */
-        ErrorCodes["UnsupportedMethodForDataSourceType"] = "unsupported-method-for-data-source-type";
+        ErrorCodes.UnsupportedMethodForDataSourceType = "unsupported-method-for-data-source-type";
     })(ErrorCodes = Tableau.ErrorCodes || (Tableau.ErrorCodes = {}));
     /**
      *  Type of aggregation on a field.
      */
     var FieldAggregationType;
     (function (FieldAggregationType) {
-        FieldAggregationType["Sum"] = "sum";
-        FieldAggregationType["Avg"] = "avg";
-        FieldAggregationType["Min"] = "min";
-        FieldAggregationType["Max"] = "max";
-        FieldAggregationType["Stdev"] = "stdev";
-        FieldAggregationType["Stdevp"] = "stdevp";
-        FieldAggregationType["Var"] = "var";
-        FieldAggregationType["Varp"] = "varp";
-        FieldAggregationType["Count"] = "count";
-        FieldAggregationType["Countd"] = "countd";
-        FieldAggregationType["Median"] = "median";
-        FieldAggregationType["Attr"] = "attr";
-        FieldAggregationType["None"] = "none";
-        FieldAggregationType["Year"] = "year";
-        FieldAggregationType["Qtr"] = "qtr";
-        FieldAggregationType["Month"] = "month";
-        FieldAggregationType["Day"] = "day";
-        FieldAggregationType["Hour"] = "hour";
-        FieldAggregationType["Minute"] = "minute";
-        FieldAggregationType["Second"] = "second";
-        FieldAggregationType["Week"] = "week";
-        FieldAggregationType["Weekday"] = "weekday";
-        FieldAggregationType["MonthYear"] = "month-year";
-        FieldAggregationType["Mdy"] = "mdy";
-        FieldAggregationType["End"] = "end";
-        FieldAggregationType["TruncYear"] = "trunc-year";
-        FieldAggregationType["TruncQtr"] = "trunc-qtr";
-        FieldAggregationType["TruncMonth"] = "trunc-month";
-        FieldAggregationType["TruncWeek"] = "trunc-week";
-        FieldAggregationType["TruncDay"] = "trunc-day";
-        FieldAggregationType["TruncHour"] = "trunc-hour";
-        FieldAggregationType["TruncMinute"] = "trunc-minute";
-        FieldAggregationType["TruncSecond"] = "trunc-second";
-        FieldAggregationType["Quart1"] = "quart1";
-        FieldAggregationType["Quart3"] = "quart3";
-        FieldAggregationType["Skewness"] = "skewness";
-        FieldAggregationType["Kurtosis"] = "kurtosis";
-        FieldAggregationType["InOut"] = "in-out";
-        FieldAggregationType["User"] = "user";
+        FieldAggregationType.Sum = "sum";
+        FieldAggregationType.Avg = "avg";
+        FieldAggregationType.Min = "min";
+        FieldAggregationType.Max = "max";
+        FieldAggregationType.Stdev = "stdev";
+        FieldAggregationType.Stdevp = "stdevp";
+        FieldAggregationType.Var = "var";
+        FieldAggregationType.Varp = "varp";
+        FieldAggregationType.Count = "count";
+        FieldAggregationType.Countd = "countd";
+        FieldAggregationType.Median = "median";
+        FieldAggregationType.Attr = "attr";
+        FieldAggregationType.None = "none";
+        FieldAggregationType.Year = "year";
+        FieldAggregationType.Qtr = "qtr";
+        FieldAggregationType.Month = "month";
+        FieldAggregationType.Day = "day";
+        FieldAggregationType.Hour = "hour";
+        FieldAggregationType.Minute = "minute";
+        FieldAggregationType.Second = "second";
+        FieldAggregationType.Week = "week";
+        FieldAggregationType.Weekday = "weekday";
+        FieldAggregationType.MonthYear = "month-year";
+        FieldAggregationType.Mdy = "mdy";
+        FieldAggregationType.End = "end";
+        FieldAggregationType.TruncYear = "trunc-year";
+        FieldAggregationType.TruncQtr = "trunc-qtr";
+        FieldAggregationType.TruncMonth = "trunc-month";
+        FieldAggregationType.TruncWeek = "trunc-week";
+        FieldAggregationType.TruncDay = "trunc-day";
+        FieldAggregationType.TruncHour = "trunc-hour";
+        FieldAggregationType.TruncMinute = "trunc-minute";
+        FieldAggregationType.TruncSecond = "trunc-second";
+        FieldAggregationType.Quart1 = "quart1";
+        FieldAggregationType.Quart3 = "quart3";
+        FieldAggregationType.Skewness = "skewness";
+        FieldAggregationType.Kurtosis = "kurtosis";
+        FieldAggregationType.InOut = "in-out";
+        FieldAggregationType.User = "user";
     })(FieldAggregationType = Tableau.FieldAggregationType || (Tableau.FieldAggregationType = {}));
     /**
      * Role of a field.
      */
     var FieldRoleType;
     (function (FieldRoleType) {
-        FieldRoleType["Dimension"] = "dimension";
-        FieldRoleType["Measure"] = "measure";
-        FieldRoleType["Unknown"] = "unknown";
+        FieldRoleType.Dimension = "dimension";
+        FieldRoleType.Measure = "measure";
+        FieldRoleType.Unknown = "unknown";
     })(FieldRoleType = Tableau.FieldRoleType || (Tableau.FieldRoleType = {}));
     /**
      * An enumeration of the valid types of filters that can be applied.
      */
     var FilterType;
     (function (FilterType) {
-        FilterType["Categorical"] = "categorical";
-        FilterType["Range"] = "range";
-        FilterType["Hierarchical"] = "hierarchical";
-        FilterType["RelativeDate"] = "relative-date";
+        FilterType.Categorical = "categorical";
+        FilterType.Range = "range";
+        FilterType.Hierarchical = "hierarchical";
+        FilterType.RelativeDate = "relative-date";
     })(FilterType = Tableau.FilterType || (Tableau.FilterType = {}));
     /**
      * The different update types for applying filter
      */
     var FilterUpdateType;
     (function (FilterUpdateType) {
-        FilterUpdateType["Add"] = "add";
-        FilterUpdateType["All"] = "all";
-        FilterUpdateType["Replace"] = "replace";
-        FilterUpdateType["Remove"] = "remove";
+        FilterUpdateType.Add = "add";
+        FilterUpdateType.All = "all";
+        FilterUpdateType.Replace = "replace";
+        FilterUpdateType.Remove = "remove";
     })(FilterUpdateType = Tableau.FilterUpdateType || (Tableau.FilterUpdateType = {}));
     /**
      * The domain type for a filter
@@ -303,11 +303,11 @@ var Tableau;
          * The domain values that are relevant to the specified filter
          * i.e. the domain is restricted by a previous filter
          */
-        FilterDomainType["Relevant"] = "relevant";
+        FilterDomainType.Relevant = "relevant";
         /**
          * list of all possible domain values from database
          */
-        FilterDomainType["Database"] = "database";
+        FilterDomainType.Database = "database";
     })(FilterDomainType = Tableau.FilterDomainType || (Tableau.FilterDomainType = {}));
     /**
      * The option for specifying which values to include for filtering
@@ -315,26 +315,26 @@ var Tableau;
      */
     var FilterNullOption;
     (function (FilterNullOption) {
-        FilterNullOption["NullValues"] = "null-values";
-        FilterNullOption["NonNullValues"] = "non-null-values";
-        FilterNullOption["AllValues"] = "all-values";
+        FilterNullOption.NullValues = "null-values";
+        FilterNullOption.NonNullValues = "non-null-values";
+        FilterNullOption.AllValues = "all-values";
     })(FilterNullOption = Tableau.FilterNullOption || (Tableau.FilterNullOption = {}));
     /**
      * Type of mark for a given marks card in a viz.
      */
     var MarkType;
     (function (MarkType) {
-        MarkType["Bar"] = "bar";
-        MarkType["Line"] = "line";
-        MarkType["Area"] = "area";
-        MarkType["Square"] = "square";
-        MarkType["Circle"] = "circle";
-        MarkType["Shape"] = "shape";
-        MarkType["Text"] = "text";
-        MarkType["Map"] = "map";
-        MarkType["Pie"] = "pie";
-        MarkType["GanttBar"] = "gantt-bar";
-        MarkType["Polygon"] = "polygon";
+        MarkType.Bar = "bar";
+        MarkType.Line = "line";
+        MarkType.Area = "area";
+        MarkType.Square = "square";
+        MarkType.Circle = "circle";
+        MarkType.Shape = "shape";
+        MarkType.Text = "text";
+        MarkType.Map = "map";
+        MarkType.Pie = "pie";
+        MarkType.GanttBar = "gantt-bar";
+        MarkType.Polygon = "polygon";
     })(MarkType = Tableau.MarkType || (Tableau.MarkType = {}));
     /**
      * An enumeration describing the different types of allowable values.
@@ -342,61 +342,61 @@ var Tableau;
      */
     var ParameterValueType;
     (function (ParameterValueType) {
-        ParameterValueType["All"] = "all";
-        ParameterValueType["List"] = "list";
-        ParameterValueType["Range"] = "range";
+        ParameterValueType.All = "all";
+        ParameterValueType.List = "list";
+        ParameterValueType.Range = "range";
     })(ParameterValueType = Tableau.ParameterValueType || (Tableau.ParameterValueType = {}));
     /**
      * Date period used in filters and in parameters.
      */
     var PeriodType;
     (function (PeriodType) {
-        PeriodType["Years"] = "years";
-        PeriodType["Quarters"] = "quarters";
-        PeriodType["Months"] = "months";
-        PeriodType["Weeks"] = "weeks";
-        PeriodType["Days"] = "days";
-        PeriodType["Hours"] = "hours";
-        PeriodType["Minutes"] = "minutes";
-        PeriodType["Seconds"] = "seconds";
+        PeriodType.Years = "years";
+        PeriodType.Quarters = "quarters";
+        PeriodType.Months = "months";
+        PeriodType.Weeks = "weeks";
+        PeriodType.Days = "days";
+        PeriodType.Hours = "hours";
+        PeriodType.Minutes = "minutes";
+        PeriodType.Seconds = "seconds";
     })(PeriodType = Tableau.PeriodType || (Tableau.PeriodType = {}));
     var QuickTableCalcType;
     (function (QuickTableCalcType) {
-        QuickTableCalcType["RunningTotal"] = "running-total";
-        QuickTableCalcType["Difference"] = "difference";
-        QuickTableCalcType["PercentDifference"] = "percent-difference";
-        QuickTableCalcType["PercentOfTotal"] = "percent-of-total";
-        QuickTableCalcType["Rank"] = "rank";
-        QuickTableCalcType["Percentile"] = "percentile";
-        QuickTableCalcType["MovingAverage"] = "moving-average";
-        QuickTableCalcType["YTDTotal"] = "ytd-total";
-        QuickTableCalcType["CompoundGrowthRate"] = "compound-growth-rate";
-        QuickTableCalcType["YearOverYearGrowth"] = "year-over-year-growth";
-        QuickTableCalcType["YTDGrowth"] = "ytd-growth";
-        QuickTableCalcType["Undefined"] = "undefined";
+        QuickTableCalcType.RunningTotal = "running-total";
+        QuickTableCalcType.Difference = "difference";
+        QuickTableCalcType.PercentDifference = "percent-difference";
+        QuickTableCalcType.PercentOfTotal = "percent-of-total";
+        QuickTableCalcType.Rank = "rank";
+        QuickTableCalcType.Percentile = "percentile";
+        QuickTableCalcType.MovingAverage = "moving-average";
+        QuickTableCalcType.YTDTotal = "ytd-total";
+        QuickTableCalcType.CompoundGrowthRate = "compound-growth-rate";
+        QuickTableCalcType.YearOverYearGrowth = "year-over-year-growth";
+        QuickTableCalcType.YTDGrowth = "ytd-growth";
+        QuickTableCalcType.Undefined = "undefined";
     })(QuickTableCalcType = Tableau.QuickTableCalcType || (Tableau.QuickTableCalcType = {}));
     /**
      * Enum for specifying the selection type for select marks api.
      */
     var SelectionUpdateType;
     (function (SelectionUpdateType) {
-        SelectionUpdateType["Replace"] = "select-replace";
-        SelectionUpdateType["Add"] = "select-add";
-        SelectionUpdateType["Remove"] = "select-remove";
+        SelectionUpdateType.Replace = "select-replace";
+        SelectionUpdateType.Add = "select-add";
+        SelectionUpdateType.Remove = "select-remove";
     })(SelectionUpdateType = Tableau.SelectionUpdateType || (Tableau.SelectionUpdateType = {}));
     /**
      * The type of sheet a [[Sheet]] object represents
      */
     var SheetType;
     (function (SheetType) {
-        SheetType["Dashboard"] = "dashboard";
-        SheetType["Story"] = "story";
-        SheetType["Worksheet"] = "worksheet";
+        SheetType.Dashboard = "dashboard";
+        SheetType.Story = "story";
+        SheetType.Worksheet = "worksheet";
     })(SheetType = Tableau.SheetType || (Tableau.SheetType = {}));
     var SortDirection;
     (function (SortDirection) {
-        SortDirection["Increasing"] = "increasing";
-        SortDirection["Decreasing"] = "decreasing";
+        SortDirection.Increasing = "increasing";
+        SortDirection.Decreasing = "decreasing";
     })(SortDirection = Tableau.SortDirection || (Tableau.SortDirection = {}));
     /**
      * Represents the type of event that can be listened for.
@@ -404,20 +404,20 @@ var Tableau;
     var TableauEventType;
     (function (TableauEventType) {
         /** Raised when any filter has changed state. You can use this event type with [[Worksheet]] objects.*/
-        TableauEventType["FilterChanged"] = "filter-changed";
+        TableauEventType.FilterChanged = "filter-changed";
         /** The selected marks on a visualization has changed. You can use this event type with [[Worksheet]] objects. */
-        TableauEventType["MarkSelectionChanged"] = "mark-selection-changed";
+        TableauEventType.MarkSelectionChanged = "mark-selection-changed";
         /** A parameter has had its value modified. You can use this event type with [[Parameter]] objects. */
-        TableauEventType["ParameterChanged"] = "parameter-changed";
+        TableauEventType.ParameterChanged = "parameter-changed";
         /** Settings have been changed for this extension. You can use this event type with [[Settings]] objects. */
-        TableauEventType["SettingsChanged"] = "settings-changed";
+        TableauEventType.SettingsChanged = "settings-changed";
     })(TableauEventType = Tableau.TableauEventType || (Tableau.TableauEventType = {}));
     var TrendLineModelType;
     (function (TrendLineModelType) {
-        TrendLineModelType["Linear"] = "linear";
-        TrendLineModelType["Logarithmic"] = "logarithmic";
-        TrendLineModelType["Exponential"] = "exponential";
-        TrendLineModelType["Polynomial"] = "polynomial";
+        TrendLineModelType.Linear = "linear";
+        TrendLineModelType.Logarithmic = "logarithmic";
+        TrendLineModelType.Exponential = "exponential";
+        TrendLineModelType.Polynomial = "polynomial";
     })(TrendLineModelType = Tableau.TrendLineModelType || (Tableau.TrendLineModelType = {}));
     /**
      * Enum that represents the visibility state of a zone.
@@ -426,9 +426,9 @@ var Tableau;
     var ZoneVisibilityType;
     (function (ZoneVisibilityType) {
         /** Used for turning on the visibility of a zone in the dashboard.*/
-        ZoneVisibilityType["Show"] = "show";
+        ZoneVisibilityType.Show = "show";
         /** Used for turning off the visibility of a zone in the dashboard.*/
-        ZoneVisibilityType["Hide"] = "hide";
+        ZoneVisibilityType.Hide = "hide";
     })(ZoneVisibilityType = Tableau.ZoneVisibilityType || (Tableau.ZoneVisibilityType = {}));
 })(Tableau || (Tableau = {}));
 module.exports = Tableau;
@@ -446,7 +446,7 @@ module.exports = Tableau;
  * The build enforces that the file has the same name as the global variable that is exported.
  */
 function __export(m) {
-    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+    for (var p in m) { if (!exports.hasOwnProperty(p)) { exports[p] = m[p]; } }
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 // The following polyfills are needed for IE11
@@ -506,7 +506,7 @@ var global = module.exports = typeof window != 'undefined' && window.Math == Mat
   ? window : typeof self != 'undefined' && self.Math == Math ? self
   // eslint-disable-next-line no-new-func
   : Function('return this')();
-if (typeof __g == 'number') __g = global; // eslint-disable-line no-undef
+if (typeof __g == 'number') { __g = global; } // eslint-disable-line no-undef
 
 
 /***/ }),
@@ -517,7 +517,7 @@ if (typeof __g == 'number') __g = global; // eslint-disable-line no-undef
 
 // Export everything which had been previously in the api-shared module
 function __export(m) {
-    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+    for (var p in m) { if (!exports.hasOwnProperty(p)) { exports[p] = m[p]; } }
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var Dashboard_1 = __webpack_require__(113);
@@ -555,7 +555,7 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) { if (b.hasOwnProperty(p)) { d[p] = b[p]; } } };
         return extendStatics(d, b);
     }
     return function (d, b) {
@@ -600,7 +600,7 @@ exports.TableauError = TableauError;
 /***/ (function(module, exports) {
 
 var core = module.exports = { version: '2.5.7' };
-if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
+if (typeof __e == 'number') { __e = core; } // eslint-disable-line no-undef
 
 
 /***/ }),
@@ -797,7 +797,7 @@ exports.ErrorHelpers = ErrorHelpers;
 
 var isObject = __webpack_require__(10);
 module.exports = function (it) {
-  if (!isObject(it)) throw TypeError(it + ' is not an object!');
+  if (!isObject(it)) { throw TypeError(it + ' is not an object!'); }
   return it;
 };
 
@@ -832,7 +832,7 @@ var $export = function (type, name, source) {
   var exports = IS_GLOBAL ? core : core[name] || (core[name] = {});
   var expProto = exports[PROTOTYPE] || (exports[PROTOTYPE] = {});
   var key, own, out, exp;
-  if (IS_GLOBAL) source = name;
+  if (IS_GLOBAL) { source = name; }
   for (key in source) {
     // contains in native
     own = !IS_FORCED && target && target[key] !== undefined;
@@ -841,10 +841,10 @@ var $export = function (type, name, source) {
     // bind timers to global for call from export context
     exp = IS_BIND && own ? ctx(out, global) : IS_PROTO && typeof out == 'function' ? ctx(Function.call, out) : out;
     // extend global
-    if (target) redefine(target, key, out, type & $export.U);
+    if (target) { redefine(target, key, out, type & $export.U); }
     // export
-    if (exports[key] != out) hide(exports, key, exp);
-    if (IS_PROTO && expProto[key] != out) expProto[key] = out;
+    if (exports[key] != out) { hide(exports, key, exp); }
+    if (IS_PROTO && expProto[key] != out) { expProto[key] = out; }
   }
 };
 global.core = core;
@@ -1090,9 +1090,9 @@ __webpack_require__(6).inspectSource = function (it) {
 
 (module.exports = function (O, key, val, safe) {
   var isFunction = typeof val == 'function';
-  if (isFunction) has(val, 'name') || hide(val, 'name', key);
-  if (O[key] === val) return;
-  if (isFunction) has(val, SRC) || hide(val, SRC, O[key] ? '' + O[key] : TPL.join(String(key)));
+  if (isFunction) { has(val, 'name') || hide(val, 'name', key); }
+  if (O[key] === val) { return; }
+  if (isFunction) { has(val, SRC) || hide(val, SRC, O[key] ? '' + O[key] : TPL.join(String(key))); }
   if (O === global) {
     O[key] = val;
   } else if (!safe) {
@@ -1127,7 +1127,7 @@ module.exports = !__webpack_require__(27)(function () {
 var aFunction = __webpack_require__(22);
 module.exports = function (fn, that, length) {
   aFunction(fn);
-  if (that === undefined) return fn;
+  if (that === undefined) { return fn; }
   switch (length) {
     case 1: return function (a) {
       return fn.call(that, a);
@@ -1165,11 +1165,12 @@ exports.f = __webpack_require__(17) ? Object.defineProperty : function definePro
   anObject(O);
   P = toPrimitive(P, true);
   anObject(Attributes);
-  if (IE8_DOM_DEFINE) try {
+  if (IE8_DOM_DEFINE) { try {
     return dP(O, P, Attributes);
   } catch (e) { /* empty */ }
-  if ('get' in Attributes || 'set' in Attributes) throw TypeError('Accessors not supported!');
-  if ('value' in Attributes) O[P] = Attributes.value;
+  }
+  if ('get' in Attributes || 'set' in Attributes) { throw TypeError('Accessors not supported!'); }
+  if ('value' in Attributes) { O[P] = Attributes.value; }
   return O;
 };
 
@@ -1189,7 +1190,7 @@ module.exports = function (it, key) {
 /***/ (function(module, exports) {
 
 module.exports = function (it) {
-  if (typeof it != 'function') throw TypeError(it + ' is not a function!');
+  if (typeof it != 'function') { throw TypeError(it + ' is not a function!'); }
   return it;
 };
 
@@ -1363,7 +1364,7 @@ module.exports = function (it) {
 
 // 7.2.1 RequireObjectCoercible(argument)
 module.exports = function (it) {
-  if (it == undefined) throw TypeError("Can't call method on  " + it);
+  if (it == undefined) { throw TypeError("Can't call method on  " + it); }
   return it;
 };
 
@@ -1437,7 +1438,7 @@ var has = __webpack_require__(21);
 var TAG = __webpack_require__(2)('toStringTag');
 
 module.exports = function (it, tag, stat) {
-  if (it && !has(it = stat ? it : it.prototype, TAG)) def(it, TAG, { configurable: true, value: tag });
+  if (it && !has(it = stat ? it : it.prototype, TAG)) { def(it, TAG, { configurable: true, value: tag }); }
 };
 
 
@@ -1464,7 +1465,7 @@ var aFunction = __webpack_require__(22);
 function PromiseCapability(C) {
   var resolve, reject;
   this.promise = new C(function ($$resolve, $$reject) {
-    if (resolve !== undefined || reject !== undefined) throw TypeError('Bad Promise constructor');
+    if (resolve !== undefined || reject !== undefined) { throw TypeError('Bad Promise constructor'); }
     resolve = $$resolve;
     reject = $$reject;
   });
@@ -1526,12 +1527,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 var MessageType;
 (function (MessageType) {
-    MessageType["Initialize"] = "initialize";
-    MessageType["Notification"] = "notification";
-    MessageType["Command"] = "command";
-    MessageType["CommandResponse"] = "command-response";
-    MessageType["Handshake"] = "v-handshake";
-    MessageType["Ack"] = "v-ack";
+    MessageType.Initialize = "initialize";
+    MessageType.Notification = "notification";
+    MessageType.Command = "command";
+    MessageType.CommandResponse = "command-response";
+    MessageType.Handshake = "v-handshake";
+    MessageType.Ack = "v-ack";
 })(MessageType = exports.MessageType || (exports.MessageType = {}));
 
 
@@ -1574,8 +1575,8 @@ var EnumConverter = /** @class */ (function () {
 exports.EnumConverter = EnumConverter;
 var ShouldThrow;
 (function (ShouldThrow) {
-    ShouldThrow["Yes"] = "yes";
-    ShouldThrow["No"] = "no";
+    ShouldThrow.Yes = "yes";
+    ShouldThrow.No = "no";
 })(ShouldThrow = exports.ShouldThrow || (exports.ShouldThrow = {}));
 
 
@@ -1852,7 +1853,7 @@ var returnThis = function () { return this; };
 module.exports = function (Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCED) {
   $iterCreate(Constructor, NAME, next);
   var getMethod = function (kind) {
-    if (!BUGGY && kind in proto) return proto[kind];
+    if (!BUGGY && kind in proto) { return proto[kind]; }
     switch (kind) {
       case KEYS: return function keys() { return new Constructor(this, kind); };
       case VALUES: return function values() { return new Constructor(this, kind); };
@@ -1874,7 +1875,7 @@ module.exports = function (Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCE
       // Set @@toStringTag to native iterators
       setToStringTag(IteratorPrototype, TAG, true);
       // fix for some old engines
-      if (!LIBRARY && typeof IteratorPrototype[ITERATOR] != 'function') hide(IteratorPrototype, ITERATOR, returnThis);
+      if (!LIBRARY && typeof IteratorPrototype[ITERATOR] != 'function') { hide(IteratorPrototype, ITERATOR, returnThis); }
     }
   }
   // fix Array#{values, @@iterator}.name in V8 / FF
@@ -1895,9 +1896,10 @@ module.exports = function (Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCE
       keys: IS_SET ? $default : getMethod(KEYS),
       entries: $entries
     };
-    if (FORCED) for (key in methods) {
-      if (!(key in proto)) redefine(proto, key, methods[key]);
-    } else $export($export.P + $export.F * (BUGGY || VALUES_BUG), NAME, methods);
+    if (FORCED) { for (key in methods) {
+      if (!(key in proto)) { redefine(proto, key, methods[key]); }
+    }
+    } else { $export($export.P + $export.F * (BUGGY || VALUES_BUG), NAME, methods); }
   }
   return methods;
 };
@@ -1928,7 +1930,7 @@ module.exports = document && document.documentElement;
 // 22.1.3.31 Array.prototype[@@unscopables]
 var UNSCOPABLES = __webpack_require__(2)('unscopables');
 var ArrayProto = Array.prototype;
-if (ArrayProto[UNSCOPABLES] == undefined) __webpack_require__(13)(ArrayProto, UNSCOPABLES, {});
+if (ArrayProto[UNSCOPABLES] == undefined) { __webpack_require__(13)(ArrayProto, UNSCOPABLES, {}); }
 module.exports = function (key) {
   ArrayProto[UNSCOPABLES][key] = true;
 };
@@ -1984,7 +1986,7 @@ if (!setTask || !clearTask) {
   setTask = function setImmediate(fn) {
     var args = [];
     var i = 1;
-    while (arguments.length > i) args.push(arguments[i++]);
+    while (arguments.length > i) { args.push(arguments[i++]); }
     queue[++counter] = function () {
       // eslint-disable-next-line no-new-func
       invoke(typeof fn == 'function' ? fn : Function(fn), args);
@@ -2062,7 +2064,7 @@ var newPromiseCapability = __webpack_require__(38);
 
 module.exports = function (C, x) {
   anObject(C);
-  if (isObject(x) && x.constructor === C) return x;
+  if (isObject(x) && x.constructor === C) { return x; }
   var promiseCapability = newPromiseCapability.f(C);
   var resolve = promiseCapability.resolve;
   resolve(x);
@@ -2088,7 +2090,7 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) { if (b.hasOwnProperty(p)) { d[p] = b[p]; } } };
         return extendStatics(d, b);
     }
     return function (d, b) {
@@ -2179,13 +2181,13 @@ exports.ApiVersion = ApiVersion;
 Object.defineProperty(exports, "__esModule", { value: true });
 var NotificationId;
 (function (NotificationId) {
-    NotificationId["SelectedMarksChanged"] = "selected-marks-changed";
-    NotificationId["ParameterChanged"] = "parameter-changed";
-    NotificationId["FilterChanged"] = "filter-changed";
-    NotificationId["ExtensionDialogUpdate"] = "extension-dialog-update";
-    NotificationId["SettingsChanged"] = "settings-changed";
-    NotificationId["ContextMenuClick"] = "context-menu-click";
-    NotificationId["TestConversionNotification"] = "test-conversion-notification";
+    NotificationId.SelectedMarksChanged = "selected-marks-changed";
+    NotificationId.ParameterChanged = "parameter-changed";
+    NotificationId.FilterChanged = "filter-changed";
+    NotificationId.ExtensionDialogUpdate = "extension-dialog-update";
+    NotificationId.SettingsChanged = "settings-changed";
+    NotificationId.ContextMenuClick = "context-menu-click";
+    NotificationId.TestConversionNotification = "test-conversion-notification";
 })(NotificationId = exports.NotificationId || (exports.NotificationId = {}));
 
 
@@ -2417,7 +2419,7 @@ exports.ExternalIdentityVersionConverter = ExternalIdentityVersionConverter;
   }
 
   function Guid(guid) {
-    if (!guid) throw new TypeError("Invalid argument; `value` has no value.");
+    if (!guid) { throw new TypeError("Invalid argument; `value` has no value."); }
       
     this.value = Guid.EMPTY;
     
@@ -2896,7 +2898,7 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) { if (b.hasOwnProperty(p)) { d[p] = b[p]; } } };
         return extendStatics(d, b);
     }
     return function (d, b) {
@@ -2936,7 +2938,7 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) { if (b.hasOwnProperty(p)) { d[p] = b[p]; } } };
         return extendStatics(d, b);
     }
     return function (d, b) {
@@ -2978,8 +2980,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 var GetDataType;
 (function (GetDataType) {
-    GetDataType["Summary"] = "summary";
-    GetDataType["Underlying"] = "underlying";
+    GetDataType.Summary = "summary";
+    GetDataType.Underlying = "underlying";
 })(GetDataType = exports.GetDataType || (exports.GetDataType = {}));
 
 
@@ -3131,11 +3133,11 @@ var isObject = __webpack_require__(10);
 // instead of the ES6 spec version, we didn't implement @@toPrimitive case
 // and the second argument - flag - preferred type is a string
 module.exports = function (it, S) {
-  if (!isObject(it)) return it;
+  if (!isObject(it)) { return it; }
   var fn, val;
-  if (S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it))) return val;
-  if (typeof (fn = it.valueOf) == 'function' && !isObject(val = fn.call(it))) return val;
-  if (!S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it))) return val;
+  if (S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it))) { return val; }
+  if (typeof (fn = it.valueOf) == 'function' && !isObject(val = fn.call(it))) { return val; }
+  if (!S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it))) { return val; }
   throw TypeError("Can't convert object to primitive value");
 };
 
@@ -3157,7 +3159,7 @@ __webpack_require__(46)(String, 'String', function (iterated) {
   var O = this._t;
   var index = this._i;
   var point;
-  if (index >= O.length) return { value: undefined, done: true };
+  if (index >= O.length) { return { value: undefined, done: true }; }
   point = $at(O, index);
   this._i += point.length;
   return { value: point, done: false };
@@ -3178,7 +3180,7 @@ module.exports = function (TO_STRING) {
     var i = toInteger(pos);
     var l = s.length;
     var a, b;
-    if (i < 0 || i >= l) return TO_STRING ? '' : undefined;
+    if (i < 0 || i >= l) { return TO_STRING ? '' : undefined; }
     a = s.charCodeAt(i);
     return a < 0xd800 || a > 0xdbff || i + 1 === l || (b = s.charCodeAt(i + 1)) < 0xdc00 || b > 0xdfff
       ? TO_STRING ? s.charAt(i) : a
@@ -3237,7 +3239,7 @@ var createDict = function () {
   iframeDocument.write(lt + 'script' + gt + 'document.F=Object' + lt + '/script' + gt);
   iframeDocument.close();
   createDict = iframeDocument.F;
-  while (i--) delete createDict[PROTOTYPE][enumBugKeys[i]];
+  while (i--) { delete createDict[PROTOTYPE][enumBugKeys[i]]; }
   return createDict();
 };
 
@@ -3249,7 +3251,7 @@ module.exports = Object.create || function create(O, Properties) {
     Empty[PROTOTYPE] = null;
     // add "__proto__" for Object.getPrototypeOf polyfill
     result[IE_PROTO] = O;
-  } else result = createDict();
+  } else { result = createDict(); }
   return Properties === undefined ? result : dPs(result, Properties);
 };
 
@@ -3268,7 +3270,7 @@ module.exports = __webpack_require__(17) ? Object.defineProperties : function de
   var length = keys.length;
   var i = 0;
   var P;
-  while (length > i) dP.f(O, P = keys[i++], Properties[P]);
+  while (length > i) { dP.f(O, P = keys[i++], Properties[P]); }
   return O;
 };
 
@@ -3287,10 +3289,11 @@ module.exports = function (object, names) {
   var i = 0;
   var result = [];
   var key;
-  for (key in O) if (key != IE_PROTO) has(O, key) && result.push(key);
+  for (key in O) { if (key != IE_PROTO) { has(O, key) && result.push(key); } }
   // Don't enum bug & hidden keys
-  while (names.length > i) if (has(O, key = names[i++])) {
+  while (names.length > i) { if (has(O, key = names[i++])) {
     ~arrayIndexOf(result, key) || result.push(key);
+  }
   }
   return result;
 };
@@ -3313,14 +3316,17 @@ module.exports = function (IS_INCLUDES) {
     var value;
     // Array#includes uses SameValueZero equality algorithm
     // eslint-disable-next-line no-self-compare
-    if (IS_INCLUDES && el != el) while (length > index) {
+    if (IS_INCLUDES && el != el) { while (length > index) {
       value = O[index++];
       // eslint-disable-next-line no-self-compare
-      if (value != value) return true;
+      if (value != value) { return true; }
     // Array#indexOf ignores holes, Array#includes - not
-    } else for (;length > index; index++) if (IS_INCLUDES || index in O) {
-      if (O[index] === el) return IS_INCLUDES || index || 0;
-    } return !IS_INCLUDES && -1;
+    }
+    } else { for (;length > index; index++) { if (IS_INCLUDES || index in O) {
+      if (O[index] === el) { return IS_INCLUDES || index || 0; }
+    }
+    }
+ } return !IS_INCLUDES && -1;
   };
 };
 
@@ -3350,7 +3356,7 @@ var ObjectProto = Object.prototype;
 
 module.exports = Object.getPrototypeOf || function (O) {
   O = toObject(O);
-  if (has(O, IE_PROTO)) return O[IE_PROTO];
+  if (has(O, IE_PROTO)) { return O[IE_PROTO]; }
   if (typeof O.constructor == 'function' && O instanceof O.constructor) {
     return O.constructor.prototype;
   } return O instanceof Object ? ObjectProto : null;
@@ -3413,10 +3419,10 @@ for (var collections = getKeys(DOMIterables), i = 0; i < collections.length; i++
   var proto = Collection && Collection.prototype;
   var key;
   if (proto) {
-    if (!proto[ITERATOR]) hide(proto, ITERATOR, ArrayValues);
-    if (!proto[TO_STRING_TAG]) hide(proto, TO_STRING_TAG, NAME);
+    if (!proto[ITERATOR]) { hide(proto, ITERATOR, ArrayValues); }
+    if (!proto[TO_STRING_TAG]) { hide(proto, TO_STRING_TAG, NAME); }
     Iterators[NAME] = ArrayValues;
-    if (explicit) for (key in $iterators) if (!proto[key]) redefine(proto, key, $iterators[key], true);
+    if (explicit) { for (key in $iterators) { if (!proto[key]) { redefine(proto, key, $iterators[key], true); } } }
   }
 }
 
@@ -3449,8 +3455,8 @@ module.exports = __webpack_require__(46)(Array, 'Array', function (iterated, kin
     this._t = undefined;
     return step(1);
   }
-  if (kind == 'keys') return step(0, index);
-  if (kind == 'values') return step(0, O[index]);
+  if (kind == 'keys') { return step(0, index); }
+  if (kind == 'values') { return step(0, O[index]); }
   return step(0, [index, O[index]]);
 }, 'values');
 
@@ -3528,7 +3534,7 @@ var isThenable = function (it) {
   return isObject(it) && typeof (then = it.then) == 'function' ? then : false;
 };
 var notify = function (promise, isReject) {
-  if (promise._n) return;
+  if (promise._n) { return; }
   promise._n = true;
   var chain = promise._c;
   microtask(function () {
@@ -3544,12 +3550,12 @@ var notify = function (promise, isReject) {
       try {
         if (handler) {
           if (!ok) {
-            if (promise._h == 2) onHandleUnhandled(promise);
+            if (promise._h == 2) { onHandleUnhandled(promise); }
             promise._h = 1;
           }
-          if (handler === true) result = value;
+          if (handler === true) { result = value; }
           else {
-            if (domain) domain.enter();
+            if (domain) { domain.enter(); }
             result = handler(value); // may throw
             if (domain) {
               domain.exit();
@@ -3560,17 +3566,17 @@ var notify = function (promise, isReject) {
             reject(TypeError('Promise-chain cycle'));
           } else if (then = isThenable(result)) {
             then.call(result, resolve, reject);
-          } else resolve(result);
-        } else reject(value);
+          } else { resolve(result); }
+        } else { reject(value); }
       } catch (e) {
-        if (domain && !exited) domain.exit();
+        if (domain && !exited) { domain.exit(); }
         reject(e);
       }
     };
-    while (chain.length > i) run(chain[i++]); // variable length - can't use forEach
+    while (chain.length > i) { run(chain[i++]); } // variable length - can't use forEach
     promise._c = [];
     promise._n = false;
-    if (isReject && !promise._h) onUnhandled(promise);
+    if (isReject && !promise._h) { onUnhandled(promise); }
   });
 };
 var onUnhandled = function (promise) {
@@ -3591,7 +3597,7 @@ var onUnhandled = function (promise) {
       // Browsers should not trigger `rejectionHandled` event if it was handled here, NodeJS - should
       promise._h = isNode || isUnhandled(promise) ? 2 : 1;
     } promise._a = undefined;
-    if (unhandled && result.e) throw result.v;
+    if (unhandled && result.e) { throw result.v; }
   });
 };
 var isUnhandled = function (promise) {
@@ -3609,22 +3615,22 @@ var onHandleUnhandled = function (promise) {
 };
 var $reject = function (value) {
   var promise = this;
-  if (promise._d) return;
+  if (promise._d) { return; }
   promise._d = true;
   promise = promise._w || promise; // unwrap
   promise._v = value;
   promise._s = 2;
-  if (!promise._a) promise._a = promise._c.slice();
+  if (!promise._a) { promise._a = promise._c.slice(); }
   notify(promise, true);
 };
 var $resolve = function (value) {
   var promise = this;
   var then;
-  if (promise._d) return;
+  if (promise._d) { return; }
   promise._d = true;
   promise = promise._w || promise; // unwrap
   try {
-    if (promise === value) throw TypeError("Promise can't be resolved itself");
+    if (promise === value) { throw TypeError("Promise can't be resolved itself"); }
     if (then = isThenable(value)) {
       microtask(function () {
         var wrapper = { _w: promise, _d: false }; // wrap
@@ -3675,8 +3681,8 @@ if (!USE_NATIVE) {
       reaction.fail = typeof onRejected == 'function' && onRejected;
       reaction.domain = isNode ? process.domain : undefined;
       this._c.push(reaction);
-      if (this._a) this._a.push(reaction);
-      if (this._s) notify(this, false);
+      if (this._a) { this._a.push(reaction); }
+      if (this._s) { notify(this, false); }
       return reaction.promise;
     },
     // 25.4.5.1 Promise.prototype.catch(onRejected)
@@ -3719,7 +3725,7 @@ $export($export.S + $export.F * (LIBRARY || !USE_NATIVE), PROMISE, {
   }
 });
 $export($export.S + $export.F * !(USE_NATIVE && __webpack_require__(99)(function (iter) {
-  $Promise.all(iter)['catch'](empty);
+  $Promise.all(iter).catch(empty);
 })), PROMISE, {
   // 25.4.4.1 Promise.all(iterable)
   all: function all(iterable) {
@@ -3737,7 +3743,7 @@ $export($export.S + $export.F * !(USE_NATIVE && __webpack_require__(99)(function
         values.push(undefined);
         remaining++;
         C.resolve(promise).then(function (value) {
-          if (alreadyCalled) return;
+          if (alreadyCalled) { return; }
           alreadyCalled = true;
           values[$index] = value;
           --remaining || resolve(values);
@@ -3745,7 +3751,7 @@ $export($export.S + $export.F * !(USE_NATIVE && __webpack_require__(99)(function
       });
       --remaining || resolve(values);
     });
-    if (result.e) reject(result.v);
+    if (result.e) { reject(result.v); }
     return capability.promise;
   },
   // 25.4.4.4 Promise.race(iterable)
@@ -3758,7 +3764,7 @@ $export($export.S + $export.F * !(USE_NATIVE && __webpack_require__(99)(function
         C.resolve(promise).then(capability.resolve, reject);
       });
     });
-    if (result.e) reject(result.v);
+    if (result.e) { reject(result.v); }
     return capability.promise;
   }
 });
@@ -3792,14 +3798,16 @@ var exports = module.exports = function (iterable, entries, fn, that, ITERATOR) 
   var f = ctx(fn, that, entries ? 2 : 1);
   var index = 0;
   var length, step, iterator, result;
-  if (typeof iterFn != 'function') throw TypeError(iterable + ' is not iterable!');
+  if (typeof iterFn != 'function') { throw TypeError(iterable + ' is not iterable!'); }
   // fast case for arrays with default iterator
-  if (isArrayIter(iterFn)) for (length = toLength(iterable.length); length > index; index++) {
+  if (isArrayIter(iterFn)) { for (length = toLength(iterable.length); length > index; index++) {
     result = entries ? f(anObject(step = iterable[index])[0], step[1]) : f(iterable[index]);
-    if (result === BREAK || result === RETURN) return result;
-  } else for (iterator = iterFn.call(iterable); !(step = iterator.next()).done;) {
+    if (result === BREAK || result === RETURN) { return result; }
+  }
+  } else { for (iterator = iterFn.call(iterable); !(step = iterator.next()).done;) {
     result = call(iterator, f, step.value, entries);
-    if (result === BREAK || result === RETURN) return result;
+    if (result === BREAK || result === RETURN) { return result; }
+  }
   }
 };
 exports.BREAK = BREAK;
@@ -3817,8 +3825,8 @@ module.exports = function (iterator, fn, value, entries) {
     return entries ? fn(anObject(value)[0], value[1]) : fn(value);
   // 7.4.6 IteratorClose(iterator, completion)
   } catch (e) {
-    var ret = iterator['return'];
-    if (ret !== undefined) anObject(ret.call(iterator));
+    var ret = iterator.return;
+    if (ret !== undefined) { anObject(ret.call(iterator)); }
     throw e;
   }
 };
@@ -3846,9 +3854,10 @@ var classof = __webpack_require__(24);
 var ITERATOR = __webpack_require__(2)('iterator');
 var Iterators = __webpack_require__(19);
 module.exports = __webpack_require__(6).getIteratorMethod = function (it) {
-  if (it != undefined) return it[ITERATOR]
+  if (it != undefined) { return it[ITERATOR]
     || it['@@iterator']
     || Iterators[classof(it)];
+  }
 };
 
 
@@ -3890,19 +3899,19 @@ module.exports = function () {
 
   var flush = function () {
     var parent, fn;
-    if (isNode && (parent = process.domain)) parent.exit();
+    if (isNode && (parent = process.domain)) { parent.exit(); }
     while (head) {
       fn = head.fn;
       head = head.next;
       try {
         fn();
       } catch (e) {
-        if (head) notify();
-        else last = undefined;
+        if (head) { notify(); }
+        else { last = undefined; }
         throw e;
       }
     } last = undefined;
-    if (parent) parent.enter();
+    if (parent) { parent.enter(); }
   };
 
   // Node.js
@@ -3940,7 +3949,7 @@ module.exports = function () {
 
   return function (fn) {
     var task = { fn: fn, next: undefined };
-    if (last) last.next = task;
+    if (last) { last.next = task; }
     if (!head) {
       head = task;
       notify();
@@ -3965,7 +3974,7 @@ module.exports = navigator && navigator.userAgent || '';
 
 var redefine = __webpack_require__(16);
 module.exports = function (target, src, safe) {
-  for (var key in src) redefine(target, key, src[key], safe);
+  for (var key in src) { redefine(target, key, src[key], safe); }
   return target;
 };
 
@@ -3983,10 +3992,11 @@ var SPECIES = __webpack_require__(2)('species');
 
 module.exports = function (KEY) {
   var C = global[KEY];
-  if (DESCRIPTORS && C && !C[SPECIES]) dP.f(C, SPECIES, {
+  if (DESCRIPTORS && C && !C[SPECIES]) { dP.f(C, SPECIES, {
     configurable: true,
     get: function () { return this; }
   });
+  }
 };
 
 
@@ -3999,13 +4009,13 @@ var SAFE_CLOSING = false;
 
 try {
   var riter = [7][ITERATOR]();
-  riter['return'] = function () { SAFE_CLOSING = true; };
+  riter.return = function () { SAFE_CLOSING = true; };
   // eslint-disable-next-line no-throw-literal
   Array.from(riter, function () { throw 2; });
 } catch (e) { /* empty */ }
 
 module.exports = function (exec, skipClosing) {
-  if (!skipClosing && !SAFE_CLOSING) return false;
+  if (!skipClosing && !SAFE_CLOSING) { return false; }
   var safe = false;
   try {
     var arr = [7];
@@ -4084,7 +4094,7 @@ var $find = __webpack_require__(104)(5);
 var KEY = 'find';
 var forced = true;
 // Shouldn't skip holes
-if (KEY in []) Array(1)[KEY](function () { forced = false; });
+if (KEY in []) { Array(1)[KEY](function () { forced = false; }); }
 $export($export.P + $export.F * forced, 'Array', {
   find: function find(callbackfn /* , that = undefined */) {
     return $find(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
@@ -4125,18 +4135,20 @@ module.exports = function (TYPE, $create) {
     var index = 0;
     var result = IS_MAP ? create($this, length) : IS_FILTER ? create($this, 0) : undefined;
     var val, res;
-    for (;length > index; index++) if (NO_HOLES || index in self) {
+    for (;length > index; index++) { if (NO_HOLES || index in self) {
       val = self[index];
       res = f(val, index, O);
       if (TYPE) {
-        if (IS_MAP) result[index] = res;   // map
-        else if (res) switch (TYPE) {
+        if (IS_MAP) { result[index] = res; }   // map
+        else if (res) { switch (TYPE) {
           case 3: return true;             // some
           case 5: return val;              // find
           case 6: return index;            // findIndex
           case 2: result.push(val);        // filter
-        } else if (IS_EVERY) return false; // every
+        }
+ } else if (IS_EVERY) { return false; } // every
       }
+    }
     }
     return IS_FIND_INDEX ? -1 : IS_SOME || IS_EVERY ? IS_EVERY : result;
   };
@@ -4168,10 +4180,10 @@ module.exports = function (original) {
   if (isArray(original)) {
     C = original.constructor;
     // cross-realm fallback
-    if (typeof C == 'function' && (C === Array || isArray(C.prototype))) C = undefined;
+    if (typeof C == 'function' && (C === Array || isArray(C.prototype))) { C = undefined; }
     if (isObject(C)) {
       C = C[SPECIES];
-      if (C === null) C = undefined;
+      if (C === null) { C = undefined; }
     }
   } return C === undefined ? Array : C;
 };
@@ -4234,7 +4246,7 @@ module.exports = !$assign || __webpack_require__(27)(function () {
     var length = keys.length;
     var j = 0;
     var key;
-    while (length > j) if (isEnum.call(S, key = keys[j++])) T[key] = S[key];
+    while (length > j) { if (isEnum.call(S, key = keys[j++])) { T[key] = S[key]; } }
   } return T;
 } : $assign;
 
@@ -4389,7 +4401,7 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) { if (b.hasOwnProperty(p)) { d[p] = b[p]; } } };
         return extendStatics(d, b);
     }
     return function (d, b) {
@@ -4526,206 +4538,206 @@ module.exports = function isInteger(it) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var ExtensionContext;
 (function (ExtensionContext) {
-    ExtensionContext["Desktop"] = "desktop";
-    ExtensionContext["Server"] = "server";
-    ExtensionContext["Unknown"] = "unknown";
+    ExtensionContext.Desktop = "desktop";
+    ExtensionContext.Server = "server";
+    ExtensionContext.Unknown = "unknown";
 })(ExtensionContext = exports.ExtensionContext || (exports.ExtensionContext = {}));
 var ExtensionMode;
 (function (ExtensionMode) {
-    ExtensionMode["Authoring"] = "authoring";
-    ExtensionMode["Viewing"] = "viewing";
-    ExtensionMode["Unknown"] = "unknown";
+    ExtensionMode.Authoring = "authoring";
+    ExtensionMode.Viewing = "viewing";
+    ExtensionMode.Unknown = "unknown";
 })(ExtensionMode = exports.ExtensionMode || (exports.ExtensionMode = {}));
 var ColumnType;
 (function (ColumnType) {
-    ColumnType["Discrete"] = "discrete";
-    ColumnType["Continuous"] = "continuous";
+    ColumnType.Discrete = "discrete";
+    ColumnType.Continuous = "continuous";
 })(ColumnType = exports.ColumnType || (exports.ColumnType = {}));
 var DashboardObjectType;
 (function (DashboardObjectType) {
-    DashboardObjectType["Blank"] = "blank";
-    DashboardObjectType["Worksheet"] = "worksheet";
-    DashboardObjectType["QuickFilter"] = "quick-filter";
-    DashboardObjectType["ParameterControl"] = "parameter-control";
-    DashboardObjectType["PageFilter"] = "page-filter";
-    DashboardObjectType["Legend"] = "legend";
-    DashboardObjectType["Title"] = "title";
-    DashboardObjectType["Text"] = "text";
-    DashboardObjectType["Image"] = "image";
-    DashboardObjectType["WebPage"] = "web-page";
-    DashboardObjectType["Extension"] = "extension";
+    DashboardObjectType.Blank = "blank";
+    DashboardObjectType.Worksheet = "worksheet";
+    DashboardObjectType.QuickFilter = "quick-filter";
+    DashboardObjectType.ParameterControl = "parameter-control";
+    DashboardObjectType.PageFilter = "page-filter";
+    DashboardObjectType.Legend = "legend";
+    DashboardObjectType.Title = "title";
+    DashboardObjectType.Text = "text";
+    DashboardObjectType.Image = "image";
+    DashboardObjectType.WebPage = "web-page";
+    DashboardObjectType.Extension = "extension";
 })(DashboardObjectType = exports.DashboardObjectType || (exports.DashboardObjectType = {}));
 var DataType;
 (function (DataType) {
-    DataType["String"] = "string";
-    DataType["Int"] = "int";
-    DataType["Float"] = "float";
-    DataType["Bool"] = "bool";
-    DataType["Date"] = "date";
-    DataType["DateTime"] = "date-time";
-    DataType["Spatial"] = "spatial";
+    DataType.String = "string";
+    DataType.Int = "int";
+    DataType.Float = "float";
+    DataType.Bool = "bool";
+    DataType.Date = "date";
+    DataType.DateTime = "date-time";
+    DataType.Spatial = "spatial";
 })(DataType = exports.DataType || (exports.DataType = {}));
 var EncodedDataType;
 (function (EncodedDataType) {
-    EncodedDataType["Number"] = "number";
-    EncodedDataType["String"] = "string";
-    EncodedDataType["Date"] = "date";
-    EncodedDataType["Boolean"] = "boolean";
+    EncodedDataType.Number = "number";
+    EncodedDataType.String = "string";
+    EncodedDataType.Date = "date";
+    EncodedDataType.Boolean = "boolean";
 })(EncodedDataType = exports.EncodedDataType || (exports.EncodedDataType = {}));
 var ErrorCodes;
 (function (ErrorCodes) {
-    ErrorCodes["INITIALIZATION_ERROR"] = "initialization-error";
-    ErrorCodes["INTERNAL_ERROR"] = "internal-error";
-    ErrorCodes["MISSING_ENUM_MAPPING"] = "missing-enum-mapping";
-    ErrorCodes["MISSING_PARAMETER"] = "missing-parameter";
-    ErrorCodes["PERMISSION_DENIED"] = "permission-denied";
-    ErrorCodes["PRES_MODEL_PARSING_ERROR"] = "pres-model-parsing-error";
-    ErrorCodes["VERSION_NOT_CONFIGURED"] = "version-not-configured";
-    ErrorCodes["VISIBILITY_ERROR"] = "visibility-error";
-    ErrorCodes["UNKNOWN_VERB_ID"] = "unknown-verb-id";
+    ErrorCodes.INITIALIZATION_ERROR = "initialization-error";
+    ErrorCodes.INTERNAL_ERROR = "internal-error";
+    ErrorCodes.MISSING_ENUM_MAPPING = "missing-enum-mapping";
+    ErrorCodes.MISSING_PARAMETER = "missing-parameter";
+    ErrorCodes.PERMISSION_DENIED = "permission-denied";
+    ErrorCodes.PRES_MODEL_PARSING_ERROR = "pres-model-parsing-error";
+    ErrorCodes.VERSION_NOT_CONFIGURED = "version-not-configured";
+    ErrorCodes.VISIBILITY_ERROR = "visibility-error";
+    ErrorCodes.UNKNOWN_VERB_ID = "unknown-verb-id";
 })(ErrorCodes = exports.ErrorCodes || (exports.ErrorCodes = {}));
 var FieldAggregationType;
 (function (FieldAggregationType) {
-    FieldAggregationType["Sum"] = "sum";
-    FieldAggregationType["Avg"] = "avg";
-    FieldAggregationType["Min"] = "min";
-    FieldAggregationType["Max"] = "max";
-    FieldAggregationType["Stdev"] = "stdev";
-    FieldAggregationType["Stdevp"] = "stdevp";
-    FieldAggregationType["Var"] = "var";
-    FieldAggregationType["Varp"] = "varp";
-    FieldAggregationType["Count"] = "count";
-    FieldAggregationType["Countd"] = "countd";
-    FieldAggregationType["Median"] = "median";
-    FieldAggregationType["Attr"] = "attr";
-    FieldAggregationType["None"] = "none";
-    FieldAggregationType["Year"] = "year";
-    FieldAggregationType["Qtr"] = "qtr";
-    FieldAggregationType["Month"] = "month";
-    FieldAggregationType["Day"] = "day";
-    FieldAggregationType["Hour"] = "hour";
-    FieldAggregationType["Minute"] = "minute";
-    FieldAggregationType["Second"] = "second";
-    FieldAggregationType["Week"] = "week";
-    FieldAggregationType["Weekday"] = "weekday";
-    FieldAggregationType["MonthYear"] = "month-year";
-    FieldAggregationType["Mdy"] = "mdy";
-    FieldAggregationType["End"] = "end";
-    FieldAggregationType["TruncYear"] = "trunc-year";
-    FieldAggregationType["TruncQtr"] = "trunc-qtr";
-    FieldAggregationType["TruncMonth"] = "trunc-month";
-    FieldAggregationType["TruncWeek"] = "trunc-week";
-    FieldAggregationType["TruncDay"] = "trunc-day";
-    FieldAggregationType["TruncHour"] = "trunc-hour";
-    FieldAggregationType["TruncMinute"] = "trunc-minute";
-    FieldAggregationType["TruncSecond"] = "trunc-second";
-    FieldAggregationType["Quart1"] = "quart1";
-    FieldAggregationType["Quart3"] = "quart3";
-    FieldAggregationType["Skewness"] = "skewness";
-    FieldAggregationType["Kurtosis"] = "kurtosis";
-    FieldAggregationType["InOut"] = "in-out";
-    FieldAggregationType["User"] = "user";
+    FieldAggregationType.Sum = "sum";
+    FieldAggregationType.Avg = "avg";
+    FieldAggregationType.Min = "min";
+    FieldAggregationType.Max = "max";
+    FieldAggregationType.Stdev = "stdev";
+    FieldAggregationType.Stdevp = "stdevp";
+    FieldAggregationType.Var = "var";
+    FieldAggregationType.Varp = "varp";
+    FieldAggregationType.Count = "count";
+    FieldAggregationType.Countd = "countd";
+    FieldAggregationType.Median = "median";
+    FieldAggregationType.Attr = "attr";
+    FieldAggregationType.None = "none";
+    FieldAggregationType.Year = "year";
+    FieldAggregationType.Qtr = "qtr";
+    FieldAggregationType.Month = "month";
+    FieldAggregationType.Day = "day";
+    FieldAggregationType.Hour = "hour";
+    FieldAggregationType.Minute = "minute";
+    FieldAggregationType.Second = "second";
+    FieldAggregationType.Week = "week";
+    FieldAggregationType.Weekday = "weekday";
+    FieldAggregationType.MonthYear = "month-year";
+    FieldAggregationType.Mdy = "mdy";
+    FieldAggregationType.End = "end";
+    FieldAggregationType.TruncYear = "trunc-year";
+    FieldAggregationType.TruncQtr = "trunc-qtr";
+    FieldAggregationType.TruncMonth = "trunc-month";
+    FieldAggregationType.TruncWeek = "trunc-week";
+    FieldAggregationType.TruncDay = "trunc-day";
+    FieldAggregationType.TruncHour = "trunc-hour";
+    FieldAggregationType.TruncMinute = "trunc-minute";
+    FieldAggregationType.TruncSecond = "trunc-second";
+    FieldAggregationType.Quart1 = "quart1";
+    FieldAggregationType.Quart3 = "quart3";
+    FieldAggregationType.Skewness = "skewness";
+    FieldAggregationType.Kurtosis = "kurtosis";
+    FieldAggregationType.InOut = "in-out";
+    FieldAggregationType.User = "user";
 })(FieldAggregationType = exports.FieldAggregationType || (exports.FieldAggregationType = {}));
 var FieldRoleType;
 (function (FieldRoleType) {
-    FieldRoleType["Dimension"] = "dimension";
-    FieldRoleType["Measure"] = "measure";
-    FieldRoleType["Unknown"] = "unknown";
+    FieldRoleType.Dimension = "dimension";
+    FieldRoleType.Measure = "measure";
+    FieldRoleType.Unknown = "unknown";
 })(FieldRoleType = exports.FieldRoleType || (exports.FieldRoleType = {}));
 /**
  *  The different update types for applying filter.
  */
 var FilterUpdateType;
 (function (FilterUpdateType) {
-    FilterUpdateType["Add"] = "add";
-    FilterUpdateType["All"] = "all";
-    FilterUpdateType["Replace"] = "replace";
-    FilterUpdateType["Remove"] = "remove";
+    FilterUpdateType.Add = "add";
+    FilterUpdateType.All = "all";
+    FilterUpdateType.Replace = "replace";
+    FilterUpdateType.Remove = "remove";
 })(FilterUpdateType = exports.FilterUpdateType || (exports.FilterUpdateType = {}));
 var SheetType;
 (function (SheetType) {
-    SheetType["Dashboard"] = "dashboard";
-    SheetType["Story"] = "story";
-    SheetType["Worksheet"] = "worksheet";
+    SheetType.Dashboard = "dashboard";
+    SheetType.Story = "story";
+    SheetType.Worksheet = "worksheet";
 })(SheetType = exports.SheetType || (exports.SheetType = {}));
 var DomainRestrictionType;
 (function (DomainRestrictionType) {
-    DomainRestrictionType["All"] = "all";
-    DomainRestrictionType["List"] = "list";
-    DomainRestrictionType["Range"] = "range";
+    DomainRestrictionType.All = "all";
+    DomainRestrictionType.List = "list";
+    DomainRestrictionType.Range = "range";
 })(DomainRestrictionType = exports.DomainRestrictionType || (exports.DomainRestrictionType = {}));
 var DateStepPeriod;
 (function (DateStepPeriod) {
-    DateStepPeriod["Years"] = "years";
-    DateStepPeriod["Quarters"] = "quarters";
-    DateStepPeriod["Months"] = "months";
-    DateStepPeriod["Weeks"] = "weeks";
-    DateStepPeriod["Days"] = "days";
-    DateStepPeriod["Hours"] = "hours";
-    DateStepPeriod["Minutes"] = "minutes";
-    DateStepPeriod["Seconds"] = "seconds";
+    DateStepPeriod.Years = "years";
+    DateStepPeriod.Quarters = "quarters";
+    DateStepPeriod.Months = "months";
+    DateStepPeriod.Weeks = "weeks";
+    DateStepPeriod.Days = "days";
+    DateStepPeriod.Hours = "hours";
+    DateStepPeriod.Minutes = "minutes";
+    DateStepPeriod.Seconds = "seconds";
 })(DateStepPeriod = exports.DateStepPeriod || (exports.DateStepPeriod = {}));
 /**
  * The option for specifying which values to include for filtering.
  */
 var FilterNullOption;
 (function (FilterNullOption) {
-    FilterNullOption["NullValues"] = "nullvalues";
-    FilterNullOption["NonNullValues"] = "nonnullvalues";
-    FilterNullOption["AllValues"] = "allvalues";
+    FilterNullOption.NullValues = "nullvalues";
+    FilterNullOption.NonNullValues = "nonnullvalues";
+    FilterNullOption.AllValues = "allvalues";
 })(FilterNullOption = exports.FilterNullOption || (exports.FilterNullOption = {}));
 /**
  * The type of filter domain
  */
 var FilterDomainType;
 (function (FilterDomainType) {
-    FilterDomainType["Relevant"] = "relevant";
-    FilterDomainType["Database"] = "database";
+    FilterDomainType.Relevant = "relevant";
+    FilterDomainType.Database = "database";
 })(FilterDomainType = exports.FilterDomainType || (exports.FilterDomainType = {}));
 /**
  * Internal enum for specifying the selection type for select marks api.
  */
 var SelectionUpdateType;
 (function (SelectionUpdateType) {
-    SelectionUpdateType["Replace"] = "select-replace";
-    SelectionUpdateType["Add"] = "select-add";
-    SelectionUpdateType["Remove"] = "select-remove";
+    SelectionUpdateType.Replace = "select-replace";
+    SelectionUpdateType.Add = "select-add";
+    SelectionUpdateType.Remove = "select-remove";
 })(SelectionUpdateType = exports.SelectionUpdateType || (exports.SelectionUpdateType = {}));
 /**
  * Internal enum for specifying the included values type for range selection.
  */
 var QuantitativeIncludedValues;
 (function (QuantitativeIncludedValues) {
-    QuantitativeIncludedValues["IncludeNull"] = "include-null";
-    QuantitativeIncludedValues["IncludeNonNull"] = "include-non-null";
-    QuantitativeIncludedValues["IncludeAll"] = "include-all";
+    QuantitativeIncludedValues.IncludeNull = "include-null";
+    QuantitativeIncludedValues.IncludeNonNull = "include-non-null";
+    QuantitativeIncludedValues.IncludeAll = "include-all";
 })(QuantitativeIncludedValues = exports.QuantitativeIncludedValues || (exports.QuantitativeIncludedValues = {}));
 /**
  * Type of mark for a given marks card in a viz.
  */
 var MarkType;
 (function (MarkType) {
-    MarkType["Bar"] = "bar";
-    MarkType["Line"] = "line";
-    MarkType["Area"] = "area";
-    MarkType["Square"] = "square";
-    MarkType["Circle"] = "circle";
-    MarkType["Shape"] = "shape";
-    MarkType["Text"] = "text";
-    MarkType["Map"] = "map";
-    MarkType["Pie"] = "pie";
-    MarkType["GanttBar"] = "gantt-bar";
-    MarkType["Polygon"] = "polygon";
+    MarkType.Bar = "bar";
+    MarkType.Line = "line";
+    MarkType.Area = "area";
+    MarkType.Square = "square";
+    MarkType.Circle = "circle";
+    MarkType.Shape = "shape";
+    MarkType.Text = "text";
+    MarkType.Map = "map";
+    MarkType.Pie = "pie";
+    MarkType.GanttBar = "gantt-bar";
+    MarkType.Polygon = "polygon";
 })(MarkType = exports.MarkType || (exports.MarkType = {}));
 /**
  * Internal enum for specifying the type of filter
  */
 var FilterType;
 (function (FilterType) {
-    FilterType["Categorical"] = "categorical";
-    FilterType["Range"] = "range";
-    FilterType["RelativeDate"] = "relativeDate";
-    FilterType["Hierarchical"] = "hierarchical";
+    FilterType.Categorical = "categorical";
+    FilterType.Range = "range";
+    FilterType.RelativeDate = "relativeDate";
+    FilterType.Hierarchical = "hierarchical";
 })(FilterType = exports.FilterType || (exports.FilterType = {}));
 /**
  * Internal enum for specifying the DateRangeType of a relative date filter
@@ -4735,36 +4747,36 @@ var DateRangeType;
     /**
      * Refers to the last day, week, month, etc. of the date period.
      */
-    DateRangeType["Last"] = "last";
+    DateRangeType.Last = "last";
     /**
      * Refers to the last N days, weeks, months, etc. of the date period.
      */
-    DateRangeType["LastN"] = "lastN";
+    DateRangeType.LastN = "lastN";
     /**
      * Refers to the next day, week, month, etc. of the date period.
      */
-    DateRangeType["Next"] = "next";
+    DateRangeType.Next = "next";
     /**
      * Refers to the next N days, weeks, months, etc. of the date period.
      */
-    DateRangeType["NextN"] = "nextN";
+    DateRangeType.NextN = "nextN";
     /**
      * Refers to the current day, week, month, etc. of the date period.
      */
-    DateRangeType["Current"] = "current";
+    DateRangeType.Current = "current";
     /**
      * Refers to everything up to and including the current day, week, month, etc. of the date period.
      */
-    DateRangeType["ToDate"] = "toDate";
+    DateRangeType.ToDate = "toDate";
 })(DateRangeType = exports.DateRangeType || (exports.DateRangeType = {}));
 /**
  * Used to determine if the launching of an extension dialog succeeded or failed.
  */
 var ExtensionDialogResult;
 (function (ExtensionDialogResult) {
-    ExtensionDialogResult["DialogAlreadyOpen"] = "dialog-already-open";
-    ExtensionDialogResult["InvalidDomain"] = "invalid-domain";
-    ExtensionDialogResult["Success"] = "success";
+    ExtensionDialogResult.DialogAlreadyOpen = "dialog-already-open";
+    ExtensionDialogResult.InvalidDomain = "invalid-domain";
+    ExtensionDialogResult.Success = "success";
 })(ExtensionDialogResult = exports.ExtensionDialogResult || (exports.ExtensionDialogResult = {}));
 
 
@@ -4777,67 +4789,67 @@ var ExtensionDialogResult;
 Object.defineProperty(exports, "__esModule", { value: true });
 var ParameterId;
 (function (ParameterId) {
-    ParameterId["ExtensionLocator"] = "extension-locator";
-    ParameterId["ExtensionBootstrapInfo"] = "extension-bootstrap-info";
-    ParameterId["ExtensionSettingsInfo"] = "extension-settings-info";
-    ParameterId["VisualId"] = "visual-id";
-    ParameterId["SheetPath"] = "sheet-path";
-    ParameterId["IgnoreAliases"] = "ignore-aliases";
-    ParameterId["IgnoreSelection"] = "ignore-selection";
-    ParameterId["IncludeAllColumns"] = "include-all-columns";
-    ParameterId["MaxRows"] = "max-rows";
-    ParameterId["UnderlyingDataTable"] = "underlying-data-table";
-    ParameterId["UnderlyingSummaryDataTable"] = "underlying-summary-data-table";
-    ParameterId["DataSourceDataTable"] = "data-source-data-table";
-    ParameterId["SettingsValues"] = "settings-values";
-    ParameterId["SelectedData"] = "selected-data";
-    ParameterId["HighlightedData"] = "highlighted-data";
+    ParameterId.ExtensionLocator = "extension-locator";
+    ParameterId.ExtensionBootstrapInfo = "extension-bootstrap-info";
+    ParameterId.ExtensionSettingsInfo = "extension-settings-info";
+    ParameterId.VisualId = "visual-id";
+    ParameterId.SheetPath = "sheet-path";
+    ParameterId.IgnoreAliases = "ignore-aliases";
+    ParameterId.IgnoreSelection = "ignore-selection";
+    ParameterId.IncludeAllColumns = "include-all-columns";
+    ParameterId.MaxRows = "max-rows";
+    ParameterId.UnderlyingDataTable = "underlying-data-table";
+    ParameterId.UnderlyingSummaryDataTable = "underlying-summary-data-table";
+    ParameterId.DataSourceDataTable = "data-source-data-table";
+    ParameterId.SettingsValues = "settings-values";
+    ParameterId.SelectedData = "selected-data";
+    ParameterId.HighlightedData = "highlighted-data";
     // Filter Params
-    ParameterId["FieldName"] = "field-name";
-    ParameterId["FilterValues"] = "filter-values";
-    ParameterId["FilterUpdateType"] = "filter-update-type";
-    ParameterId["IsExcludeMode"] = "is-exclude";
-    ParameterId["FilterRangeMin"] = "filter-range-min";
-    ParameterId["FilterRangeMax"] = "filter-range-max";
-    ParameterId["FilterRangeNullOption"] = "filter-range-null-option";
-    ParameterId["WorksheetFilters"] = "worksheet-filters";
-    ParameterId["FieldId"] = "field-id";
-    ParameterId["DomainType"] = "domain-type";
-    ParameterId["CategoricalDomain"] = "categorical-domain";
-    ParameterId["QuantitativeDomain"] = "quantitative-dmain";
-    ParameterId["Field"] = "field";
-    ParameterId["WorksheetName"] = "worksheet-name";
-    ParameterId["DashboardName"] = "dashboard";
-    ParameterId["ParameterInfo"] = "parameter-info";
-    ParameterId["ParameterInfos"] = "parameter-infos";
-    ParameterId["ParameterCaption"] = "paremeter-caption";
-    ParameterId["ParameterFieldName"] = "parameter-field-name";
-    ParameterId["ParameterValue"] = "parameter-value";
-    ParameterId["Selection"] = "selection";
-    ParameterId["SelectionUpdateType"] = "selectionUpdateType";
-    ParameterId["HierValSelectionModels"] = "hierarchicalValueSelectionModels";
-    ParameterId["QuantRangeSelectionModels"] = "quantativeRangeSelectionModels";
-    ParameterId["DimValSelectionModels"] = "dimensionValueSelectionModels";
-    ParameterId["ActiveTablesInfo"] = "active-tables-info";
-    ParameterId["DataSource"] = "data-source";
-    ParameterId["DataSourceId"] = "data-source-id";
-    ParameterId["DeltaTimeMs"] = "delta-time-ms";
-    ParameterId["ShouldRefreshDS"] = "should-refresh-ds";
-    ParameterId["DataSchema"] = "data-schema";
-    ParameterId["DataSourceName"] = "data-source-name";
-    ParameterId["ColumnsToInclude"] = "columns-to-include";
-    ParameterId["JoinDescription"] = "join-description";
-    ParameterId["ConnectionDescriptionSummaries"] = "connection-description-summaries";
-    ParameterId["ExtensionDialogUrl"] = "extension-dialog-url";
-    ParameterId["ExtensionDialogPayload"] = "extension-dialog-payload";
-    ParameterId["IsExtensionDialog"] = "is-extension-dialog";
-    ParameterId["ExtensionDialogH"] = "extension-dialog-height";
-    ParameterId["ExtensionDialogW"] = "extension-dialog-width";
-    ParameterId["ExtensionDialogResult"] = "extension-dialog-result";
-    ParameterId["ExtensionContextMenuIds"] = "extension-context-menu-ids";
-    ParameterId["TestConversionParameter"] = "test-conversion-parameter";
-    ParameterId["Dashboard"] = "dashboard";
-    ParameterId["ZoneIdsVisibilityMap"] = "zone-ids-visibility-map";
+    ParameterId.FieldName = "field-name";
+    ParameterId.FilterValues = "filter-values";
+    ParameterId.FilterUpdateType = "filter-update-type";
+    ParameterId.IsExcludeMode = "is-exclude";
+    ParameterId.FilterRangeMin = "filter-range-min";
+    ParameterId.FilterRangeMax = "filter-range-max";
+    ParameterId.FilterRangeNullOption = "filter-range-null-option";
+    ParameterId.WorksheetFilters = "worksheet-filters";
+    ParameterId.FieldId = "field-id";
+    ParameterId.DomainType = "domain-type";
+    ParameterId.CategoricalDomain = "categorical-domain";
+    ParameterId.QuantitativeDomain = "quantitative-dmain";
+    ParameterId.Field = "field";
+    ParameterId.WorksheetName = "worksheet-name";
+    ParameterId.DashboardName = "dashboard";
+    ParameterId.ParameterInfo = "parameter-info";
+    ParameterId.ParameterInfos = "parameter-infos";
+    ParameterId.ParameterCaption = "paremeter-caption";
+    ParameterId.ParameterFieldName = "parameter-field-name";
+    ParameterId.ParameterValue = "parameter-value";
+    ParameterId.Selection = "selection";
+    ParameterId.SelectionUpdateType = "selectionUpdateType";
+    ParameterId.HierValSelectionModels = "hierarchicalValueSelectionModels";
+    ParameterId.QuantRangeSelectionModels = "quantativeRangeSelectionModels";
+    ParameterId.DimValSelectionModels = "dimensionValueSelectionModels";
+    ParameterId.ActiveTablesInfo = "active-tables-info";
+    ParameterId.DataSource = "data-source";
+    ParameterId.DataSourceId = "data-source-id";
+    ParameterId.DeltaTimeMs = "delta-time-ms";
+    ParameterId.ShouldRefreshDS = "should-refresh-ds";
+    ParameterId.DataSchema = "data-schema";
+    ParameterId.DataSourceName = "data-source-name";
+    ParameterId.ColumnsToInclude = "columns-to-include";
+    ParameterId.JoinDescription = "join-description";
+    ParameterId.ConnectionDescriptionSummaries = "connection-description-summaries";
+    ParameterId.ExtensionDialogUrl = "extension-dialog-url";
+    ParameterId.ExtensionDialogPayload = "extension-dialog-payload";
+    ParameterId.IsExtensionDialog = "is-extension-dialog";
+    ParameterId.ExtensionDialogH = "extension-dialog-height";
+    ParameterId.ExtensionDialogW = "extension-dialog-width";
+    ParameterId.ExtensionDialogResult = "extension-dialog-result";
+    ParameterId.ExtensionContextMenuIds = "extension-context-menu-ids";
+    ParameterId.TestConversionParameter = "test-conversion-parameter";
+    ParameterId.Dashboard = "dashboard";
+    ParameterId.ZoneIdsVisibilityMap = "zone-ids-visibility-map";
 })(ParameterId = exports.ParameterId || (exports.ParameterId = {}));
 
 
@@ -4851,37 +4863,37 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // Declare this key type and export the NotificationId to make this behave like a string enum
 var VerbId;
 (function (VerbId) {
-    VerbId["ApplyCategoricalFilter"] = "categorical-filter";
-    VerbId["ApplyRangeFilter"] = "range-filter";
-    VerbId["ClearFilter"] = "clear-filter";
-    VerbId["InitializeExtension"] = "initialize-extension";
-    VerbId["GetDataSummaryData"] = "get-summary-data";
-    VerbId["GetUnderlyingData"] = "get-underlying-data";
-    VerbId["GetDataSourceData"] = "get-datasource-data";
-    VerbId["SaveExtensionSettings"] = "save-extension-settings";
-    VerbId["GetSelectedMarks"] = "get-selected-marks";
-    VerbId["GetHighlightedMarks"] = "get-highlighted-marks";
-    VerbId["GetParametersForSheet"] = "get-parameters-for-sheet";
-    VerbId["FindParameter"] = "find-parameter";
-    VerbId["ChangeParameterValue"] = "change-parameter-value";
-    VerbId["ClearSelectedMarks"] = "clear-selected-marks";
-    VerbId["SelectByValue"] = "select-by-value";
-    VerbId["GetDataSources"] = "get-data-sources";
-    VerbId["RefreshDataSource"] = "refresh-data-source";
-    VerbId["GetFilters"] = "get-filters";
-    VerbId["GetFieldAndDataSource"] = "get-field-and-datasource";
-    VerbId["GetCategoricalDomain"] = "get-categorical-domain";
-    VerbId["GetRangeDomain"] = "get-range-domain";
-    VerbId["GetJoinDescription"] = "get-join-description";
-    VerbId["GetConnectionDescriptionSummaries"] = "get-connection-description-summaries";
-    VerbId["DisplayDialog"] = "display-dialog";
-    VerbId["CloseDialog"] = "close-dialog";
-    VerbId["TestConversionVerb"] = "test-conversion-verb";
-    VerbId["GetField"] = "get-field";
-    VerbId["GetDataSource"] = "get-datasource";
-    VerbId["GetActiveTables"] = "get-active-tables";
-    VerbId["SetZoneVisibility"] = "set-zone-visibility";
-    VerbId["BlockExtension"] = "block-extension";
+    VerbId.ApplyCategoricalFilter = "categorical-filter";
+    VerbId.ApplyRangeFilter = "range-filter";
+    VerbId.ClearFilter = "clear-filter";
+    VerbId.InitializeExtension = "initialize-extension";
+    VerbId.GetDataSummaryData = "get-summary-data";
+    VerbId.GetUnderlyingData = "get-underlying-data";
+    VerbId.GetDataSourceData = "get-datasource-data";
+    VerbId.SaveExtensionSettings = "save-extension-settings";
+    VerbId.GetSelectedMarks = "get-selected-marks";
+    VerbId.GetHighlightedMarks = "get-highlighted-marks";
+    VerbId.GetParametersForSheet = "get-parameters-for-sheet";
+    VerbId.FindParameter = "find-parameter";
+    VerbId.ChangeParameterValue = "change-parameter-value";
+    VerbId.ClearSelectedMarks = "clear-selected-marks";
+    VerbId.SelectByValue = "select-by-value";
+    VerbId.GetDataSources = "get-data-sources";
+    VerbId.RefreshDataSource = "refresh-data-source";
+    VerbId.GetFilters = "get-filters";
+    VerbId.GetFieldAndDataSource = "get-field-and-datasource";
+    VerbId.GetCategoricalDomain = "get-categorical-domain";
+    VerbId.GetRangeDomain = "get-range-domain";
+    VerbId.GetJoinDescription = "get-join-description";
+    VerbId.GetConnectionDescriptionSummaries = "get-connection-description-summaries";
+    VerbId.DisplayDialog = "display-dialog";
+    VerbId.CloseDialog = "close-dialog";
+    VerbId.TestConversionVerb = "test-conversion-verb";
+    VerbId.GetField = "get-field";
+    VerbId.GetDataSource = "get-datasource";
+    VerbId.GetActiveTables = "get-active-tables";
+    VerbId.SetZoneVisibility = "set-zone-visibility";
+    VerbId.BlockExtension = "block-extension";
 })(VerbId = exports.VerbId || (exports.VerbId = {}));
 
 
@@ -5404,7 +5416,7 @@ var CrossFrameMessenger = /** @class */ (function () {
      */
     CrossFrameMessenger.prototype.prepareMessage = function (msg) {
         if (!this.otherWindow || !this.otherWindowOrigin) {
-            throw 'Other window not initialized, cannot dispatch messages';
+            throw new Error('Other window not initialized, cannot dispatch messages');
         }
         var preparedMessage = new CrossFramePreparedMessage_1.CrossFramePreparedMessage(msg, this.otherWindow, this.otherWindowOrigin);
         return preparedMessage;
@@ -5652,7 +5664,7 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) { if (b.hasOwnProperty(p)) { d[p] = b[p]; } } };
         return extendStatics(d, b);
     }
     return function (d, b) {
@@ -5950,7 +5962,7 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) { if (b.hasOwnProperty(p)) { d[p] = b[p]; } } };
         return extendStatics(d, b);
     }
     return function (d, b) {
@@ -6031,7 +6043,7 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) { if (b.hasOwnProperty(p)) { d[p] = b[p]; } } };
         return extendStatics(d, b);
     }
     return function (d, b) {
@@ -6317,7 +6329,7 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) { if (b.hasOwnProperty(p)) { d[p] = b[p]; } } };
         return extendStatics(d, b);
     }
     return function (d, b) {
@@ -6372,7 +6384,7 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) { if (b.hasOwnProperty(p)) { d[p] = b[p]; } } };
         return extendStatics(d, b);
     }
     return function (d, b) {
@@ -6487,7 +6499,7 @@ var CrossFrameDispatcher = /** @class */ (function () {
         // The collection of notification handlers which have been registered with this dispatcher
         this._notificationHandlers = [];
         if (!this._messenger) {
-            throw 'Missing messenger object';
+            throw new Error('Missing messenger object');
         }
         // Set up our message handlers. We only care about incoming notifications and command responses
         this._messenger.setCommandResponseMessageHandler(this.onCommandResponse.bind(this));
@@ -6585,7 +6597,7 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) { if (b.hasOwnProperty(p)) { d[p] = b[p]; } } };
         return extendStatics(d, b);
     }
     return function (d, b) {
@@ -6703,7 +6715,7 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) { if (b.hasOwnProperty(p)) { d[p] = b[p]; } } };
         return extendStatics(d, b);
     }
     return function (d, b) {
@@ -6914,7 +6926,7 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) { if (b.hasOwnProperty(p)) { d[p] = b[p]; } } };
         return extendStatics(d, b);
     }
     return function (d, b) {
@@ -7156,7 +7168,7 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) { if (b.hasOwnProperty(p)) { d[p] = b[p]; } } };
         return extendStatics(d, b);
     }
     return function (d, b) {
@@ -7341,7 +7353,7 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) { if (b.hasOwnProperty(p)) { d[p] = b[p]; } } };
         return extendStatics(d, b);
     }
     return function (d, b) {
@@ -7571,7 +7583,7 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) { if (b.hasOwnProperty(p)) { d[p] = b[p]; } } };
         return extendStatics(d, b);
     }
     return function (d, b) {
@@ -7618,7 +7630,7 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) { if (b.hasOwnProperty(p)) { d[p] = b[p]; } } };
         return extendStatics(d, b);
     }
     return function (d, b) {
@@ -7695,7 +7707,7 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) { if (b.hasOwnProperty(p)) { d[p] = b[p]; } } };
         return extendStatics(d, b);
     }
     return function (d, b) {
@@ -8000,10 +8012,10 @@ exports.SelectionServiceImpl = SelectionServiceImpl;
  */
 var SelectionCriteriaType;
 (function (SelectionCriteriaType) {
-    SelectionCriteriaType[SelectionCriteriaType["HierarchicalType"] = 1] = "HierarchicalType";
-    SelectionCriteriaType[SelectionCriteriaType["RangeType"] = 2] = "RangeType";
-    SelectionCriteriaType[SelectionCriteriaType["DimensionType"] = 3] = "DimensionType";
-    SelectionCriteriaType[SelectionCriteriaType["TuplesType"] = 4] = "TuplesType";
+    SelectionCriteriaType[SelectionCriteriaType.HierarchicalType = 1] = "HierarchicalType";
+    SelectionCriteriaType[SelectionCriteriaType.RangeType = 2] = "RangeType";
+    SelectionCriteriaType[SelectionCriteriaType.DimensionType = 3] = "DimensionType";
+    SelectionCriteriaType[SelectionCriteriaType.TuplesType = 4] = "TuplesType";
 })(SelectionCriteriaType || (SelectionCriteriaType = {}));
 
 
@@ -8017,7 +8029,7 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) { if (b.hasOwnProperty(p)) { d[p] = b[p]; } } };
         return extendStatics(d, b);
     }
     return function (d, b) {
@@ -8116,7 +8128,7 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) { if (b.hasOwnProperty(p)) { d[p] = b[p]; } } };
         return extendStatics(d, b);
     }
     return function (d, b) {
@@ -8302,7 +8314,7 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) { if (b.hasOwnProperty(p)) { d[p] = b[p]; } } };
         return extendStatics(d, b);
     }
     return function (d, b) {
@@ -8353,7 +8365,7 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) { if (b.hasOwnProperty(p)) { d[p] = b[p]; } } };
         return extendStatics(d, b);
     }
     return function (d, b) {
@@ -8405,7 +8417,7 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) { if (b.hasOwnProperty(p)) { d[p] = b[p]; } } };
         return extendStatics(d, b);
     }
     return function (d, b) {
@@ -8482,7 +8494,7 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) { if (b.hasOwnProperty(p)) { d[p] = b[p]; } } };
         return extendStatics(d, b);
     }
     return function (d, b) {
@@ -8542,7 +8554,7 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) { if (b.hasOwnProperty(p)) { d[p] = b[p]; } } };
         return extendStatics(d, b);
     }
     return function (d, b) {
