@@ -235,10 +235,16 @@ select::-ms-expand {
 }
 
 
-  
-
+.centerChildren {
+    display: inline-grid;
+    justify-content: center;
+    align-items: center;
+}  
+.backgroundLightBlue{
+    background-color: lightblue;
+}
 .headerStyle {
-    background-color: rgb(235,235,235);
+    background-color: #f5f5f5;
     font-family: "Benton Sans";
     font-size: 12px;
     height: 30px;
@@ -255,12 +261,14 @@ select::-ms-expand {
     font-size: 12px;
     font-weight: "bold"; 
     padding: 5px 28px 0px 18px;
+    margin-top: 18px;
 }
 .labelStyle {
     font-family: "Benton Sans";
     font-size: 10px;
-    margin: auto; 
-    padding: 1px 0px 0px 0px;
+    /* margin: auto;  */
+    padding: 1px 0px 0px 9px;
+    color: rgba(0, 0, 0, 0.56);
 }
 
 /*  React simple tree menu */
@@ -327,12 +335,39 @@ select::-ms-expand {
     font-size: 12px;
     line-height: 1.42857;
 }
+.narrow {
+    padding: 0px 0px 0px 0px;
+}
+.noMargin {
+    margin: 0px !important;
+    display: inline-block;
+}
 .btn-circle:hover{
     cursor: default; 
 }
 .navcontainer {
     font-size: 12px;
-    background: #FAFAFA;
+    background: #F5F5F5;
     display: flex;
     text-align: center;
+    padding: 0px 18px 0px 18px;
 }
+
+/* dragging for SortableList */
+.sortableList {
+    border: 1px solid rgb(212, 212, 212);
+    display: inline-flex;
+    flex-direction: column; 
+    padding: 6px;
+    list-style-type: none;
+    cursor: -webkit-grab
+    
+}
+
+.draggingSort {
+    list-style-type: none;
+    pointer-events: auto !important;
+    cursor:move !important;
+}
+    
+  

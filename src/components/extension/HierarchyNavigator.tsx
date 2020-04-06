@@ -3,11 +3,9 @@ import 'babel-polyfill';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import '../../css/style.css';
-import { defaultSelectedProps, SelectedProps } from '../config/Interfaces';
+import { debug, defaultSelectedProps, SelectedProps } from '../config/Interfaces';
 import ParamHandler from './ParamHandler';
 
-
-const debug=false;
 
 declare global {
     interface Window { tableau: { extensions: Extensions; }; }
@@ -78,16 +76,16 @@ class HierarchyNavigator extends React.Component<any, State> {
             });
         })
             .catch((err: any) => {
-                if(debug){console.log(`Something went wrong.  Here is the error: ${ err }.<p> ${ err.stack }`);}
+                if(debug) { console.log(`Something went wrong.  Here is the error: ${ err }.<p> ${ err.stack }`); }
                 this.resetParams();
             });
 
     }
     public componentDidMount() {
-        if(debug){console.log(`component MOUNTED`);}
+        if(debug) { console.log(`component MOUNTED`); }
     }
     public componentWillUnmount() {
-        if(debug){console.log(`component UNMOUNTED`);}
+        if(debug) { console.log(`component UNMOUNTED`); }
         // this.paramHandler.clearEventHandlers();
         if(this.configEventHandler) {
             this.configEventHandler();
@@ -106,12 +104,16 @@ class HierarchyNavigator extends React.Component<any, State> {
         settings=Object.assign({}, settings, { selectedProps: selectedPropsTmp }, { configComplete: configCompleteTmp });
         // this.paramHandler.clearEventHandlers();
         this.setState({ extensionSettings: { ...settings } });
+        if(debug) {
+            console.log(`loaded extension settings:`);
+            console.log(settings);
+        }
         if(settings.configComplete) {
             // await this.paramHandler.clearFilterAndMarksAsync();
             // this.hierarchy.clearHierarchy();
             document.body.style.backgroundColor=settings.bgColor;
             // this.loadHierarchy();
-            this.setState({lastUpdated: new Date()});
+            this.setState({ lastUpdated: new Date() });
         }
         else {
             this.configure();
@@ -120,15 +122,15 @@ class HierarchyNavigator extends React.Component<any, State> {
 
     // Pops open the configure page if extension isn't configured
     public configure=(): any => {
-        if(debug){console.log(`calling CONFIGURE`);}
+        if(debug) { console.log(`calling CONFIGURE`); }
         // this.paramHandler.clearFilterAndMarksAsync();
         // this.paramHandler.clearEventHandlers();
-        if(debug){console.log(`settings in configure:`);}
-        if(debug){console.log(this.state);}
+        if(debug) { console.log(`settings in configure:`); }
+        if(debug) { console.log(this.state); }
         const popupUrl=`config.html`;
-        window.tableau.extensions.ui.displayDialogAsync(popupUrl, '', { height: 525, width: 450 }).then((closePayload: string) => {
-            if(debug){console.log(`returning from Configure! ${ closePayload }`);}
-            if(debug){console.log(`typeof return: ${ typeof closePayload }`);}
+        window.tableau.extensions.ui.displayDialogAsync(popupUrl, '', { height: 725, width: 500 }).then((closePayload: string) => {
+            if(debug) { console.log(`returning from Configure! ${ closePayload }`); }
+            if(debug) { console.log(`typeof return: ${ typeof closePayload }`); }
             if(closePayload==='true') {
                 // this.loadHierarchy();
                 // this.setState({lastUpdated: new Date()});
@@ -136,7 +138,7 @@ class HierarchyNavigator extends React.Component<any, State> {
         }).catch((error: any) => {
             switch(error.errorCode) {
                 case tableau.ErrorCodes.DialogClosedByUser:
-                    if(debug){console.log('Dialog was closed by user.');}
+                    if(debug) { console.log('Dialog was closed by user.'); }
                     break;
                 default:
                     console.error(error.message);
@@ -148,18 +150,20 @@ class HierarchyNavigator extends React.Component<any, State> {
     public render() {
         return (
             <div style={{ overflowX: 'hidden' }}>
-                
+
                 <p>
                     <ParamHandler
                         // data={this.state.data}
                         // currentId={this.state.currentLabel}
                         // currentLabel={this.state.currentLabel}
                         dashboard={this.dashboard}
-                        
-                        parameters = {this.state.extensionSettings.selectedProps.parameters}
-                        worksheet = {this.state.extensionSettings.selectedProps.worksheet}
+
+                        parameters={this.state.extensionSettings.selectedProps.parameters}
+                        worksheet={this.state.extensionSettings.selectedProps.worksheet}
                         lastUpdated={this.state.lastUpdated}
                         configComplete={this.state.extensionSettings.configComplete}
+                        type={this.state.extensionSettings.selectedProps.type}
+                        separator={this.state.extensionSettings.selectedProps.seperator}
                     />
                     {/*  {JSON.stringify(this.state.extensionSettings, null, 2)} */}
                 </p>
@@ -184,7 +188,7 @@ class HierarchyNavigator extends React.Component<any, State> {
         }
     };
 
-    
+
     // helper function
     public fakeWhiteOverlay(hex: string) {
         const rgb=this.hexToRgb(hex);

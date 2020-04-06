@@ -3,6 +3,7 @@
   "rules": {
     "quotemark": [true, "single"],
     "interface-name": [true, "never-prefix"],
+    "jsx-no-lamba": false,
     "interface-over-type-literal": false,
     "one-variable-per-declaration": false,
     "no-console": false,
@@ -10,7 +11,8 @@
     "react-hooks-nesting": "error",
     "variable-name": {
         "options":[
-            "allow-leading-underscore"
+            "allow-leading-underscore",
+            "allow-pascal-case"
         ]
     }
   },

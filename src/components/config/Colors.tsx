@@ -3,9 +3,6 @@ import { Col, Container, Row } from 'reactstrap';
 
 /* tslint:disable:no-console */
 
-
-
-
 // Shows if setting has not yet been configured
 class Colors extends React.Component<any> {
    

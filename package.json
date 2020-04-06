@@ -5,11 +5,13 @@
   "dependencies": {
     "@types/concurrently": "^4.1.0",
     "@types/http-server": "^0.10.0",
+    "array-move": "^2.2.1",
     "concurrently": "^5.0.0",
     "extend": "^3.0.2",
     "http-server": "^0.12.0",
     "parcel-bundler": "^1.12.3",
-    "react-simple-tree-menu": "^1.1.12"
+    "react-simple-tree-menu": "^1.1.12",
+    "react-sortable-hoc": "^1.11.0"
   },
   "scripts": {
     "watch-compile": "npx nodemon --ignore docs --watch src -e tsx,js,html,css --exec 'npm run parcel-build-sandbox-dev'",

@@ -1,7 +1,7 @@
 import { Button, ButtonProps, DropdownSelect, DropdownSelectProps } from '@tableau/tableau-ui';
 import * as React from 'react';
 import '../../css/style.css';
-import {Status} from '../config/Config';
+import {Status} from '../config/Interfaces';
 
 export interface SelectorProps {
     title?: string;
@@ -49,7 +49,7 @@ export const Selector: React.SFC<SelectorProps> = (props) => {
             {props.title}
                 <div className='p-2 w-100'>
                     <DropdownSelect 
-                        {...dropdownSelectProps} className='dropdownStyle w-100'
+                        {...dropdownSelectProps} className='w-100'
                         data-type={props.type}>
                         {props.list.map(option => <option key={option}>{option}</option>)}
                         

@@ -1,34 +1,31 @@
+/* tslint:disable:jsx-no-lambda */
 import { Extensions } from '@tableau/extensions-api-types';
 import * as t from '@tableau/extensions-api-types';
 import { Button, Checkbox } from '@tableau/tableau-ui';
+
 import 'babel-polyfill';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+
 import { Button as RSButton, Col, Container, Row } from 'reactstrap';
 import '../../css/style.css';
-import { Selector } from '../shared/Selector';
+import flatHier from '../../images/FlatHier.jpeg';
+import recursiveHier from '../../images/RecursiveHier.jpeg';
 import Colors from './Colors';
-import { defaultField, defaultFilter, defaultParameter, defaultSelectedProps, Field, FilterType, Parameter, SelectedProps } from './Interfaces';
+import {
+    AvailableProps, AvailableWorksheet, debug, defaultField, defaultFilter, defaultParameter,  defaultSelectedProps, Field, FilterType, HierType, Parameter, SelectedProps, Status
+} from './Interfaces';
+import { Page2Flat } from './Page2Flat';
+import { Page2Recursive } from './Page2Recursive';
+import { Page3 } from './Page3';
 
 const extend=require('extend');
-const debug=false;
-export enum Status { 'notpossible', 'notset', 'set', 'hidden' }
 
 declare global {
     interface Window { tableau: { extensions: Extensions; }; }
 }
 
-interface AvailableProps {
-    parameters: Parameter[], // list of paramaters to be shown to user for selection
-    worksheets: AvailableWorksheet[]; // list of available worksheets with their names, fields and filters 
-}
-interface AvailableWorksheet {
-    name: string,
-    filters: FilterType[],
-    fields: Field[]; // store all worksheet names and fields for selecting hierarchy
-}
-
-interface State {
+export interface State {
     configComplete: boolean, // is the extension configured ? 
     error: string[]; // array to hold any errors 0 = param, 1 = sheet, 2 = other
     availableProps: AvailableProps; // hold all available worksheets, fields, filters, parameters
@@ -67,10 +64,10 @@ class Configure extends React.Component<any, State> {
         worksheetStatus: Status.notset,
     };
 
+
     private dashboard: t.Dashboard;
     private loading: string=' -- Loading...';
-
-    public constructor(props: any) {
+    public constructor(props: any) {       
         super(props);
         this.getWorksheetsAsync=this.getWorksheetsAsync.bind(this);
         this.setParent=this.setParent.bind(this);
@@ -82,175 +79,56 @@ class Configure extends React.Component<any, State> {
         this.changeTabPrevious=this.changeTabPrevious.bind(this);
         this.changeEnabled=this.changeEnabled.bind(this);
         this.changeFilter=this.changeFilter.bind(this);
+        this.changeHierType=this.changeHierType.bind(this);
+        this.setStatePassThru=this.setStatePassThru.bind(this);
         window.tableau.extensions.initializeDialogAsync().then(() => {
             this.dashboard=window.tableau.extensions.dashboardContent!.dashboard;
             this.loadExtensionSettings();
         });
+
+    }
+    public getStyle(style: HierType) {
+        console.log(`calling getStyle`);
+        console.log(`style=${ style } and this.state.selectedProps.type=${ this.state.selectedProps.type }`);
+        if((style===HierType.FLAT&&this.state.selectedProps.type===HierType.FLAT)||
+            (style===HierType.RECURSIVE&&this.state.selectedProps.type===HierType.RECURSIVE)) {
+            return { background: 'lightblue' };
+        }
+        return {};
+    }
+    public setStatePassThru(obj: any) {
+        const self=this;
+        self.setState(obj);
     }
     public render() {
-        const worksheetTitle=() => {
-            switch(this.state.worksheetStatus) {
-                case Status.notpossible:
-                    return 'No valid sheets on the dashboard';
-                case Status.set:
-                case Status.notset:
-                    return 'Select the sheet with the hierarchy data';
-                default:
-                    return '';
-            }
-        };
-        const availableWorksheetArr: string[]=[];
-        for(const sheet of this.state.availableProps.worksheets) {
-            availableWorksheetArr.push(sheet.name);
-        }
-        const page: Array<{ name: string, content: React.ReactFragment; }>=[{ name: 'Sheet/Fields', content: (<div />) }, { name: 'Interactions', content: (<div />) }, { name: 'Display', content: (<div />) }];
+        console.log(`start of render`);
+        console.log(`props - start of render???`);
+        console.log(this.props);
 
+        const page: Array<{ name: string, content: React.ReactFragment; }>=[{ name: 'Hierarchy Type', content: (<div />) }, { name: 'Sheet/Fields', content: (<div />) }, { name: 'Interactions', content: (<div />) }, { name: 'Display', content: (<div />) }];
         // WORKSHEET CONTENT
         page[0].content=(
             <div className='sectionStyle mb-5'>
-                <b>Worksheet and Fields</b>
+                <b>Hierarchy Type</b><br />
+            Select your data type. The source hierarchy should be on a separate sheet (can be hidden).
                 <p />
-            <Selector
-                    title={worksheetTitle()}
-                    status={this.state.worksheetStatus}
-                    selected={this.state.selectedProps.worksheet.name}
-                    list={availableWorksheetArr}
-                    onChange={this.worksheetChange}
-                />
-                <Selector
-                    title='Parent ID'
-                    status={this.state.worksheetStatus!==Status.set? Status.hidden:this.state.worksheetStatus}
-                    list={this.state.fieldArr}
-                    onChange={this.setParent}
-                    selected={this.state.selectedProps.worksheet.parentId.fieldName}
-                />
-                <Selector
-                    title='Child ID'
-                    status={this.state.worksheetStatus!==Status.set? Status.hidden:this.state.worksheetStatus}
-                    list={this.state.fieldArr}
-                    onChange={this.setChild}
-                    selected={this.state.selectedProps.worksheet.childId.fieldName}
-                />
-                <Selector
-                    title='Child label'
-                    status={this.state.worksheetStatus!==Status.set? Status.hidden:this.state.worksheetStatus}
-                    list={this.state.fieldArr}
-                    onChange={this.setChildLabel}
-                    selected={this.state.selectedProps.worksheet.childLabel.fieldName}
-                />
+                <Row>
+
+                    <Col onClick={() => this.changeHierType(HierType.FLAT)} className='centerChildren sectionStyle' style={this.getStyle(HierType.FLAT)}>
+                        <b>Dimensional </b><br />
+                        <img src={flatHier} /><br />
+                    Description: Levels of the hierarchy are in separate columns/dimensions.
+            </Col>
+                    <Col onClick={() => this.changeHierType(HierType.RECURSIVE)} className='centerChildren sectionStyle' style={this.state.selectedProps.type===HierType.RECURSIVE? { background: 'lightblue' }:{}}>
+                        <b>Recursive</b> <br />
+                        <img src={recursiveHier} /><br />
+                    Description: Relationships are stored in a parent/child relationship.
+            </Col>
+                </Row>
             </div>
         );
-
-        // PARAMETERS CONTENT
-        page[1].content=(
-            <Container>
-
-                <div className='sectionStyle mb-2'>
-                    <b>Parameters</b>
-                </div>
-                <Row>
-                    <Col xs='6' style={{ marginLeft: '38px' }}>
-                        <Row>
-                            <Checkbox
-                                checked={this.state.selectedProps.parameters.childIdEnabled}
-                                onClick={this.changeEnabled}
-                                data-type='id'
-                            >Parameter for Child Id Field
-                        </Checkbox>
-                        </Row>
-                        <Row>
-                            <Selector
-                                status={this.state.selectedProps.parameters.childIdEnabled? (this.state.paramArr.length? Status.set:Status.notpossible):Status.notpossible}
-                                onChange={this.changeParam}
-                                list={this.state.paramArr}
-                                selected={this.state.selectedProps.parameters.childId.name}
-                                type='id'
-                            />
-
-                        </Row>
-                    </Col>
-
-                </Row>
-                <Row>
-                    <Col xs='6' style={{ marginLeft: '38px' }}>
-                        <Row>
-
-                            <Checkbox
-                                checked={this.state.selectedProps.parameters.childLabelEnabled}
-                                onClick={this.changeEnabled}
-                                onChange={this.changeEnabled}
-                                data-type='label'
-                            >Parameter for Child Label Field
-                            </Checkbox>
-                        </Row>
-                        <Row>
-                            <Selector
-                                // For label field'
-                                status={this.state.selectedProps.parameters.childLabelEnabled?
-                                    (this.state.paramArr.length? Status.set:Status.notpossible):Status.notpossible}
-                                onChange={this.changeParam}
-                                list={this.state.paramArr}
-                                selected={this.state.selectedProps.parameters.childLabel.name}
-                                type='label'
-                            />
-                        </Row>
-                    </Col>
-
-                </Row>
-                <div className='sectionStyle mb-2'>
-                    <b>Sheet Interactions</b>
-                </div>
-
-                <Row>
-                    <Col xs='6' style={{ marginLeft: '38px' }}>
-                        <Row>
-                            <Checkbox
-                                // for filter field
-                                disabled={this.state.filterArr.length&&this.state.filterArr.filter(filter => {
-                                    const selFields=[this.state.selectedProps.worksheet.childId.fieldName, this.state.selectedProps.worksheet.childLabel.fieldName];
-                                    return selFields.includes(filter);
-                                }).length? false:true}
-                                checked={this.state.selectedProps.worksheet.filterEnabled}
-                                onClick={this.changeEnabled}
-                                data-type='filter'
-                            >Filter 
-                        </Checkbox>
-                        </Row>
-                        <Row>
-                            <Selector
-                                status={this.state.filterArr.length&&this.state.filterArr.filter(filter => {
-                                    const selFields=[this.state.selectedProps.worksheet.childId.fieldName, this.state.selectedProps.worksheet.childLabel.fieldName];
-                                    return selFields.includes(filter);
-                                }).length&&this.state.selectedProps.worksheet.filterEnabled? Status.set:Status.notpossible}
-                                onChange={this.changeFilter}
-                                list={this.state.filterArr.filter(filter => {
-                                    const selFields=[this.state.selectedProps.worksheet.childId.fieldName, this.state.selectedProps.worksheet.childLabel.fieldName];
-                                    if(debug) { console.log(`selFields: ${ selFields } and filter: ${ filter }`); }
-                                    if(debug) { console.log(`selFields.includes(filter): ${ selFields.includes(filter) }`); }
-                                    return selFields.includes(filter);
-                                })}
-                                selected={this.state.selectedProps.worksheet.filter.fieldName}
-                                type='filter'
-                            />
-                        </Row>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col xs='6' style={{ marginLeft: '38px' }}>
-                        <Row>
-                            <Checkbox
-                                checked={this.state.selectedProps.worksheet.enableMarkSelection}
-                                onClick={this.changeEnabled}
-                                data-type='mark'
-                            >Enable Mark Selection
-                        </Checkbox>
-                        </Row>
-                    </Col>
-                </Row>
-            </Container>
-        );
         //  COLOR CONTENT
-        page[2].content=(
+        page[3].content=(
             <div>
                 <Colors bg={this.state.bgColor}
                     onBGChange={this.bgChange}
@@ -258,6 +136,65 @@ class Configure extends React.Component<any, State> {
                 />
             </div>
         );
+
+        const self=this;
+        function returnPage(index: number) {
+            switch(index) {
+                case 0:
+                case 3:
+                    return (<span>{page[index].content}</span>);
+                case 1:
+                    if(self.state.selectedProps.type===HierType.FLAT) {
+                        return <Page2Flat
+                            // self={self} 
+                            // page={page} 
+                            debug={debug}
+                            availableProps={self.state.availableProps}
+                            selectedProps={self.state.selectedProps}
+                            paramArr={self.state.paramArr}
+                            filterArr={self.state.filterArr}
+                            fieldArr={self.state.fieldArr}
+                            worksheetStatus={self.state.worksheetStatus}
+                            setStatePassThru={self.setStatePassThru}
+                            setChild={self.setChild}
+                            worksheetChange={self.worksheetChange}
+                        />;
+                    }
+
+                    else if(self.state.selectedProps.type===HierType.RECURSIVE) {
+                        return <Page2Recursive
+                            availableProps={self.state.availableProps}
+                            selectedProps={self.state.selectedProps}
+                            worksheetStatus={self.state.worksheetStatus}
+                            debug={debug}
+                            setParent={self.setParent}
+                            setChild={self.setChild}
+                            setChildLabel={self.setChildLabel}
+                            fieldArr={self.state.fieldArr}
+                            worksheetChange={self.worksheetChange}
+                        />;
+                    }
+
+                case 2:
+                    return <Page3
+                        // self={self} 
+                        // page={page} 
+                        debug={debug}
+                        fieldArr={self.state.fieldArr}
+                        availableProps={self.state.availableProps}
+                        selectedProps={self.state.selectedProps}
+                        paramArr={self.state.paramArr}
+                        filterArr={self.state.filterArr}
+                        worksheetStatus={self.state.worksheetStatus}
+                        changeEnabled={self.changeEnabled}
+                        changeParam={self.changeParam}
+                        changeFilter={self.changeFilter}
+                    />;
+
+                default:
+                    return (<div>Not here yet</div>);
+            }
+        }
         return (
             <>
                 <div className='headerStyle' >
@@ -272,18 +209,17 @@ class Configure extends React.Component<any, State> {
                 )}
                 <Container className='navcontainer'>
                     <Row>
-                        <Col />
                         <Col>
                             <Row>
 
                                 <RSButton type='button' className='btn btn-default btn-circle' color='primary'>1
                             </RSButton>
                             </Row>
-                            <Row>
+                            <Row className='noMargin'>
                                 {page[0].name}
                             </Row>
                         </Col>
-                        <Col>
+                        <Col className='narrow'>
                             <div className='userhr' />
                         </Col>
                         <Col>
@@ -292,11 +228,11 @@ class Configure extends React.Component<any, State> {
                                 <RSButton type='button' className='btn btn-default btn-circle' color={this.state.selectedTabIndex>=1? 'primary':'secondary'}>2
                             </RSButton>
                             </Row>
-                            <Row>
+                            <Row className='noMargin'>
                                 {page[1].name}
                             </Row>
                         </Col>
-                        <Col>
+                        <Col className='narrow'>
                             <div className='userhr' />
                         </Col>
                         <Col>
@@ -305,27 +241,40 @@ class Configure extends React.Component<any, State> {
                                 <RSButton type='button' className='btn btn-default btn-circle' color={this.state.selectedTabIndex>=2? 'primary':'secondary'} active={false}>3
                             </RSButton>
                             </Row>
-                            <Row style={{ margin: 'auto' }}>
+                            <Row className='noMargin'>
                                 {page[2].name}
                             </Row>
                         </Col>
-                        <Col />
+                        <Col className='narrow'>
+                            <div className='userhr' />
+                        </Col>
+                        <Col>
+                            <Row>
+
+                                <RSButton type='button' className='btn btn-default btn-circle' color={this.state.selectedTabIndex>=3? 'primary':'secondary'} active={false}>4
+                            </RSButton>
+                            </Row>
+                            <Row className='noMargin'>
+                                {page[3].name}
+                            </Row>
+                        </Col>
+
 
                     </Row>
 
                 </Container>
-                <span>{page[this.state.selectedTabIndex].content}</span>
+                {returnPage(this.state.selectedTabIndex)}
 
                 <div className='d-flex flex-row-reverse'>
                     <div className='p-2'>
-                        {[1, 2].includes(this.state.selectedTabIndex)&&
+                        {[1, 2, 3].includes(this.state.selectedTabIndex)&&
                             <Button
                                 kind='outline'
                                 onClick={this.changeTabPrevious}>
                                 Previous
                         </Button>
                         }
-                        {[0, 1].includes(this.state.selectedTabIndex)&&
+                        {[0, 1, 2].includes(this.state.selectedTabIndex)&&
                             <Button
                                 kind='outline'
                                 onClick={this.changeTabNext}>
@@ -333,11 +282,12 @@ class Configure extends React.Component<any, State> {
                         </Button>
                         }
 
-                        {this.state.selectedTabIndex===2&&
+                        {this.state.selectedTabIndex===3&&
                             <Button kind={this.state.configComplete? 'filledGreen':'outline'} onClick={this.submit}>{this.state.configComplete? 'Submit':'Cancel'} </Button>
                         }
                     </div>
                 </div>
+                {console.log(`end of render`)}
             </>
         );
     }
@@ -394,6 +344,7 @@ class Configure extends React.Component<any, State> {
     };
 
     private async getWorksheetFieldsAsync(worksheet: any) {
+        console.log(`getWorksheetFieldAsync`);
         try {
             const tempFields: Field[]=[];
             const dataTable: any=await worksheet.getSummaryDataAsync({ maxRows: 1 });
@@ -419,6 +370,7 @@ class Configure extends React.Component<any, State> {
 
     // get all worksheets
     private async getWorksheetsAsync() {
+        console.log(`getWorksheetsAsync`);
         this.updateError(1, '');
         if(debug) { console.log(`loadWorksheets`); }
         const dashboard=window.tableau.extensions.dashboardContent!.dashboard;
@@ -609,8 +561,8 @@ class Configure extends React.Component<any, State> {
         if(debug) {
             console.log(`this.state.availProps: vvv`);
             console.log(JSON.stringify(this.state.availableProps, null, 2));
-            console.log(`this.state.availProps: vvv`);
-            console.log(JSON.stringify(this.state.availableProps, null, 2));
+            console.log(`this.state.selectedProps: vvv`);
+            console.log(JSON.stringify(this.state.selectedProps, null, 2));
         }
         const ws=this.state.availableProps.worksheets.find(_ws => _ws.name===this.state.selectedProps.worksheet.name);
         const parentId=ws!.fields.find(field => field.fieldName===e.target.value)||defaultField;
@@ -709,7 +661,7 @@ class Configure extends React.Component<any, State> {
                 case 'id':
                     if(!lengthOfCurrentArr) { return; }
                     selectedProps.parameters.childIdEnabled=e.target.checked;
-                    if(selectedProps.parameters.childId.name===selectedProps.parameters.childLabel.name&&e.target.checked&&selectedProps.parameters.childLabelEnabled) {
+                    if(selectedProps.parameters.childId.name===selectedProps.parameters.childLabel.name&&e.target.checked&&selectedProps.parameters.childLabelEnabled||(lengthOfCurrentArr===1&&e.target.checked)) {
                         selectedProps.parameters.childLabelEnabled=false;
                     }
                     break;
@@ -717,7 +669,7 @@ class Configure extends React.Component<any, State> {
                     if(!lengthOfCurrentArr) { return; }
                     selectedProps.parameters.childLabelEnabled=e.target.checked;
                     // here we check if there is only 1 param
-                    if(selectedProps.parameters.childId.name===selectedProps.parameters.childLabel.name&&e.target.checked&&selectedProps.parameters.childIdEnabled) {
+                    if(selectedProps.parameters.childId.name===selectedProps.parameters.childLabel.name&&e.target.checked&&selectedProps.parameters.childIdEnabled||(lengthOfCurrentArr===1&&e.target.checked)) {
                         selectedProps.parameters.childIdEnabled=false;
                     }
                     break;
@@ -734,11 +686,18 @@ class Configure extends React.Component<any, State> {
 
     // load settings upon opening configuration dialogue
     private loadExtensionSettings=async () => {
+        console.log(`loadExtensionSettings`);
         this.setState({ loading: true });
-        const settings=window.tableau.extensions.settings.getAll();
+        const settings: any=window.tableau.extensions.settings.getAll();
 
-        const _configComplete=settings.configComplete==='true'? true:false;
-        const _selectedProps=typeof settings.selectedProps==='undefined'? defaultSelectedProps:JSON.parse(settings.selectedProps);
+        settings.configComplete==='true'? settings.configComplete=true:settings.configComplete=false;
+        if(typeof settings.selectedProps==='undefined') {
+            settings.selectedProps=defaultSelectedProps;
+        }
+        else {
+            settings.selectedProps=JSON.parse(settings.selectedProps);
+        }
+        // const _selectedProps=typeof settings.selectedProps==='undefined'? defaultSelectedProps:JSON.parse(settings.selectedProps);
         if(debug) {
             console.log(`loading settings: vvv`);
             console.log(settings);
@@ -747,8 +706,8 @@ class Configure extends React.Component<any, State> {
         if(settings.configComplete) {
             this.setState({
                 bgColor: settings.bgColor,
-                configComplete: _configComplete,
-                selectedProps: _selectedProps,
+                configComplete: settings.configComplete,
+                selectedProps: settings.selectedProps,
             });
             this.validateSettings(false);
         }
@@ -761,6 +720,7 @@ class Configure extends React.Component<any, State> {
     // big logic block to make sure existing settings are still valid
     // if any fail, reset all data
     private async validateSettings(bLoad: boolean=false): Promise<any> {
+        console.log(`validate settings`);
         try {
             this.setState({ loading: true });
             if(debug) { console.log(`starting validate worksheets/fields/filters and parameters - bLoad=${ bLoad }`); }
@@ -807,22 +767,44 @@ class Configure extends React.Component<any, State> {
                 // validate worksheet/fields
                 const foundWorksheet=this.state.availableProps.worksheets.find((ws) => ws.name===worksheet.name)||{ fields: [] };
                 if(foundWorksheet?.fields.length<2) {
-                    if(debug) { console.log(`can't validate existing worksheet has 2+ fields - reload`); }
+                    if(debug) { console.log(`can't validate existing worksheet has <2 fields - reload`); }
                     return this.validateSettings(true);
                 }
                 else {
-                    for(const availFields of foundWorksheet.fields) {
-                        if(availFields.fieldName===worksheet.childId.fieldName) {
-                            bFound=true;
-                            break;
+
+                    if(this.state.selectedProps.type===HierType.RECURSIVE) {
+
+                        for(const availFields of foundWorksheet.fields) {
+                            if(availFields.fieldName===worksheet.childId.fieldName) {
+                                bFound=true;
+                                break;
+                            }
+                        }
+                        if(!bFound) {
+                            if(debug) { console.log(`can't validate existing childiId field (recursive tree) - reload`); }
+                            return this.validateSettings(true);
+                        }
+                    }
+                    else {
+                        // flat tree
+                        bFound=true; // start with true and set false if any field is not found.
+                        for(const field of worksheet.fields) {
+                            let fieldFound=false;
+                            for(const availField of foundWorksheet.fields) {
+                                if(availField.fieldName===field) {
+                                    fieldFound=true;
+                                }
+                            }
+                            bFound=bFound&&fieldFound;
+                        }
+                        if(!bFound) {
+                            if(debug) { console.log(`can't validate existing worksheet fields (flat tree) - reload`); }
+                            return this.validateSettings(true);
                         }
                     }
                 }
 
-                if(!bFound) {
-                    if(debug) { console.log(`can't validate existing childiId field - reload`); }
-                    return this.validateSettings(true);
-                }
+
                 // is the selected parent field still present?
                 bFound=false;
                 for(const availFields of foundWorksheet.fields) {
@@ -838,15 +820,18 @@ class Configure extends React.Component<any, State> {
                 }
                 bFound=false;
                 // is the selected childLabel field still present?
-                for(const availFields of foundWorksheet.fields) {
-                    if(availFields.fieldName===worksheet.childLabel.fieldName) {
-                        bFound=true;
-                        break;
+                // skip if flat tree
+                if(this.state.selectedProps.type===HierType.RECURSIVE) {
+                    for(const availFields of foundWorksheet.fields) {
+                        if(availFields.fieldName===worksheet.childLabel.fieldName) {
+                            bFound=true;
+                            break;
+                        }
                     }
-                }
-                if(!bFound) {
-                    if(debug) { console.log(`can't validate existing childLabel field- reload`); }
-                    return this.validateSettings(true);
+                    if(!bFound) {
+                        if(debug) { console.log(`can't validate existing childLabel field- reload`); }
+                        return this.validateSettings(true);
+                    }
                 }
                 bFound=false;
                 // is the selected filter still available, if it is selected?
@@ -880,8 +865,11 @@ class Configure extends React.Component<any, State> {
                 }
                 bFound=false;
                 // is the childLabel param still available?
+                console.log(`1111111 - selectedProps`)
+                console.log(this.state.selectedProps)
                 if(childLabelEnabled) {
                     for(const availParam of this.state.paramArr) {
+                        console.log(`aP ${availParam} matching ${childLabel.name}`)
                         if(availParam===childLabel.name) {
                             bFound=true;
                             break;
@@ -1000,7 +988,7 @@ class Configure extends React.Component<any, State> {
             loading: false,
             parameterStatus: Status.notpossible,
             selectedProps: defaultSelectedProps,
-            worksheetStatus: Status.notset,
+            worksheetStatus: Status.notset
         });
         if(debug) { console.log(`calling validateSettings from clearSettings`); }
         this.validateSettings(true);
@@ -1011,10 +999,10 @@ class Configure extends React.Component<any, State> {
         // if the user hits Clear the parameter will not be configured so save 'configured' state from that
         if(debug) { console.log(`submitting settings...`); }
         if(debug) { console.log(this.state); }
+        if(debug) { console.log(JSON.stringify(this.state,null,2)); }
         window.tableau.extensions.settings.set('configComplete', this.state.configComplete.toString());
         window.tableau.extensions.settings.set('selectedProps', JSON.stringify(this.state.selectedProps));
         window.tableau.extensions.settings.set('bgColor', this.state.bgColor.toString());
-
         window.tableau.extensions.settings.saveAsync().then(() => {
             window.tableau.extensions.ui.closeDialog(this.state.configComplete.toString());
         })
@@ -1031,7 +1019,7 @@ class Configure extends React.Component<any, State> {
     // change to next tab in UI
     private changeTabNext() {
         if(debug) { console.log(`onChange tab next: ${ this.state.selectedTabIndex }`); }
-        if(this.state.selectedTabIndex<2) {
+        if(this.state.selectedTabIndex<3) {
             this.setState((prevState) => ({ selectedTabIndex: prevState.selectedTabIndex+1 }));
         }
     }
@@ -1042,6 +1030,18 @@ class Configure extends React.Component<any, State> {
             this.setState((prevState) => ({ selectedTabIndex: prevState.selectedTabIndex-1 }));
         }
     }
+    // change Hier Type
+    private changeHierType(type: HierType) {
+        console.log(`clicked hier type image: ${ type }`);
+        console.log(`settings before:`);
+        console.log(this.state.selectedProps);
+        // this.clearSettings();
+        const selectedP=extend(true, {}, this.state.selectedProps, { type });
+        console.log(`about to set...`);
+        console.log(selectedP);
+        this.setState({ selectedProps: selectedP });
+    }
+
 }
 
 export default Configure;

@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState, ReactFragment } from 'react';
+import React, { ReactFragment, useEffect, useRef, useState } from 'react';
 import TreeMenu from 'react-simple-tree-menu';
-import { SelectedWorksheet } from '../config/Interfaces';
+import { debug, HierType, SelectedWorksheet } from '../config/Interfaces';
 
 interface Tree {
     key: string,
@@ -21,17 +21,18 @@ interface Props {
     lastUpdated: Date;
     worksheet: SelectedWorksheet;
     configComplete: boolean;
+    type: HierType;
+    separator: string;
     setDataFromExtension: (data: { currentId: string, currentLabel: string, childrenById?: string[], childrenByLabel?: string[]; }) => void;
 }
-const debug=false;
 
 function Hierarchy(props: Props) {
     const childRef=useRef<any>(null);
     const [currentLabel, setCurrentLabel]=useState(props.currentLabel);
     const [currentId, setCurrentId]=useState(props.currentId);
-    const [pathMap, setPathMap]=useState();
-    const [childOf, setChildOf]=useState();
-    const [tree, setTree]=useState();
+    const [pathMap, setPathMap]=useState<PathMap[]>([]);
+    const [childOf, setChildOf]=useState([]);
+    const [tree, setTree]=useState<Tree[]>([]);
     let _pathMap: PathMap[]=[];
 
     // if user sets ID parameter in dashboard, this will be triggered
@@ -72,37 +73,132 @@ function Hierarchy(props: Props) {
                 if(worksheet.name===props.worksheet.name) {
                     if(debug) { console.log(`found worksheet: ${ worksheet.name }`); }
                     await worksheet.getSummaryDataAsync().then(async (dataTable: any) => {
-                        let parentIDCol=0;
-                        let childLabelCol=1;
-                        let childIDCol=2;
-                        await asyncForEach(dataTable.columns, (column: any) => {
-                            if(column.fieldName===props.worksheet.parentId.fieldName) {
-                                parentIDCol=column.index;
-                            }
-                            else if(column.fieldName===props.worksheet.childLabel.fieldName) {
-                                childLabelCol=column.index;
-                            }
-                            if(column.fieldName===props.worksheet.childId.fieldName) {
-                                childIDCol=column.index;
-                            }
-                        });
-                        if(debug) { console.log(`parentCol: ${ parentIDCol }  childCol: ${ childLabelCol } keyCol: ${ childIDCol }`); }
-                        let isSet: boolean=false;
-                        dataTable.data.forEach((row: any, index: number) => {
-                            map.push({ parent: row[parentIDCol].formattedValue, label: row[childLabelCol].formattedValue, key: row[childIDCol].formattedValue, nodes: [] });
-                            if(!isSet) {
-                                isSet=true;
-                                setCurrentLabel(row[childLabelCol].formattedValue);
-                                setCurrentId(row[childIDCol].formattedValue);
-                            }
-                        });
+
+
+                        if(props.type===HierType.RECURSIVE) {
+
+                            let parentIDCol=0;
+                            let childLabelCol=1;
+                            let childIDCol=2;
+
+                            await asyncForEach(dataTable.columns, (column: any) => {
+                                if(column.fieldName===props.worksheet.parentId.fieldName) {
+                                    parentIDCol=column.index;
+                                }
+                                else if(column.fieldName===props.worksheet.childLabel.fieldName) {
+                                    childLabelCol=column.index;
+                                }
+                                if(column.fieldName===props.worksheet.childId.fieldName) {
+                                    childIDCol=column.index;
+                                }
+                            });
+                            if(debug) { console.log(`parentCol: ${ parentIDCol }  childCol: ${ childLabelCol } keyCol: ${ childIDCol }`); }
+                            let isSet: boolean=false;
+                            dataTable.data.forEach((row: any, index: number) => {
+                                // check for dupes and ignore
+                                const match=map.filter(itm =>
+                                    itm.parent===row[parentIDCol].formattedValue&&itm.label===row[childLabelCol].formattedValue&&itm.key===row[childIDCol].formattedValue
+                                );
+                                if(match.length&&debug) { console.log(`skipping dupe: ${ row[parentIDCol].formattedValue }/${ row[childLabelCol].formattedValue }/${ row[childIDCol].formattedValue }`); }
+                                if(!match.length) {
+                                    map.push({ parent: row[parentIDCol].formattedValue, label: row[childLabelCol].formattedValue, key: row[childIDCol].formattedValue, nodes: [] });
+                                }
+                                if(!isSet) {
+                                    isSet=true;
+                                    setCurrentLabel(row[childLabelCol].formattedValue);
+                                    setCurrentId(row[childIDCol].formattedValue);
+                                }
+                            });
+                        }
+                        else {
+                            console.log(`datatable vvv`);
+                            console.log(JSON.stringify(dataTable));
+                            // flat tree/hierarchy type
+                            const colArray: number[]=[];
+                            // set colArray values to indexes of fields in the order they are returned
+                            await asyncForEach(dataTable.columns, (column: any) => {
+                                props.worksheet.fields.forEach((field, index) => {
+                                    if(field===column.fieldName) { colArray[index]=column.index; }
+                                });
+                            });
+                            if(debug) { console.log(`Order of fields from dataTablea: ${ colArray } => ${ JSON.stringify(dataTable.coumns) }`); }
+                            let isSet: boolean=false;
+                            dataTable.data.forEach((row: any, index: number) => {
+                                // for (const index of colArray){
+                                    let parentId: string = 'Null';
+                                    let key: string = '';
+                                for(let i=0;i<colArray.length;i++) {
+                                    const parentIDCol=colArray[i-1];
+                                    const childIDCol = colArray[i];
+                                    const childLabelCol=colArray[i];
+
+                                    const childLabel=row[childLabelCol].formattedValue;
+                                    // let key: string='';
+                                    // build key
+                                    // console.log(`building key for ${childLabel}`)
+    /*                                 for(let j=0;j<=i;j++) {
+                                        key+=row[colArray[j]].formattedValue;
+                                        if (j<i) { key+='|'; }
+                                        if (i === 0) { parentId = 'Null'}
+                                        else{
+                            
+                                            if (j < i){
+                                                parentId += row[colArray[j]].formattedValue ;
+                                            }
+                                            if (j < i-1){parentId += '|'}
+                                        } 
+                                    } */
+                                    if (i === 0) {parentId = 'Null';}
+                                    else {
+                                        if (i === 1) {parentId = row[parentIDCol].formattedValue;}
+                                        else { parentId += `${props.separator}${row[parentIDCol].formattedValue}`}
+                                    }
+                                    if (i === 0) {key = row[childIDCol].formattedValue}
+                                    else {key += `${props.separator}${row[childIDCol].formattedValue}`}
+                                    // console.log(`built key ${key} for ${childLabel}`)
+
+                                    const match=map.filter(itm =>
+                                        itm.parent===parentId&&itm.label===childLabel&&itm.key===key
+                                    );
+                                    // console.log(match);
+                                    // if(debug) { console.log(`${ match.length? `+ Adding`:`  - Skipping` } row: ${ parentId } -> ${ childLabel }(${ key })`); };
+                                    if(!match.length) {
+                                        map.push({ parent: parentId, label: childLabel, key, nodes: [] });
+                                    }
+                                    if(!isSet) {
+                                        isSet=true;
+                                        setCurrentLabel(childLabel);
+                                        setCurrentId(key);
+                                    }
+
+                                }
+
+
+
+                                // check for dupes and ignore
+                                /* const match=map.filter(itm =>
+                                    itm.parent===row[parentIDCol].formattedValue&&itm.label===row[childLabelCol].formattedValue&&itm.key===row[childIDCol].formattedValue
+                                );
+                                if(match.length&&debug) { console.log(`skipping dupe: ${ row[parentIDCol].formattedValue }/${ row[childLabelCol].formattedValue }/${ row[childIDCol].formattedValue }`); }
+                                if(!match.length) {
+                                    map.push({ parent: row[parentIDCol].formattedValue, label: row[childLabelCol].formattedValue, key: row[childIDCol].formattedValue, nodes: [] });
+                                }
+                                if(!isSet) {
+                                    isSet=true;
+                                    setCurrentLabel(row[childLabelCol].formattedValue);
+                                    setCurrentId(row[childIDCol].formattedValue);
+                                } */
+                            });
+                        }
                     });
                     if(debug) { console.log('done getting data...'); }
                 }
             });
         }
-        if(debug) { console.log(`map: vvv`); }
-        if(debug) { console.log(map); }
+/*         if(debug) { console.log(`map (stringify): vvv`); }
+        if(debug) { console.log(JSON.stringify(map)); }
+        if(debug) { console.log(`map (object): vvv`); }
+        if(debug) { console.log(map); } */
         buildHierarchy(map);
     };
 
@@ -115,46 +211,69 @@ function Hierarchy(props: Props) {
     }
     // credit to https://stackoverflow.com/a/58136016/7386278
     function buildHierarchy(data: Tree[]): void {
-        if(debug) {
+/*         if(debug) {
             console.log(`buildHierarchy: incoming data? vvv`);
             console.log(data);
-        }
+        } */
         clearHierarchy();
         let _tree: Tree[]=[]; // object we will return to set state
-        const _childOf: any=[]; // object we will return to set state
-        data.forEach((item) => {
+        const _childOf: any=[]; // array we will return to set state
+        data.forEach((item,index) => {
+
             const { key, parent }=item;
             _childOf[key]=_childOf[key]||[];
+            // console.log(`_childOf[key] key=${ key }`);
+            // console.log(_childOf[key]);
             item.nodes=_childOf[key];
+            // console.log(parent)
             const _hasParent=!(parent==='Null'||parseInt(parent, 10)===0||parent==='');
+            // if(debug) { console.log(`hasParent?  ${ _hasParent }`); }
             _hasParent? (_childOf[parent]=_childOf[parent]||[]).push(item):_tree.push(item);
-        });
+            /* console.log(`\nfor ${index}-${JSON.stringify(item)}
+            \tchildOf[parent] = ${JSON.stringify(_childOf[parent],null,2)}
+            \tchildOf[key] = ${JSON.stringify(_childOf[key],null,2)}
+            `) */
 
-        // logic if parent/child are not recursive
+        });
+        // console.log(`_childOf ___: ${ _childOf.length }  ${ Array.isArray(_childOf) }`);
+        // console.log(_childOf);
+        // console.log(`___`);
+        /* // logic if parent/child are not recursive
         // props to Santiago Sanchez, SC Extraodinaire 12/19/19
         if(!_tree.length&&Object.keys(_childOf).length) {
             if(debug) { console.log(`found non-recursive hierarchy`); }
+            _tree.push({ parent: '', key: '(All)', label: '(All)', nodes: [] })
+            _childOf['(All)'] = [];
             const alreadyFound: string[]=[];
             for(const el in _childOf) {
                 if(_childOf.hasOwnProperty(el)) {
-                    if(debug) { console.log(_childOf[el].length); }
+                    if(debug) { console.log(_childOf[el]); }
                     if(_childOf[el].length) {
                         // tslint:disable-next-line prefer-for-of
                         for(let i=0;i<_childOf[el].length;i++) {
                             const { parent }=_childOf[el][i];
+                            console.log(`!alreadyFound.includes(parent): ${!alreadyFound.includes(parent)} 
+                            -- parent = ${parent}, el = ${JSON.stringify(el)}`)
+                            console.log(`already found: ${JSON.stringify(alreadyFound)}`)
                             if(!alreadyFound.includes(parent)) {
+                                _childOf['(All)'].push({ parent: '(All)', key: _childOf[el].key, label: _childOf[el].label, nodes: _childOf[el].nodes });
                                 alreadyFound.push(parent);
-                                _tree.push({ parent: '', key: parent, label: parent, nodes: _childOf[parent] });
+                                _tree[0].nodes.push({ parent: '(All)', key: parent, label: parent, nodes: _childOf[parent] });
                             }
                         }
                     }
                 }
-            }
+            } 
             if(debug) {
+                console.log(`now childOf: vvv`)
+                console.log(JSON.stringify(_childOf));
+                console.log(_childOf)
                 console.log(`_tree was not recursive... morphing into 2 level hierarchy!`);
+                console.log(`_tree`)
                 console.log(JSON.stringify(_tree));
+                console.log(_tree);
             }
-        }
+        }*/
 
         _tree=sortTree(_tree); // sort the tree
         buildPathMap(_tree); // build a map of paths to children
@@ -173,10 +292,10 @@ function Hierarchy(props: Props) {
     // sort tree alphabetically within each node/parent
     function sortTree(_tree: Tree[]): Tree[] {
         if(_tree.length<=1) { return _tree; }
-        if(debug) {
-            console.log(`tree.length ${ _tree.length }`);
-            console.log(`first node: ${ _tree[0].label }`);
-        }
+        // if(debug) {
+        //     console.log(`tree.length ${ _tree.length }`);
+        //     console.log(`first node: ${ _tree[0].label }`);
+        // }
         function compare(a: Tree, b: Tree) {
             if(a.label>b.label) { return 1; }
             else if(b.label>a.label) { return -1; }
