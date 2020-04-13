@@ -229,7 +229,7 @@ function ParamHandler(props: Props) {
 
         if(props.data.type===HierType.FLAT) {
             const [levelParam, childIdParam, childLabelParam, ...fieldParams]: Parameter[]=await (findParameters());
-            const level=(incomingData.currentId.match(new RegExp(escapeRegex(props.data.seperator), 'g'))?.length||0)+1;
+            const level=(incomingData.currentId.match(new RegExp(escapeRegex(props.data.separator), 'g'))?.length||0)+1;
             try {
                 levelParam.changeValueAsync(level);
             }
@@ -249,7 +249,7 @@ function ParamHandler(props: Props) {
 
                 if(debug) { console.log(`can't set childLabel param: ${ e.message }`); }
             }
-            const fieldVals=incomingData.currentId.split(props.data.seperator);
+            const fieldVals=incomingData.currentId.split(props.data.separator);
             for(let i=0;i<props.data.worksheet.fields.length;i++) {
                 try {
                     if(typeof fieldParams[i]==='undefined') { continue; }

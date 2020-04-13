@@ -155,18 +155,18 @@ export function Page2Flat(props: Props) {
         label: `Separator for ${ props.data.worksheet.childId } field formula.`,
         onChange: (e: any) => {
             // const _selectedProps: SelectedProps=extend(true, {}, props.data);
-            // _selectedProps.seperator=e.target.value;
-            // props.dispatchSelectedProps({ type: 'seperator', data: e.target.value });
-            props.setUpdates({ type: 'SETSEPERATOR', data: e.target.value });
+            // _selectedProps.separator=e.target.value;
+            // props.dispatchSelectedProps({ type: 'separator', data: e.target.value });
+            props.setUpdates({ type: 'SETseparator', data: e.target.value });
         },
         onClear: () => {
             // const _selectedProps: SelectedProps=extend(true, {}, props.data);
-            // _selectedProps.seperator='|';
-            // props.dispatchSelectedProps({ type: 'seperator', data: '|' });
-            props.setUpdates({ type: 'SETSEPERATOR', data: '|' });
+            // _selectedProps.separator='|';
+            // props.dispatchSelectedProps({ type: 'separator', data: '|' });
+            props.setUpdates({ type: 'SETseparator', data: '|' });
         },
         style: { width: 200, paddingLeft: '9px' },
-        value: props.data.seperator,
+        value: props.data.separator,
     };
 
     const formula=() => {
@@ -174,7 +174,7 @@ export function Page2Flat(props: Props) {
         for(let i=0;i<props.data.worksheet.fields.length;i++) {
             f+=`[${ props.data.worksheet.fields[i] }]`;
             if(i<props.data.worksheet.fields.length-1) {
-                f+=`+'${ props.data.seperator }'+`;
+                f+=`+'${ props.data.separator }'+`;
             }
         }
         return f;

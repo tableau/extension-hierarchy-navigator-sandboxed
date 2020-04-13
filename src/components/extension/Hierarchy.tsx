@@ -153,10 +153,10 @@ function Hierarchy(props: Props) {
                                     if (i === 0) {parentId = 'Null';}
                                     else {
                                         if (i === 1) {parentId = row[parentIDCol].formattedValue;}
-                                        else { parentId += `${props.data.seperator}${row[parentIDCol].formattedValue}`}
+                                        else { parentId += `${props.data.separator}${row[parentIDCol].formattedValue}`}
                                     }
                                     if (i === 0) {key = row[childIDCol].formattedValue}
-                                    else {key += `${props.data.seperator}${row[childIDCol].formattedValue}`}
+                                    else {key += `${props.data.separator}${row[childIDCol].formattedValue}`}
                                     // console.log(`built key ${key} for ${childLabel}`)
 
                                     const match=map.filter(itm =>
@@ -436,7 +436,8 @@ function Hierarchy(props: Props) {
                     await setSelectedFromExtension(label, key.split('/').pop()||'');
                 }}
                 resetOpenNodesOnDataUpdate={true}
-                ref={childRef}
+                ref={childRef} 
+                separator={'»'}
             />
         </div>
     );

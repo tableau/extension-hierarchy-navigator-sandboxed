@@ -18,7 +18,7 @@ export interface HierarchyProps {
     isConfigure: boolean;
     bgColor: string;
     configComplete: boolean;
-    seperator: string;
+    separator: string;
     type: HierType;
     paramSuffix: string;
     worksheet: SelectedWorksheet,
@@ -87,7 +87,7 @@ export const defaultSelectedProps: HierarchyProps={
         childLabel: '',
         childLabelEnabled: false
     },
-    seperator: '|',
+    separator: '|',
     type: HierType.FLAT,
     worksheet:
     {

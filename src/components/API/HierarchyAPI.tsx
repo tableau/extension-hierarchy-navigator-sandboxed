@@ -227,10 +227,10 @@ const hierarchyAPI=(): any => {
                     payload.paramSuffix=action.data;
                     return dispatch({ type: 'FETCH_SUCCESS', data: payload });
                 }
-            case 'SETSEPERATOR':
+            case 'SETseparator':
                 {
-                    // update seperator
-                    payload.seperator=action.data;
+                    // update separator
+                    payload.separator=action.data;
                     return dispatch({ type: 'FETCH_SUCCESS', data: payload });
                 }
             case 'SETFIELDS':
