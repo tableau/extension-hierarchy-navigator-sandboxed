@@ -9,7 +9,7 @@
     "concurrently": "^5.0.0",
     "extend": "^3.0.2",
     "http-server": "^0.12.0",
-    "parcel-bundler": "^1.12.3",
+    "parcel-bundler": "^1.12.4",
     "react-simple-tree-menu": "^1.1.12",
     "react-sortable-hoc": "^1.11.0"
   },
@@ -72,5 +72,8 @@
       "/docs",
       "tableau.extensions.*.latest.js"
     ]
-  }
+  },
+  "browserslist": [
+    "last 2 Chrome versions"
+    ]
 }

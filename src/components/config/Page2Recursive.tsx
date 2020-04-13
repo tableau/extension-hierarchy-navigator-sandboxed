@@ -1,28 +1,16 @@
-
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Selector } from '../shared/Selector';
-import { AvailableProps, SelectedProps, HierType, Status } from './Interfaces';
+import { HierarchyProps, Status } from './Interfaces';
 
-interface Props{
-    selectedProps: SelectedProps;
-    fieldArr: string[];
-    availableProps: AvailableProps;
-    debug: boolean;
-    worksheetStatus: Status;
-    worksheetChange: (arg0:any)=>void;
-    setParent: (arg0:any)=>void
-    setChild: (arg0:any)=>void
-    setChildLabel: (arg0:any)=>void
+interface Props {
+    data: HierarchyProps;
+    setUpdates: (obj: { type: string, data: any; }) => void;
+    setCurrentWorksheetName: (s: string) => void;
 }
 export function Page2Recursive(props: Props) {
-    // const { state }: { state: State; }=props;
 
-    const availableWorksheetArr: string[]=[];
-    for(const sheet of props.availableProps.worksheets) {
-        availableWorksheetArr.push(sheet.name);
-    }
     const worksheetTitle=() => {
-        switch(props.worksheetStatus) {
+        switch(props.data.worksheet.status) {
             case Status.notpossible:
                 return 'No valid sheets on the dashboard';
             case Status.set:
@@ -32,41 +20,60 @@ export function Page2Recursive(props: Props) {
                 return '';
         }
     };
-    
-   
+
+    // Handles selection of the parentid field
+    const setParent=(e: React.ChangeEvent<HTMLSelectElement>): void => {
+        props.setUpdates({ type: 'SETPARENTIDFIELD', data: e.target.value });
+    };
+
+    // Handles selection in worksheet selection dropdown
+    const worksheetChange=(e: React.ChangeEvent<HTMLSelectElement>): void => {
+        props.setCurrentWorksheetName(e.target.value);
+    };
+
+    const setChild=(e: React.ChangeEvent<HTMLSelectElement>): void => {
+
+        props.setUpdates({ type: 'SETCHILDIDFIELD', data: e.target.value });
+    };
+
+    // Handles selection of the label field
+    const setChildLabel=(e: React.ChangeEvent<HTMLSelectElement>): void => {
+        props.setUpdates({ type: 'SETCHILDLABELFIELD', data: e.target.value });
+    };
+
     return (
-            <div className='sectionStyle mb-5'>
-                <b>Worksheet and Fields</b>
-                <p />
-                <Selector
-                    title={worksheetTitle()}
-                    status={props.worksheetStatus}
-                    selected={props.selectedProps.worksheet.name}
-                    list={availableWorksheetArr}
-                    onChange={props.worksheetChange}
-                />
-                <Selector
-                    title='Parent ID'
-                    status={props.worksheetStatus!==Status.set? Status.hidden:props.worksheetStatus}
-                    list={props.fieldArr}
-                    onChange={props.setParent}
-                    selected={props.selectedProps.worksheet.parentId.fieldName}
-                />
-                <Selector
-                    title='Child ID'
-                    status={props.worksheetStatus!==Status.set? Status.hidden:props.worksheetStatus}
-                    list={props.fieldArr}
-                    onChange={props.setChild}
-                    selected={props.selectedProps.worksheet.childId.fieldName}
-                />
-                <Selector
-                    title='Child label'
-                    status={props.worksheetStatus!==Status.set? Status.hidden:props.worksheetStatus}
-                    list={props.fieldArr}
-                    onChange={props.setChildLabel}
-                    selected={props.selectedProps.worksheet.childLabel.fieldName}
-                />
-            </div>
+        <div className='sectionStyle mb-5'>
+            <b>Worksheet and Fields</b>
+            <p />
+            <Selector
+                title={worksheetTitle()}
+                status={props.data.worksheet.status}
+                selected={props.data.worksheet.name}
+                list={props.data.dashboardItems.worksheets}
+                onChange={worksheetChange}
+            />
+            <Selector
+                title='Parent ID'
+                status={props.data.worksheet.status!==Status.set? Status.hidden:props.data.worksheet.status}
+                list={props.data.dashboardItems.allCurrentWorksheetItems.fields}
+                onChange={setParent}
+                selected={props.data.worksheet.parentId}
+            />
+            <Selector
+                title='Child ID'
+                status={props.data.worksheet.status!==Status.set? Status.hidden:props.data.worksheet.status}
+                list={props.data.dashboardItems.allCurrentWorksheetItems.fields}
+                onChange={setChild}
+                selected={props.data.worksheet.childId}
+            />
+            <Selector
+                title='Child label'
+                status={props.data.worksheet.status!==Status.set? Status.hidden:props.data.worksheet.status}
+                list={props.data.dashboardItems.allCurrentWorksheetItems.fields}
+                onChange={setChildLabel}
+                selected={props.data.worksheet.childLabel}
+            />
+        </div>
     );
 
 

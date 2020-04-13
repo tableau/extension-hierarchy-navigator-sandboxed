@@ -1,6 +1,7 @@
 import React, { ReactFragment, useEffect, useRef, useState } from 'react';
 import TreeMenu from 'react-simple-tree-menu';
-import { debug, HierType, SelectedWorksheet } from '../config/Interfaces';
+import { debug, HierType, HierarchyProps } from '../config/Interfaces';
+import { HierarchyState } from '../API/HierarchyAPI';
 
 interface Tree {
     key: string,
@@ -15,39 +16,40 @@ interface PathMap {
     path: string;
 }
 interface Props {
-    currentId: string,
-    currentLabel: string;
-    dashboard: any;
+    data:HierarchyProps
     lastUpdated: Date;
-    worksheet: SelectedWorksheet;
-    configComplete: boolean;
-    type: HierType;
-    separator: string;
     setDataFromExtension: (data: { currentId: string, currentLabel: string, childrenById?: string[], childrenByLabel?: string[]; }) => void;
+    currentLabel: string;
+    currentId: string;
 }
 
 function Hierarchy(props: Props) {
+   
+    const lastUpdated=useRef<number>(new Date().valueOf());
     const childRef=useRef<any>(null);
     const [currentLabel, setCurrentLabel]=useState(props.currentLabel);
     const [currentId, setCurrentId]=useState(props.currentId);
     const [pathMap, setPathMap]=useState<PathMap[]>([]);
     const [childOf, setChildOf]=useState([]);
     const [tree, setTree]=useState<Tree[]>([]);
+
     let _pathMap: PathMap[]=[];
 
     // if user sets ID parameter in dashboard, this will be triggered
     useEffect(() => {
-        console.log(`useEffect for props.currentId`);
-        if(props.currentId!==currentId&&props.configComplete) {
+        console.log(`useEffect for props.currentId.  prop.currid:${props.currentId} currid:${currentId}`);
+        if(props.currentId!==currentId&&props.data.configComplete) {
             // if we set state locally we don't want to re-run state when props is updated in paramhandler
+            if (!debounce()) {return;}
             setcurrentIdFromDashboard();
         }
     }, [props.currentId]);
 
     // if user sets Label parameter in dashboard, this will be triggered
     useEffect(() => {
-        if(props.currentLabel!==currentLabel&&props.configComplete) {
+        if(props.currentLabel!==currentLabel&&props.data.configComplete) {
             // if we set state locally we don't want to re-run state when props is updated in paramhandler
+            if (!debounce()) {return;}
             setcurrentLabelFromDashboard();
         }
     }, [props.currentLabel]);
@@ -56,7 +58,7 @@ function Hierarchy(props: Props) {
     // happened and will (re)build the hierarchy.
     useEffect(() => {
         clearHierarchy();
-        if(props.configComplete) { loadHierarchyFromDataSource(); }
+        if(props.data.configComplete) { loadHierarchyFromDataSource(); }
     }, [props.lastUpdated]);
 
     async function asyncForEach(array: any[], callback: any) {
@@ -68,27 +70,27 @@ function Hierarchy(props: Props) {
     // this function handles loading and of stored values and live params 
     async function loadHierarchyFromDataSource() {
         const map: any[]=[];
-        if(props.dashboard) {
-            await asyncForEach(props.dashboard.worksheets, async (worksheet: any) => {
-                if(worksheet.name===props.worksheet.name) {
+      
+            await asyncForEach(window.tableau.extensions.dashboardContent!.dashboard.worksheets, async (worksheet: any) => {
+                if(worksheet.name===props.data.worksheet.name) {
                     if(debug) { console.log(`found worksheet: ${ worksheet.name }`); }
                     await worksheet.getSummaryDataAsync().then(async (dataTable: any) => {
 
 
-                        if(props.type===HierType.RECURSIVE) {
+                        if(props.data.type===HierType.RECURSIVE) {
 
                             let parentIDCol=0;
                             let childLabelCol=1;
                             let childIDCol=2;
 
                             await asyncForEach(dataTable.columns, (column: any) => {
-                                if(column.fieldName===props.worksheet.parentId.fieldName) {
+                                if(column.fieldName===props.data.worksheet.parentId) {
                                     parentIDCol=column.index;
                                 }
-                                else if(column.fieldName===props.worksheet.childLabel.fieldName) {
+                                else if(column.fieldName===props.data.worksheet.childLabel) {
                                     childLabelCol=column.index;
                                 }
-                                if(column.fieldName===props.worksheet.childId.fieldName) {
+                                if(column.fieldName===props.data.worksheet.childId) {
                                     childIDCol=column.index;
                                 }
                             });
@@ -111,13 +113,13 @@ function Hierarchy(props: Props) {
                             });
                         }
                         else {
-                            console.log(`datatable vvv`);
-                            console.log(JSON.stringify(dataTable));
+                            // console.log(`datatable vvv`);
+                            // console.log(JSON.stringify(dataTable));
                             // flat tree/hierarchy type
                             const colArray: number[]=[];
                             // set colArray values to indexes of fields in the order they are returned
                             await asyncForEach(dataTable.columns, (column: any) => {
-                                props.worksheet.fields.forEach((field, index) => {
+                                props.data.worksheet.fields.forEach((field, index) => {
                                     if(field===column.fieldName) { colArray[index]=column.index; }
                                 });
                             });
@@ -151,10 +153,10 @@ function Hierarchy(props: Props) {
                                     if (i === 0) {parentId = 'Null';}
                                     else {
                                         if (i === 1) {parentId = row[parentIDCol].formattedValue;}
-                                        else { parentId += `${props.separator}${row[parentIDCol].formattedValue}`}
+                                        else { parentId += `${props.data.seperator}${row[parentIDCol].formattedValue}`}
                                     }
                                     if (i === 0) {key = row[childIDCol].formattedValue}
-                                    else {key += `${props.separator}${row[childIDCol].formattedValue}`}
+                                    else {key += `${props.data.seperator}${row[childIDCol].formattedValue}`}
                                     // console.log(`built key ${key} for ${childLabel}`)
 
                                     const match=map.filter(itm =>
@@ -191,10 +193,10 @@ function Hierarchy(props: Props) {
                             });
                         }
                     });
-                    if(debug) { console.log('done getting data...'); }
+                    if(debug) { console.log('done getting props.data...'); }
                 }
             });
-        }
+        
 /*         if(debug) { console.log(`map (stringify): vvv`); }
         if(debug) { console.log(JSON.stringify(map)); }
         if(debug) { console.log(`map (object): vvv`); }
@@ -210,7 +212,7 @@ function Hierarchy(props: Props) {
         setChildOf([]);
     }
     // credit to https://stackoverflow.com/a/58136016/7386278
-    function buildHierarchy(data: Tree[]): void {
+    function buildHierarchy(_data: Tree[]): void {
 /*         if(debug) {
             console.log(`buildHierarchy: incoming data? vvv`);
             console.log(data);
@@ -218,7 +220,7 @@ function Hierarchy(props: Props) {
         clearHierarchy();
         let _tree: Tree[]=[]; // object we will return to set state
         const _childOf: any=[]; // array we will return to set state
-        data.forEach((item,index) => {
+        _data.forEach((item,index) => {
 
             const { key, parent }=item;
             _childOf[key]=_childOf[key]||[];
@@ -324,6 +326,7 @@ function Hierarchy(props: Props) {
 
     // set values if user selects a value in the extension
     async function setSelectedFromExtension(label: string, key: string) {
+        if (!debounce()) {return;}
         if(debug) {
             console.log(`setSelectedFromExtension`);
             console.log(`about to set label:${ label } and key: ${ key }`);
@@ -343,8 +346,17 @@ function Hierarchy(props: Props) {
         }
         return out;
     }
+
+    const debounce = ():boolean => {
+        const newDt = new Date().valueOf();
+        if (newDt-lastUpdated.current < 250) {return false};
+        lastUpdated.current = newDt;
+        return true;
+    }
+
     // when the id is changed on the dashboard, update extension values
     function setcurrentIdFromDashboard() {
+        if (!debounce()) {return;}
         if(debug) {
             console.log(`in setcurrentIdfromDash`);
             console.log(`props.currentId: ${ props.currentId }`);
@@ -370,6 +382,7 @@ function Hierarchy(props: Props) {
     }
     // when the label is changed on the dashboard, update extension values
     function setcurrentLabelFromDashboard() {
+        if (!debounce()) {return;}
         if(debug) { console.log(`in setcurrentLabelFromDash`); }
         let node;
         for(const el of pathMap) {
@@ -418,9 +431,9 @@ function Hierarchy(props: Props) {
             <TreeMenu
                 data={tree}
                 // tslint:disable-next-line jsx-no-lambda
-                onClickItem={({ label, key }) => {
+                onClickItem={async ({ label, key }) => {
                     if(debug) { console.log(`selected... ${ label }, ${ key }`); }
-                    setSelectedFromExtension(label, key.split('/').pop()||'');
+                    await setSelectedFromExtension(label, key.split('/').pop()||'');
                 }}
                 resetOpenNodesOnDataUpdate={true}
                 ref={childRef}

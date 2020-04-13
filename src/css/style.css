@@ -371,3 +371,34 @@ select::-ms-expand {
 }
     
   
+/* overlay for loading */
+.overlay {
+    position: fixed; /* Sit on top of the page content */
+    width: 100%; /* Full width (cover the whole page) */
+    height: 100%; /* Full height (cover the whole page) */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.5); /* Black background with opacity */
+    z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
+    cursor: pointer; /* Add a pointer on hover */
+}
+      
+.centerOnPage{
+    position: absolute;
+    top: 55%;
+    left: 50%;
+    font-size: 50px;
+    color: white;
+    transform: translate(-50%,-50%);
+    -ms-transform: translate(-50%,-50%);
+  }
+
+  .spinnerBg {
+    background-image: radial-gradient(22% 38%, rgba(255,255,255,0.00) 21%, rgba(102,102,102,0.50) 4%, #666666 10%);
+    border-radius: 10px;
+    color: White, 60%;
+    width: 65px;
+    height: 65px;
+  }

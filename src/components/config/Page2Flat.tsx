@@ -2,7 +2,7 @@
 import { TextField } from '@tableau/tableau-ui';
 import React, { useEffect, useState } from 'react';
 import { Selector } from '../shared/Selector';
-import { AvailableProps, SelectedProps, Status } from './Interfaces';
+import { HierarchyProps, Status } from './Interfaces';
 const extend=require('extend');
 import arrayMove from 'array-move';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
@@ -10,47 +10,53 @@ import { Button as RSButton, Col, Container, Row } from 'reactstrap';
 import dragHandle from '../../images/Drag-handle-01.png';
 
 interface Props {
-    selectedProps: SelectedProps;
-    fieldArr: string[];
-    availableProps: AvailableProps;
-    debug: boolean;
-    paramArr: string[];
-    filterArr: string[];
-    worksheetStatus: Status;
-    setStatePassThru: (arg0: any) => void;
-    worksheetChange: (arg0: any) => void;
-    setChild: (arg0: any) => void;
+    data: HierarchyProps;
+    setUpdates: (obj: { type: string, data: any; }) => void;
+
+    setCurrentWorksheetName: (s: string) => void;
 }
 
 export function Page2Flat(props: Props) {
-    // const { state }: { state: State; }=props;
+    // fieldArr is all fields on current worksheet
+    const [fieldArr, setFieldArr]=useState<string[]>([]);
+    // availFields are fields on worksheet that are not added to hierarchy (aka worksheet.fields); used for childID selector
     const [availFields, setAvailFields]=useState<string[]>([]);
+    // sans child is all available fields except child id field; used for left ul
     const [availFieldsSansChildId, setAvailFieldsSansChildId]=useState<string[]>([]);
 
     useEffect(() => {
-        const _selectedProps=extend(true, {}, props.selectedProps);
+        setFieldArr(props.data.dashboardItems.allCurrentWorksheetItems.fields.map(field => field));
+    }, [props.data.dashboardItems.allCurrentWorksheetItems.fields, props.data.worksheet.childId]);
+
+    useEffect(() => {
         const avail: string[]=[];
-        if(!_selectedProps.worksheet.hasOwnProperty('fields')) { _selectedProps.worksheet.fields=[]; }
+        const sansChildId: string[]=[];
         // tslint:disable prefer-for-of
-        console.log(`props.selectedProps in useEffect`);
-        console.log(props.selectedProps);
-        for(let i=0;i<props.fieldArr.length;i++) {
-            if(_selectedProps.worksheet.fields.indexOf(props.fieldArr[i])===-1) {
-                avail.push(props.fieldArr[i]);
+        for(let i=0;i<fieldArr.length;i++) {
+            if(props.data.worksheet.fields.indexOf(fieldArr[i])===-1 ) {
+                avail.push(fieldArr[i]);
+                if (fieldArr[i] !== props.data.worksheet.childId){
+                    sansChildId.push(fieldArr[i]);
+                }
             }
         }
         // tslint:enable prefer-for-of
-
         setAvailFields(avail);
-        setAvailFieldsSansChildId(avail.filter(el => el!==props.selectedProps.worksheet?.childId?.fieldName));
-    }, [props]);
+        setAvailFieldsSansChildId(sansChildId);
+    }, [fieldArr, props.data.worksheet.fields, props.data.worksheet.childId]);
 
-    const availableWorksheetArr: string[]=[];
-    for(const sheet of props.availableProps.worksheets) {
-        availableWorksheetArr.push(sheet.name);
-    }
+    // Handles selection in worksheet selection dropdown
+    const worksheetChange=(e: React.ChangeEvent<HTMLSelectElement>): void => {
+        props.setCurrentWorksheetName(e.target.value);
+    };
+
+    const setChild=(e: React.ChangeEvent<HTMLSelectElement>): void => {
+        props.setUpdates({ type: 'SETCHILDIDFIELD', data: e.target.value });
+    };
+
+
     const worksheetTitle=() => {
-        switch(props.worksheetStatus) {
+        switch(props.data.worksheet.status) {
             case Status.notpossible:
                 return 'No valid sheets on the dashboard';
             case Status.set:
@@ -96,83 +102,79 @@ export function Page2Flat(props: Props) {
 
     // sort lists
     const onSortEnd=({ oldIndex, newIndex }: any) => {
-        console.log(`onSortEnd: ${ JSON.stringify(props.selectedProps.worksheet.fields) } - ${ oldIndex }->${ newIndex }`);
-        const newOrder=arrayMove(props.selectedProps.worksheet.fields, oldIndex, newIndex);
+        console.log(`onSortEnd: ${ JSON.stringify(props.data.worksheet.fields) } - ${ oldIndex }->${ newIndex }`);
+        const newOrder=arrayMove(props.data.worksheet.fields, oldIndex, newIndex);
         console.log(`newOrder: ${ JSON.stringify(newOrder) }`);
-        const _st=extend(true, {}, props.selectedProps);
-        _st.worksheet.fields=newOrder;
-        props.setStatePassThru({ selectedProps: _st });
+        // const _st=extend(true, {}, props.data);
+        // _st.worksheet.fields=newOrder;
+        // props.setStatePassThru({ selectedProps: _st });
+        // props.dispatchSelectedProps({ type: 'worksheetProps', data: { fields: newOrder } });
+        props.setUpdates({ type: 'SETFIELDS', data: newOrder });
     };
 
     // remove from list
     const removeFromList=(evt: any) => {
         console.log(`trying to remove ${ evt.target.value }`);
-        const filteredItems=props.selectedProps.worksheet.fields.filter((item: string) => {
+        const filteredItems=props.data.worksheet.fields.filter((item: string) => {
             return item!==evt.target.value;
         }
         );
         console.log(`items now: ${ filteredItems }`);
-        const _selectedProps=extend(true, {}, props.selectedProps);
-        _selectedProps.worksheet.fields=filteredItems;
+        // const _selectedProps=extend(true, {}, props.data);
+        // _selectedProps.worksheet.fields=filteredItems;
 
-        props.setStatePassThru({ selectedProps: _selectedProps });
+        // props.setStatePassThru({ selectedProps: _selectedProps });
+        // props.dispatchSelectedProps({ type: 'replaceFields', data: filteredItems });
+        props.setUpdates({ type: 'SETFIELDS', data: filteredItems });
     };
 
     // add to list
     const addToList=(evt?: any) => {
-        const _selectedProps=extend(true, {}, props.selectedProps);
+        const fields: string[]=extend(true, [], props.data.worksheet.fields);
         // if(!_selectedProps.worksheet.hasOwnProperty('fields')) { _selectedProps.worksheet.fields=[]; }
         console.log(`evt?  target.value ${ evt.target.value }`);
         console.log(evt);
         if(evt.target&&evt.target.value) {
-            _selectedProps.worksheet.fields.push(evt.target.value);
+            fields.push(evt.target.value);
         }
         else {
-            props.fieldArr.forEach(el => {
-                if(_selectedProps.worksheet.fields.indexOf(el)===-1&&el!==props.selectedProps.worksheet?.childId?.fieldName) {
-                    _selectedProps.worksheet.fields.push(el);
+            fieldArr.forEach(el => {
+                if(fields.indexOf(el)===-1&&el!==props.data.worksheet.childId) {
+                    fields.push(el);
                 }
             });
         }
-        props.setStatePassThru({ selectedProps: _selectedProps });
-    };
-    /*     const addAsKey = (evt:any)=> {
-            console.log(`add key -> ${evt.target.value}`)
-    
-        } */
+        // props.setStatePassThru({ selectedProps: _selectedProps });
 
-    const removeId=() => {
-        const _st=extend(true, {}, props.selectedProps);
-        const lastField=props.selectedProps.worksheet.fields[props.selectedProps.worksheet.fields.length-1];
-        _st.worksheet.childId=lastField;
-        // selectedProps.worksheet.childId.fieldName
-        props.setStatePassThru({ selectedProps: _st });
+        // props.dispatchSelectedProps({ type: 'worksheetProps', data: { fields } });
+        props.setUpdates({ type: 'SETFIELDS', data: fields });
     };
-
     const inputProps={
         errorMessage: undefined,
         kind: 'line' as 'line'|'outline'|'search',
-        label: `Separator for ${ props.selectedProps.worksheet.childId.fieldName } field formula.`,
+        label: `Separator for ${ props.data.worksheet.childId } field formula.`,
         onChange: (e: any) => {
-            const _selectedProps: SelectedProps=extend(true, {}, props.selectedProps);
-            _selectedProps.seperator=e.target.value;
-            props.setStatePassThru({ selectedProps: _selectedProps });
+            // const _selectedProps: SelectedProps=extend(true, {}, props.data);
+            // _selectedProps.seperator=e.target.value;
+            // props.dispatchSelectedProps({ type: 'seperator', data: e.target.value });
+            props.setUpdates({ type: 'SETSEPERATOR', data: e.target.value });
         },
         onClear: () => {
-            const _selectedProps: SelectedProps=extend(true, {}, props.selectedProps);
-            _selectedProps.seperator='|';
-            props.setStatePassThru({ selectedProps: _selectedProps });
+            // const _selectedProps: SelectedProps=extend(true, {}, props.data);
+            // _selectedProps.seperator='|';
+            // props.dispatchSelectedProps({ type: 'seperator', data: '|' });
+            props.setUpdates({ type: 'SETSEPERATOR', data: '|' });
         },
         style: { width: 200, paddingLeft: '9px' },
-        value: props.selectedProps.seperator,
+        value: props.data.seperator,
     };
 
     const formula=() => {
         let f='';
-        for(let i=0;i<props.selectedProps.worksheet.fields.length;i++) {
-            f+=`[${ props.selectedProps.worksheet.fields[i] }]`;
-            if(i<props.selectedProps.worksheet.fields.length-1) {
-                f+=`+'${ props.selectedProps.seperator }'+`;
+        for(let i=0;i<props.data.worksheet.fields.length;i++) {
+            f+=`[${ props.data.worksheet.fields[i] }]`;
+            if(i<props.data.worksheet.fields.length-1) {
+                f+=`+'${ props.data.seperator }'+`;
             }
         }
         return f;
@@ -184,34 +186,34 @@ export function Page2Flat(props: Props) {
             <p />
             <Selector
                 title={worksheetTitle()}
-                status={props.worksheetStatus}
-                selected={props.selectedProps.worksheet.name}
-                list={availableWorksheetArr}
-                onChange={props.worksheetChange}
+                status={props.data.worksheet.status}
+                selected={props.data.worksheet.name}
+                list={props.data.dashboardItems.worksheets}
+                onChange={worksheetChange}
             />
             <Selector
                 title='ID Column'
                 status={availFields.length>0? Status.set:Status.hidden}
                 list={availFields}
-                onChange={props.setChild}
-                selected={props.selectedProps.worksheet.childId.fieldName}
+                onChange={setChild}
+                selected={props.data.worksheet.childId}
             />
             <TextField {...inputProps} />
             <br />
             <div style={{ marginLeft: '9px' }}>
-                The source sheet for the hierarchy should have the {props.selectedProps.worksheet.childId.fieldName} field with the below formula.  If it does not, please add/edit it and re-configure the extension:
+                The source sheet for the hierarchy should have the {props.data.worksheet.childId} field with the below formula.  If it does not, please add/edit it and re-configure the extension:
                 <br />
-            <span style={{ fontStyle: 'italic', marginLeft: '5px' }}>{`   ${ formula() }`}</span>
+                <span style={{ fontStyle: 'italic', marginLeft: '5px' }}>{`   ${ formula() }`}</span>
             </div>
             <br />
             <Container style={{ border: '1px solid #e6e6e6', padding: '1px', marginLeft: '9px' }}>
                 <Row>
 
                     <Col>
-                        {props.selectedProps.worksheet.fields&&props.selectedProps.worksheet.fields.length?
+                        {props.data.worksheet.fields&&props.data.worksheet.fields.length?
                             <div>Hierarchy fields (in order)
                 <SortableList
-                                    items={props.selectedProps.worksheet.fields}
+                                    items={props.data.worksheet.fields}
                                     onSortEnd={onSortEnd}
                                     lockAxis='y'
                                     helperClass={'draggingSort'}
@@ -233,43 +235,11 @@ export function Page2Flat(props: Props) {
                                 />
 
                             </>
-                            :'All fields are used'}
+                            :fieldArr.length?'All fields are used':'No fields available'}
                         <p />
 
                     </Col>
                 </Row>
             </Container>
-
-
-            {/*             {props.selectedProps.worksheet.childId.fieldName? <>Selected Key = props.selectedProps.worksheet.childId.fieldName}
-                <RSButton onClick={removeId} color='white' size='xs' disabled={!props.selectedProps.worksheet?.childId?.fieldName} style={{ color: 'red' }} >X</RSButton></>:`No id selected for lowest level of hierarchy.`} */}
-
-
-            {/* <Selector
-                title='Parent ID'
-                status={state.worksheetStatus!==Status.set? Status.hidden:state.worksheetStatus}
-                list={props.fieldArr}
-                onChange={props.setParent}
-                selected={props.selectedProps.worksheet?.parentId?.fieldName}
-            />*/}
-            {/*             <Selector
-                title='Child ID'
-                status={state.worksheetStatus!==Status.set? Status.hidden:state.worksheetStatus}
-                list={props.fieldArr}
-                onChange={props.setChild}
-                selected={props.selectedProps.worksheet?.childId?.fieldName}
-            />  */}
-
-
-            {/* <Selector
-                title='Child label'
-                status={state.worksheetStatus!==Status.set? Status.hidden:state.worksheetStatus}
-                list={props.fieldArr}
-                onChange={props.setChildLabel}
-                selected={props.selectedProps.worksheet?.childLabel?.fieldName}
-            /> */}
         </div>);
-
-
-
 }
