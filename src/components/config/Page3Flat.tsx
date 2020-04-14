@@ -186,7 +186,6 @@ export function Page3Flat(props: Props) {
                         data-type='mark'
                     >Enable Mark Selection
                 </Checkbox>
-                </div>
             </div>
         </>
     );

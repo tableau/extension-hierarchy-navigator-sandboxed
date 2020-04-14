@@ -1,7 +1,7 @@
 import * as t from '@tableau/extensions-api-types';
 import { useEffect, useReducer, useRef, useState } from 'react';
 
-import { debug, defaultSelectedProps, HierarchyProps, HierType, SelectedWorksheet, Status } from '../config/Interfaces';
+import { debug, defaultSelectedProps, HierarchyProps, HierType, Status } from '../config/Interfaces';
 
 
 const extend=require('extend');
@@ -326,6 +326,8 @@ const hierarchyAPI=(): any => {
                 }
                 if(_initialData.dashboardItems.worksheets.indexOf(worksheet.name)===-1) { _initialData.dashboardItems.worksheets.push(worksheet.name); }
 
+                // if filter added, assign it
+                if (_initialData.worksheet.filter==='') {_initialData.worksheet.filter=_initialData.dashboardItems.allCurrentWorksheetItems.filters[0];}
             });
         }
         catch(e) {

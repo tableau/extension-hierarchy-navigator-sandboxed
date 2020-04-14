@@ -375,7 +375,7 @@ function Configure(props: any) {
         if(debug) { console.log(`onChange tab next: ${ selectedTabIndex }`); }
         if(selectedTabIndex<3) {
 
-            setSelectedTabIndex(prev => prev+1);
+            setSelectedTabIndex((prev:number) => prev+1);
             // setState((prevState) => ({ selectedTabIndex: prevState.selectedTabIndex+1 }));
         }
     };
@@ -383,7 +383,7 @@ function Configure(props: any) {
     const changeTabPrevious=() => {
         if(debug) { console.log(`onChange tab previous: ${ selectedTabIndex }`); }
         if(selectedTabIndex>0) {
-            setSelectedTabIndex(prev => prev-1);
+            setSelectedTabIndex((prev:number) => prev-1);
             // setState((prevState) => ({ selectedTabIndex: prevState.selectedTabIndex-1 }));
         }
     };
