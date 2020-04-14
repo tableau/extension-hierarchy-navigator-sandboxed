@@ -89,7 +89,6 @@ export function Page2Flat(props: Props) {
     </li>);
 
     const StaticFieldsList=SortableContainer(({ items }: any) => {
-        console.log(`static list recevied ${ JSON.stringify(items) }`);
         if(!items) { return (<li>No items</li>); }
         return (
             <ul className={'sortableList'}>
@@ -102,29 +101,16 @@ export function Page2Flat(props: Props) {
 
     // sort lists
     const onSortEnd=({ oldIndex, newIndex }: any) => {
-        console.log(`onSortEnd: ${ JSON.stringify(props.data.worksheet.fields) } - ${ oldIndex }->${ newIndex }`);
         const newOrder=arrayMove(props.data.worksheet.fields, oldIndex, newIndex);
-        console.log(`newOrder: ${ JSON.stringify(newOrder) }`);
-        // const _st=extend(true, {}, props.data);
-        // _st.worksheet.fields=newOrder;
-        // props.setStatePassThru({ selectedProps: _st });
-        // props.dispatchSelectedProps({ type: 'worksheetProps', data: { fields: newOrder } });
         props.setUpdates({ type: 'SETFIELDS', data: newOrder });
     };
 
     // remove from list
     const removeFromList=(evt: any) => {
-        console.log(`trying to remove ${ evt.target.value }`);
         const filteredItems=props.data.worksheet.fields.filter((item: string) => {
             return item!==evt.target.value;
         }
         );
-        console.log(`items now: ${ filteredItems }`);
-        // const _selectedProps=extend(true, {}, props.data);
-        // _selectedProps.worksheet.fields=filteredItems;
-
-        // props.setStatePassThru({ selectedProps: _selectedProps });
-        // props.dispatchSelectedProps({ type: 'replaceFields', data: filteredItems });
         props.setUpdates({ type: 'SETFIELDS', data: filteredItems });
     };
 
@@ -132,8 +118,6 @@ export function Page2Flat(props: Props) {
     const addToList=(evt?: any) => {
         const fields: string[]=extend(true, [], props.data.worksheet.fields);
         // if(!_selectedProps.worksheet.hasOwnProperty('fields')) { _selectedProps.worksheet.fields=[]; }
-        console.log(`evt?  target.value ${ evt.target.value }`);
-        console.log(evt);
         if(evt.target&&evt.target.value) {
             fields.push(evt.target.value);
         }

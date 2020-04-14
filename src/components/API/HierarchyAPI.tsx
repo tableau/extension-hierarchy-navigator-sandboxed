@@ -106,7 +106,7 @@ const hierarchyAPI=(): any => {
         // validate settings
         // true means all good; false means some data didn't pass the logic
         // skip if current worksheet name is blank (initial load)
-        if (typeof _settings.configComplete !== 'undefined' && _settings.configComplete) {
+        if(typeof _settings.configComplete!=='undefined'&&_settings.configComplete) {
             extend(true, _initialData, _settings);
             _initialData=await getWorksheetsFilterAndFieldsFromDashboardAsyncWithoutAssignments(_initialData);
             const { result, msg }=validateSettings(_initialData);
@@ -117,12 +117,13 @@ const hierarchyAPI=(): any => {
             }
             else {
                 console.log(`WE FAILED, ${ msg }`);
-                
-                getWorksheetsFilterAndFieldsFromDashboardAsyncWithAssignments(_initialData);
+                _initialData=extend(true, {}, defaultSelectedProps);
+                _initialData.dashboardItems.parameters=await getParamListFromDashboardAsync();
+                await getWorksheetsFilterAndFieldsFromDashboardAsyncWithAssignments(_initialData);
             }
         }
         else {
-            getWorksheetsFilterAndFieldsFromDashboardAsyncWithAssignments(_initialData);
+            await getWorksheetsFilterAndFieldsFromDashboardAsyncWithAssignments(_initialData);
         }
 
 
@@ -135,7 +136,7 @@ const hierarchyAPI=(): any => {
         const _settings=tableau.extensions.settings.getAll();
         let res={};
         console.log(`loadSettings: raw settings = ${ _settings }`);
-        if (typeof _settings.data === 'undefined'){return res;}
+        if(typeof _settings.data==='undefined') { return res; }
         res=JSON.parse(_settings.data);
         return res;
     };
@@ -146,7 +147,7 @@ const hierarchyAPI=(): any => {
         const resetAsync=async () => {
             console.log(`begin resetAsync`);
             dispatch({ type: 'FETCH_INIT' });
-            const _initialData:HierarchyProps=extend(true, {}, defaultSelectedProps);
+            const _initialData: HierarchyProps=extend(true, {}, defaultSelectedProps);
             _initialData.type=hierType;
             _initialData.dashboardItems.parameters=await getParamListFromDashboardAsync();
             // dispatch({ type: 'FETCH_SUCCESS', data: _initialData });
@@ -327,7 +328,7 @@ const hierarchyAPI=(): any => {
                 if(_initialData.dashboardItems.worksheets.indexOf(worksheet.name)===-1) { _initialData.dashboardItems.worksheets.push(worksheet.name); }
 
                 // if filter added, assign it
-                if (_initialData.worksheet.filter==='') {_initialData.worksheet.filter=_initialData.dashboardItems.allCurrentWorksheetItems.filters[0];}
+                if(_initialData.worksheet.filter==='') { _initialData.worksheet.filter=_initialData.dashboardItems.allCurrentWorksheetItems.filters[0]; }
             });
         }
         catch(e) {
@@ -360,19 +361,24 @@ const hierarchyAPI=(): any => {
             // step 2: get current worksheet object
             await asyncForEach(tableau.extensions.dashboardContent!.dashboard.worksheets, async (worksheet: t.Worksheet) => {
                 if(debug) {
-                    console.log(`worksheet: vvv`);
+                    console.log(`worksheet ${worksheet.name}: vvv`);
                     console.log(worksheet);
                 }
                 const _fields=await getWorksheetFieldsAsync(worksheet);
                 // need at least 2 fields (parent/child or flat tree) to use this sheet.  filters are optional
                 if(_fields.length<2) {
-                    if(debug) { console.log(`UH OH!  NOT ENOUGH FIELDS IN ${ worksheet.name }.`); }
+                    if(debug) { console.log(` --- skipping ${ worksheet.name }; not enough fields`); }
                 }
                 else {
                     // if worksheets isn't in list, add it
                     if(payload.dashboardItems.worksheets.indexOf(worksheet.name)===-1) { payload.dashboardItems.worksheets.push(worksheet.name); }
                     // if name is blank, assume fresh load or reset and take 1st worksheet found
-                    if(currentWorksheetName===''&&payload.worksheet.name==='') { payload.worksheet.name=worksheet.name; }
+                    if(currentWorksheetName===''&&payload.worksheet.name==='') { 
+                        initAsyncLoading.current = true; // make sure we don't trigger a loop here
+                        payload.worksheet.name=worksheet.name; 
+                        setCurrentWorksheetName(payload.worksheet.name);
+                        initAsyncLoading.current = false;
+                    }
                     if(worksheet.name===payload.worksheet.name) {
                         // step 3: set current fields
                         // Ípayload.dashboardItems.allCurrentWorksheetItems.worksheetObject=worksheet;
@@ -394,21 +400,22 @@ const hierarchyAPI=(): any => {
                                 payload.dashboardItems.allCurrentWorksheetItems.filters.push(filter.fieldName);
                             }
                         }
+                    
+                    // step 5: set childid/childlabel/parentid; reset selected fields and disable filter
+                    payload.worksheet.childId=payload.dashboardItems.allCurrentWorksheetItems.fields[1];
+                    payload.worksheet.childLabel=payload.dashboardItems.allCurrentWorksheetItems.fields[0];
+                    payload.worksheet.parentId=payload.dashboardItems.allCurrentWorksheetItems.fields[0];
+                    payload.worksheet.filter=payload.dashboardItems.allCurrentWorksheetItems.filters[0];
+                    payload.worksheet.fields=[];
+                    payload.worksheet.filterEnabled=false;
                     }
                 }
             });
-
-            // step 5: set childid/childlabel/parentid; reset selected fields and disable filter
-            payload.worksheet.childId=payload.dashboardItems.allCurrentWorksheetItems.fields[1];
-            payload.worksheet.childLabel=payload.dashboardItems.allCurrentWorksheetItems.fields[0];
-            payload.worksheet.parentId=payload.dashboardItems.allCurrentWorksheetItems.fields[0];
-            payload.worksheet.filter=payload.dashboardItems.allCurrentWorksheetItems.filters[0];
-            payload.worksheet.fields=[];
-            payload.worksheet.filterEnabled=false;
-            if (payload.type === HierType.RECURSIVE){
-                payload.parameters.childId = payload.dashboardItems.parameters[0] || payload.dashboardItems.parameters[1] || '';
-                payload.parameters.childLabel =  payload.dashboardItems.parameters[1] || '';
+            if(payload.type===HierType.RECURSIVE) {
+                payload.parameters.childId=payload.dashboardItems.parameters[0]||payload.dashboardItems.parameters[1]||'';
+                payload.parameters.childLabel=payload.dashboardItems.parameters[1]||'';
             }
+
         }
         catch(e) {
             if(debug) { console.log(`error in getWorksheetsFromDashboardAsyncWithAssigments: ${ e }`); }
@@ -424,7 +431,6 @@ const hierarchyAPI=(): any => {
     };
 
     useEffect(() => {
-        console.log(`??? ${!initAsyncLoading.current} for ws ${currentWorksheetName}`)
         if(!initAsyncLoading.current) { getWorksheetsFilterAndFieldsFromDashboardAsyncWithAssignments(); }
     }, [currentWorksheetName, initAsyncLoading]);
 
@@ -474,27 +480,27 @@ const hierarchyAPI=(): any => {
         const params: string[]=[];
         if(debug) { console.log(`parameters found`); }
         for(const p of _params) {
-            if(debug) { console.log(`${p.name} of allowable Values ${p.allowableValues.type} and type ${p.dataType}`); }
+            if(debug) { console.log(`${ p.name } of allowable Values ${ p.allowableValues.type } and type ${ p.dataType }`); }
             if(p.allowableValues.type===tableau.ParameterValueType.All&&p.dataType===tableau.DataType.String) {
-                console.log(`pushing ${p.name}`)
+                console.log(`pushing ${ p.name }`);
                 params.push(p.name);
             }
-            else {console.log(` --- skipping ${p.name}`)}
-            console.log(`list now: ${params.join(', ')}`)
+            else { console.log(` --- skipping ${ p.name }`); }
+            console.log(`list now: ${ params.join(', ') }`);
         }
         // TODO: case insensitive sort was returning incorrect results
         if(params.length>0) {
-            console.log(`params before sort`)
-            console.log(params.toString())
+            console.log(`params before sort`);
+            console.log(params.toString());
             // case insensitive sort
             params.sort((a, b) =>
-                 (a.localeCompare(b, 'en', { 'sensitivity': 'base' })));
+                (a.localeCompare(b, 'en', { 'sensitivity': 'base' })));
 
         };
         if(debug) {
             console.log(`parameterList`);
             console.log(params);
-            console.log(params.toString())
+            console.log(params.toString());
 
         }
         if(debug) { console.log(`finished loadParamList`); }
@@ -509,7 +515,7 @@ const hierarchyAPI=(): any => {
         if(data.type===HierType.FLAT&&data.worksheet.fields.length>=2) {
             return true;
         }
-        else if(data.type===HierType.RECURSIVE&&data.worksheet.childLabel!==''&& data.worksheet.parentId!=='') {
+        else if(data.type===HierType.RECURSIVE&&data.worksheet.childLabel!==''&&data.worksheet.parentId!=='') {
             return true;
         }
         // all other conditions
@@ -524,7 +530,7 @@ const hierarchyAPI=(): any => {
                 console.log(`submitting settings...
             ${JSON.stringify(state.data) }`);
             }
-            const _data = extend(true,{},state.data);
+            const _data=extend(true, {}, state.data);
             delete _data.dashboardItems;
             await tableau.extensions.settings.set('data', JSON.stringify(_data));
             // extensions.settings.set('worksheet', JSON.stringify(state.data.worksheet));
@@ -677,9 +683,9 @@ const hierarchyAPI=(): any => {
             // }
             bFound=false;
             // is the selected filter still available, if it is selected?
-            
 
-            if(d.worksheet.filter!=='' &&   !d.dashboardItems.allCurrentWorksheetItems.filters.includes(d.worksheet.filter)) {
+
+            if(d.worksheet.filter!==''&&!d.dashboardItems.allCurrentWorksheetItems.filters.includes(d.worksheet.filter)) {
                 return { result: false, msg: `Filter ${ d.worksheet.filter } no longer present;` };
             }
             if(debug) { console.log(`childIdEnabled? ${ d.parameters.childIdEnabled }`); }
