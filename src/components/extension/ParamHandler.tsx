@@ -181,7 +181,7 @@ function ParamHandler(props: Props) {
 
                 await worksheet.clearFilterAsync(props.data.worksheet.filter);
             }
-            if(debug) { console.log(`worksheet: ${ props.data.worksheet } for sheet: ${ props.data.worksheet.childId }`); }
+            if(debug) { console.log(`worksheet: ${ props.data.worksheet.name } for childId: ${ props.data.worksheet.childId }`); }
             // clear all marks selection
             if(props.data.worksheet.childId!==null||props.data.worksheet.childId!=='') {
                 await worksheet.selectMarksByValueAsync([{

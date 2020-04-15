@@ -96,8 +96,22 @@ function Hierarchy(props: Props) {
                             });
                             if(debug) { console.log(`parentCol: ${ parentIDCol }  childCol: ${ childLabelCol } keyCol: ${ childIDCol }`); }
                             let isSet: boolean=false;
+                            let count = 0;
                             dataTable.data.forEach((row: any, index: number) => {
                                 // check for dupes and ignore
+                                if (debug) {
+                                    if (count < 10){
+                                        if (count===0) {console.log(`outputting first 10 rows of data`);}
+                                        console.log(row);
+                                        count++;
+                                    }
+                                    if (count===10){
+                                        console.log(`first 10 rows of map (data loading)`)
+                                        // console.log(map);
+                                        console.log(JSON.stringify(map));
+                                        count++;
+                                    }
+                                }
                                 const match=map.filter(itm =>
                                     itm.parent===row[parentIDCol].formattedValue&&itm.label===row[childLabelCol].formattedValue&&itm.key===row[childIDCol].formattedValue
                                 );
@@ -193,7 +207,10 @@ function Hierarchy(props: Props) {
                             });
                         }
                     });
-                    if(debug) { console.log('done getting props.data...'); }
+                    if(debug) { console.log('done getting props.data...');
+                    console.log(map)
+                }
+
                 }
             });
         
@@ -228,7 +245,7 @@ function Hierarchy(props: Props) {
             // console.log(_childOf[key]);
             item.nodes=_childOf[key];
             // console.log(parent)
-            const _hasParent=!(parent==='Null'||parseInt(parent, 10)===0||parent==='');
+            const _hasParent=!(parent==='Null'||parseInt(parent, 10)===0||parent===''||parent===key);
             // if(debug) { console.log(`hasParent?  ${ _hasParent }`); }
             _hasParent? (_childOf[parent]=_childOf[parent]||[]).push(item):_tree.push(item);
             /* console.log(`\nfor ${index}-${JSON.stringify(item)}

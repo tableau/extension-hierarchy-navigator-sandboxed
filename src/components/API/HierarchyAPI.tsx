@@ -458,7 +458,7 @@ const hierarchyAPI=(): any => {
                         console.log(dataTable);
                     }
                     // only allow string values
-                    if(column.dataType===tableau.DataType.String) {
+                    if(column.dataType===tableau.DataType.String || column.dataType===tableau.DataType.Int) {
                         tempFields.push(column.fieldName);
                     }
                 });
@@ -481,7 +481,7 @@ const hierarchyAPI=(): any => {
         if(debug) { console.log(`parameters found`); }
         for(const p of _params) {
             if(debug) { console.log(`${ p.name } of allowable Values ${ p.allowableValues.type } and type ${ p.dataType }`); }
-            if(p.allowableValues.type===tableau.ParameterValueType.All&&p.dataType===tableau.DataType.String) {
+            if(p.allowableValues.type===tableau.ParameterValueType.All&& (p.dataType===tableau.DataType.String || p.dataType===tableau.DataType.Int)) {
                 console.log(`pushing ${ p.name }`);
                 params.push(p.name);
             }

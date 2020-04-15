@@ -38,7 +38,7 @@ export function Page3Recursive(props: Props) {
                 <br />
                 <div style={{ marginLeft: '9px' }}>
                     <Checkbox
-                        disabled={!props.data.dashboardItems.parameters}
+                        disabled={!props.data.dashboardItems.parameters.length}
                         checked={props.data.parameters.childIdEnabled}
                         onClick={props.changeEnabled}
                         data-type='id'
