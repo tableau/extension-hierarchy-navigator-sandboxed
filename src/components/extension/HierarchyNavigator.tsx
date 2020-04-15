@@ -9,7 +9,9 @@ import ParamHandler from './ParamHandler';
 
 function HierarchyNavigator() {
     const [dashboard, setDashboard]=useState({});
-
+    const [doneLoading, setDoneLoading]=useState(false);
+    const [data, setData]=useState<HierarchyProps>(defaultSelectedProps);
+    
     // Pops open the configure page if extension isn't configured
     const configure=(): any => {
         if(debug) { console.log(`calling CONFIGURE`); }
@@ -75,29 +77,20 @@ function HierarchyNavigator() {
         });
     }, []);
 
-
-    const [doneLoading, setDoneLoading]=useState(false);
-    const [data, setData]=useState<HierarchyProps>(defaultSelectedProps);
     useEffect(() => {
         document.body.style.backgroundColor=data.bgColor;
     }, [data.bgColor]);
 
-
     return (
         <>
             {!doneLoading? (<div aria-busy='true' className='overlay'><div className='centerOnPage'><div className='spinnerBg centerOnPage'>{}</div><Spinner color='light' /></div></div>):undefined}
-
             <div style={{ overflowX: 'hidden' }}>
-
-                <p>
+                <p />
                     <ParamHandler
                         data={data}
                         dashboard={dashboard as t.Dashboard}
 
                     />
-                    {console.log(`STATE:`)}
-                    {console.log(JSON.stringify(data))}
-                </p>
             </div>
         </>
     );

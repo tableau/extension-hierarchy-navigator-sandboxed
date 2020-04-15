@@ -37,7 +37,6 @@ function Hierarchy(props: Props) {
 
     // if user sets ID parameter in dashboard, this will be triggered
     useEffect(() => {
-        console.log(`useEffect for props.currentId.  prop.currid:${props.currentId} currid:${currentId}`);
         if(props.currentId!==currentId&&props.data.configComplete) {
             // if we set state locally we don't want to re-run state when props is updated in paramhandler
             if (!debounce()) {return;}

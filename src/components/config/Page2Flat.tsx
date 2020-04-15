@@ -51,7 +51,7 @@ export function Page2Flat(props: Props) {
     };
 
     const setChild=(e: React.ChangeEvent<HTMLSelectElement>): void => {
-        props.setUpdates({ type: 'SETCHILDIDFIELD', data: e.target.value });
+        props.setUpdates({ type: 'SET_CHILD_ID_FIELD', data: e.target.value });
     };
 
 
@@ -102,7 +102,7 @@ export function Page2Flat(props: Props) {
     // sort lists
     const onSortEnd=({ oldIndex, newIndex }: any) => {
         const newOrder=arrayMove(props.data.worksheet.fields, oldIndex, newIndex);
-        props.setUpdates({ type: 'SETFIELDS', data: newOrder });
+        props.setUpdates({ type: 'SET_FIELDS', data: newOrder });
     };
 
     // remove from list
@@ -111,7 +111,7 @@ export function Page2Flat(props: Props) {
             return item!==evt.target.value;
         }
         );
-        props.setUpdates({ type: 'SETFIELDS', data: filteredItems });
+        props.setUpdates({ type: 'SET_FIELDS', data: filteredItems });
     };
 
     // add to list
@@ -131,7 +131,7 @@ export function Page2Flat(props: Props) {
         // props.setStatePassThru({ selectedProps: _selectedProps });
 
         // props.dispatchSelectedProps({ type: 'worksheetProps', data: { fields } });
-        props.setUpdates({ type: 'SETFIELDS', data: fields });
+        props.setUpdates({ type: 'SET_FIELDS', data: fields });
     };
     const inputProps={
         errorMessage: undefined,
@@ -141,13 +141,13 @@ export function Page2Flat(props: Props) {
             // const _selectedProps: SelectedProps=extend(true, {}, props.data);
             // _selectedProps.separator=e.target.value;
             // props.dispatchSelectedProps({ type: 'separator', data: e.target.value });
-            props.setUpdates({ type: 'SETseparator', data: e.target.value });
+            props.setUpdates({ type: 'SET_SEPARATOR', data: e.target.value });
         },
         onClear: () => {
             // const _selectedProps: SelectedProps=extend(true, {}, props.data);
             // _selectedProps.separator='|';
             // props.dispatchSelectedProps({ type: 'separator', data: '|' });
-            props.setUpdates({ type: 'SETseparator', data: '|' });
+            props.setUpdates({ type: 'SET_SEPARATOR', data: '|' });
         },
         style: { width: 200, paddingLeft: '9px' },
         value: props.data.separator,

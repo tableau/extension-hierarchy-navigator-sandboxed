@@ -34,7 +34,7 @@ export function Page3Flat(props: Props) {
             if(!p.includes(param)) { _flatFields.push(param); }
         });
         setFlatFieldsForChildLabel(_flatFields);
-        if(props.data.parameters.childLabel==='') { props.setUpdates({ type: 'SETCHILDLABELPARAMETER', data: _flatFields[0] }); }
+        if(props.data.parameters.childLabel==='') { props.setUpdates({ type: 'SET_CHILD_LABEL_PARAMETER', data: _flatFields[0] }); }
     }, [props.data.dashboardItems.parameters, props.data]);
 
     useEffect(() => {
@@ -46,7 +46,7 @@ export function Page3Flat(props: Props) {
         const res=filters.filter(filter => {
             return (filter===props.data.worksheet.childId);
         });
-        console.log(`SETTING FILTER(s) ${res.join(', ')} from ${filters.join(', ')}`)
+        if (res.length && props.data.worksheet.filter !== res[0]) {props.setUpdates({type: 'SET_FILTER_FIELD', data: res[0]})};
         setFilterList(res);
 
     }, [props.data.worksheet.childId, props.data.dashboardItems.allCurrentWorksheetItems.filters]);
@@ -82,16 +82,16 @@ export function Page3Flat(props: Props) {
         kind: 'line' as 'line'|'outline'|'search',
         label: `Suffix for all Parameters.`,
         onChange: (e: any) => {
-            props.setUpdates({ type: 'SETPARAMSUFFIX', data: e.target.value });
+            props.setUpdates({ type: 'SET_PARAM_SUFFiX', data: e.target.value });
         },
         onClear: () => {
-            props.setUpdates({ type: 'SETPARAMSUFFIX', data: ' Param' });
+            props.setUpdates({ type: 'SET_PARAM_SUFFiX', data: ' Param' });
         },
         style: { width: 200, paddingLeft: '9px' },
         value: props.data.paramSuffix,
     };
     // const changeFilter=(e: React.ChangeEvent<HTMLSelectElement>): void => {
-    //     props.setUpdates({ type: 'SETFILTERFIELD', data: e.target.value });
+    //     props.setUpdates({ type: 'SET_FILTER_FIELD', data: e.target.value });
     // };
     const yes=(<span style={{ color: 'green', marginRight: '0.5em' }}>✔</span>);
     const no=(<span style={{ marginRight: '0.5em' }}>⚠️</span>);

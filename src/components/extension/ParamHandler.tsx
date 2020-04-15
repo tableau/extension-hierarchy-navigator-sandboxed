@@ -64,7 +64,7 @@ function ParamHandler(props: Props) {
     // finds the worksheet in the dashboard that matches the user selected worksheet
     // returns the worksheet
     async function findWorksheet(): Promise<t.Worksheet|undefined> {
-        console.log(`findWorksheet: props.data.worksheet: ${ props.data.worksheet.name }`);
+        if (debug) {console.log(`findWorksheet: props.data.worksheet: ${ props.data.worksheet.name }`);}
         let ws: Worksheet|undefined;
          if(props.data.worksheet.name !== '') {
             await asyncForEach(props.dashboard.worksheets, (currWorksheet: t.Worksheet) => {
@@ -93,8 +93,6 @@ function ParamHandler(props: Props) {
         }
         const res: any=[];
         if(props.data.worksheet.name!=='') {
-            console.log(`1`);
-
             if(props.data.type===HierType.RECURSIVE) {
 
                 // RECURSIVE

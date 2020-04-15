@@ -287,7 +287,6 @@ class Configure extends React.Component<any, State> {
                         }
                     </div>
                 </div>
-                {console.log(`end of render`)}
             </>
         );
     }

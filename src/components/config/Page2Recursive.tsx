@@ -23,7 +23,7 @@ export function Page2Recursive(props: Props) {
 
     // Handles selection of the parentid field
     const setParent=(e: React.ChangeEvent<HTMLSelectElement>): void => {
-        props.setUpdates({ type: 'SETPARENTIDFIELD', data: e.target.value });
+        props.setUpdates({ type: 'SET_PARENT_ID_FIELD', data: e.target.value });
     };
 
     // Handles selection in worksheet selection dropdown
@@ -33,12 +33,12 @@ export function Page2Recursive(props: Props) {
 
     const setChild=(e: React.ChangeEvent<HTMLSelectElement>): void => {
 
-        props.setUpdates({ type: 'SETCHILDIDFIELD', data: e.target.value });
+        props.setUpdates({ type: 'SET_CHILD_ID_FIELD', data: e.target.value });
     };
 
     // Handles selection of the label field
     const setChildLabel=(e: React.ChangeEvent<HTMLSelectElement>): void => {
-        props.setUpdates({ type: 'SETCHILDLABELFIELD', data: e.target.value });
+        props.setUpdates({ type: 'SET_CHILD_LABEL_FIELD', data: e.target.value });
     };
 
     return (

@@ -5,8 +5,7 @@ import { Extensions } from '@tableau/extensions-api-types';
 import { Button, Spinner } from '@tableau/tableau-ui';
 import React, { useState } from 'react';
 import * as ReactDOM from 'react-dom';
-import { Button as RSButton, Col, Container, Row } from 'reactstrap';
-
+import { Button as RSButton, Col, Container, Row, Alert } from 'reactstrap';
 import flatHier from '../../images/FlatHier.jpeg';
 import recursiveHier from '../../images/RecursiveHier.jpeg';
 import HierarchyAPI from '../API/HierarchyAPI';
@@ -69,7 +68,7 @@ function Configure(props: any) {
                     () => { if(bSwitch) { setSelectedFilterBasedOnAllowedFilters(_selectedWorksheet.name); } }
                 );
         ; */
-        setUpdates({type: 'SETPARENTIDFIELD', data: e.target.value})
+        setUpdates({type: 'SET_PARENT_ID_FIELD', data: e.target.value})
     };
 
     // Handles selection of the childId field
@@ -93,7 +92,7 @@ function Configure(props: any) {
                     selectedProps: selectedWorksheet
                 },
                     () => { setSelectedFilterBasedOnAllowedFilters(selectedWorksheet.name); }); */
-        setUpdates({type: 'SETCHILDIDFIELD', data: e.target.value})
+        setUpdates({type: 'SET_CHILD_ID_FIELD', data: e.target.value})
     };
     // Handles selection of the label field
     const setChildLabel=(e: React.ChangeEvent<HTMLSelectElement>): void => {
@@ -118,7 +117,7 @@ function Configure(props: any) {
                     { selectedProps: _selectedProps },
                     () => { setFilterArrayBasedOnSelectedWorksheet(selectedProps.worksheet.name); }
                 ); */
-        setUpdates({type: 'SETCHILDLABELFIELD', data: e.target.value})
+        setUpdates({type: 'SET_CHILD_LABEL_FIELD', data: e.target.value})
     };
 
     // Handles selection of the filter field
@@ -136,7 +135,7 @@ function Configure(props: any) {
         /*         setState({
                     selectedProps: selectedWorksheet
                 }); */
-       setUpdates({type: 'SETFILTERFIELD', data: e.target.value})
+       setUpdates({type: 'SET_FILTER_FIELD', data: e.target.value})
 
     };
 
@@ -163,7 +162,7 @@ function Configure(props: any) {
                         _sP.childLabelEnabled=false;
                     }
                     dispatchSelectedProps({ type: 'parameterProps', data: _sP }); */
-                    setUpdates({type: 'TOGGLEIDPARAMETERENABLED', data: target.checked})
+                    setUpdates({type: 'TOGGLE_ID_PARAMETER_ENABLED', data: target.checked})
 
                     break;
                 case 'label':
@@ -175,19 +174,19 @@ function Configure(props: any) {
                     } */
                     // dispatchSelectedProps({ type: 'parameterProps', data: selectedParameters });
                     /* dispatchSelectedProps({type: 'parameterProps', data: _sP}) */
-                    setUpdates({type: 'TOGGLELABELPARAMETERENABLED', data: target.checked})
+                    setUpdates({type: 'TOGGLE_LABEL_PARAMETER_ENABLED', data: target.checked})
 
                     break;
                 case 'filter':
                     // selectedWorksheet.filterEnabled=e.target.checked;
                     // dispatchSelectedProps({ type: 'worksheetProps', data: { filterEnabled: e.target.checked } });
-                    setUpdates({type: 'TOGGLEFILTERENABLED', data: target.checked})
+                    setUpdates({type: 'TOGGLE_FILTER_ENABLED', data: target.checked})
 
                     break;
                 case 'mark':
                     // dispatchSelectedProps({ type: 'worksheetProps', data: { enableMarkSelection: e.target.checked } });
                     // selectedWorksheet.enableMarkSelection=e.target.checked;
-                    setUpdates({type: 'TOGGLEMARKSELECTIONENABLED', data: target.checked})
+                    setUpdates({type: 'TOGGLE_MARKSELECTION_ENABLED', data: target.checked})
                     break;
             }
             // setState({ selectedProps: _selectedProps });
@@ -215,7 +214,7 @@ function Configure(props: any) {
     //     }
 
     //     if(settings.configComplete) {
-    //         // setBgColor(settings.bgColor);
+    //         // SET_BG_COLOR(settings.bgColor);
     //         // dispatchSelectedProps({ type: 'replaceAndValidate', data: settings.configComplete});
     //         // setConfigComplete(true);
     //         /* setState({ 
@@ -286,97 +285,28 @@ function Configure(props: any) {
     // };
     // Handles change in background color input
     const bgChange=(color: any): void => {
-        // setBgColor(color.target.value);
+        // SET_BG_COLOR(color.target.value);
         // setState({ bgColor: color.target.value });
-        setUpdates({type: 'SETBGCOLOR', data: color.target.value})
+        setUpdates({type: 'SET_BG_COLOR', data: color.target.value})
 
     };
     // handles changing either the childId or parentId field in the hierarchy
     const changeParam=(e: React.ChangeEvent<HTMLSelectElement>): void => {
         const type: string|null=e.target.getAttribute('data-type');
-        /*         if(debug) {
-                    console.log(`all state: ${ JSON.stringify(state, null, 2) }`);
-                } */
         if(typeof type==='string') {
-
-            // check to see if we can even enable (length of current array >= 1)
-
-            // const { parameters: availParameters }=availableProps;
-/*             const newParam=availableProps.parameters.find(param => param.name===e.target.value)||defaultParameter;
-            const prevChildId: SimpleParameter=extend({}, selectedProps.parameters.childId);
-            if(debug) { console.log(`prevChildId: ${ JSON.stringify(prevChildId, null, 2) }`); }
-
-            const prevChildLabel: SimpleParameter=selectedProps.parameters.childLabel;
-            if(debug) { console.log(`prevChildLabel: ${ JSON.stringify(prevChildLabel, null, 2) }`); }
-            let childId=prevChildId;
-            let childLabel=prevChildLabel; */
-            // if new value is same as existing other value than switch, but only to the same type (string/int)
             if(type==='id') {
-                setUpdates({type: 'SETCHILDIDPARAMETER', data: e.target.value})
-                // childId=newParam;
-                // if(prevChildLabel.name===e.target.value) {
-                //     childLabel=prevChildId; // switch values if they are the same
-                // }
+                setUpdates({type: 'SET_CHILD_ID_PARAMETER', data: e.target.value})
             }
             else if(type==='label') {
-                setUpdates({type: 'SETCHILDLABELPARAMETER', data: e.target.value})
-                // childLabel=newParam;
-                // if(prevChildId.name===e.target.value) {
-                //     childId=prevChildLabel; // switch values if they are the same
-                // }
-
-            }
-
-/*             if(debug) {
-                console.log(`childId param set to ${ JSON.stringify(prevChildId) }`);
-                console.log(`childLabel param set to ${ JSON.stringify(prevChildLabel) }`);
-            } */
-            // const selectedProps=extend(true, {}, selectedProps, { parameters: { childId, childLabel } });
-            // if(debug) { console.log(`setting (finally): ${ JSON.stringify(selectedProps, null, 2) }`); }
-            /*             setState({
-                            selectedProps
-                        }); */
-            // dispatchSelectedProps({ type: 'parameterProps', data: { childId, childLabel } });
-            
+                setUpdates({type: 'SET_CHILD_LABEL_PARAMETER', data: e.target.value})
+            } 
         }
     };
-
-    // Clears setting for which tableau parameter to update
-    // Don't update the saved settings until the user clicks Okay (or cancels)
-/*     const clearSettings=(): void => {
-        if(debug) { console.log(`clearSettings`); }
-        setBgColor('#F3F3F3');
-        setError([]);
-        setConfigComplete(false);
-        setLoading(false);
-        setParameterStatus(Status.notpossible);
-        dispatchSelectedProps({ type: 'reset' });
-        // setSelectedProps(defaultSelectedProps);
-        setWorksheetStatus(Status.notset);
-        // setAvailableProps(defaultAvailableProps);
-        // dispatchAvailableProps({ type: 'reset' });
-
-        // if(debug) { console.log(`calling validateSettings from clearSettings`); }
-        // validateSettings();
-        setSelectedWorksheet();
-        if(debug) { console.log(`end clearSettings`); }
-    }; */
-
-
-
-    // change tabs to specified index #
-    /*     const changeTabs=(index: number) => {
-            if(debug) { console.log(`onChange tab index: ${ index }`); }
-            setSelectedTabIndex(index);
-            // setState({ selectedTabIndex: index });
-        }; */
     // change to next tab in UI
     const changeTabNext=() => {
         if(debug) { console.log(`onChange tab next: ${ selectedTabIndex }`); }
         if(selectedTabIndex<3) {
-
             setSelectedTabIndex((prev:number) => prev+1);
-            // setState((prevState) => ({ selectedTabIndex: prevState.selectedTabIndex+1 }));
         }
     };
     // change to prev tab in UI
@@ -384,30 +314,15 @@ function Configure(props: any) {
         if(debug) { console.log(`onChange tab previous: ${ selectedTabIndex }`); }
         if(selectedTabIndex>0) {
             setSelectedTabIndex((prev:number) => prev-1);
-            // setState((prevState) => ({ selectedTabIndex: prevState.selectedTabIndex-1 }));
         }
     };
     // change Hier Type
     const changeHierType=(type: HierType) => {
-        console.log(`clicked hier type image: ${ type }`);
-        // console.log(`settings before:`);
-        // console.log(selectedProps);
-        // // clearSettings();
-        // const selectedP=extend(true, {}, selectedProps, { type });
-        // console.log(`about to set...`);
-        // console.log(selectedP);
-        // setSelectedProps(selectedP);
-        // dispatchSelectedProps({ type: 'type', data: type });
-        // setState({ selectedProps: selectedP });
+        if (debug) {console.log(`clicked hier type image: ${ type }`);}
         setUpdates({type: 'CHANGE_HIER_TYPE', data: type})
-
     };
 
-
-
     const getStyle=(style: HierType) => {
-        console.log(`calling getStyle`);
-        console.log(`style=${ style } andselectedProps.type=${ data.type }`);
         if((style===HierType.FLAT&&data.type===HierType.FLAT)||
             (style===HierType.RECURSIVE&&data.type===HierType.RECURSIVE)) {
             return { background: 'lightblue' };
@@ -497,17 +412,18 @@ function Configure(props: any) {
                 return (<div>Not here yet</div>);
         }
     }
+
+    const onDismiss = () => {
+        setUpdates({type: 'CLEAR_ERROR'})
+    }
+
     return (
         <>
             {!doneLoading? (<div aria-busy='true' className='overlay'><div className='centerOnPage'><div className='spinnerBg centerOnPage'>{}</div><Spinner color='light' /></div></div>):undefined}
             <div className='headerStyle' >
             Hierarchy Navigator 
             </div>
-            {typeof isError !== 'undefined' && isError?
-                    (<h4 style={{ color: 'red' }} className={'m-3'}>
-                        {errorStr}<br />
-                    </h4>):undefined
-            }
+
 
             <Container className='navcontainer'>
                 <Row>
@@ -565,6 +481,10 @@ function Configure(props: any) {
                 </Row>
 
             </Container>
+            <Alert color='warning' isOpen={isError} toggle={onDismiss}>
+                {errorStr}
+            </Alert>
+
             {returnPage(selectedTabIndex)}
 
             <div className='d-flex flex-row-reverse'>
@@ -589,8 +509,6 @@ function Configure(props: any) {
                     }
                 </div>
             </div>
-            {console.log(`end of render`)}
-                {/* {console.log(JSON.stringify(state,null,2))}  */}
         </>
     );
 }

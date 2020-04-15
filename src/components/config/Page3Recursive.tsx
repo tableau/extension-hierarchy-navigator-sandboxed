@@ -5,10 +5,10 @@ import { Selector } from '../shared/Selector';
 import { debug, HierarchyProps, Status } from './Interfaces';
 
 interface Props {
-    data: HierarchyProps
+    data: HierarchyProps;
     setUpdates: (obj: { type: string, data: any; }) => void;
-    changeEnabled: (s: React.MouseEvent<HTMLInputElement, MouseEvent> | React.ChangeEvent<HTMLInputElement>) => void
-    changeParam: (e: React.ChangeEvent<HTMLSelectElement>)=>void
+    changeEnabled: (s: React.MouseEvent<HTMLInputElement, MouseEvent>|React.ChangeEvent<HTMLInputElement>) => void;
+    changeParam: (e: React.ChangeEvent<HTMLSelectElement>) => void;
 
 }
 
@@ -18,16 +18,18 @@ export function Page3Recursive(props: Props) {
     useEffect(() => {
         const { filters }=props.data.dashboardItems.allCurrentWorksheetItems;
         const res=filters.filter(filter => {
-            return (filter===props.data.worksheet.childId || filter===props.data.worksheet.childLabel);
+            return (filter===props.data.worksheet.childId||filter===props.data.worksheet.childLabel);
         });
-        console.log(`SETTING FILTER(s) ${res.join(', ')} from ${filters.join(', ')}`)
+        if (res.length && props.data.worksheet.filter !== props.data.worksheet.childId && props.data.worksheet.filter !== props.data.worksheet.childLabel) { 
+            props.setUpdates({type: 'SET_FILTER_FIELD', data: res[0]})
+        }
         setFilterList(res);
 
     }, [props.data.worksheet.childId, props.data.dashboardItems.allCurrentWorksheetItems.filters]);
 
     const changeFilter=(e: React.ChangeEvent<HTMLSelectElement>): void => {
-        props.setUpdates({type: 'SETFILTERFIELD', data: e.target.value})
-     };
+        props.setUpdates({ type: 'SET_FILTER_FIELD', data: e.target.value });
+    };
 
 
     // PARAMETERS CONTENT
@@ -85,13 +87,13 @@ export function Page3Recursive(props: Props) {
                     <br />
                     <div style={filterList.length? {}:{ display: 'none' }}>
                         <Selector
-                        status={filterList.length>0?Status.set:Status.notset}
+                            status={filterList.length>0? Status.set:Status.notset}
                             onChange={changeFilter}
                             list={filterList}
                             selected={props.data.worksheet.filter}
                             type='filter'
                         />
-                        </div>
+                    </div>
                     <Checkbox
                         checked={props.data.worksheet.enableMarkSelection}
                         onClick={props.changeEnabled}
