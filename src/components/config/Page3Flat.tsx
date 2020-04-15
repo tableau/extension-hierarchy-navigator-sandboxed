@@ -90,9 +90,7 @@ export function Page3Flat(props: Props) {
         style: { width: 200, paddingLeft: '9px' },
         value: props.data.paramSuffix,
     };
-    // const changeFilter=(e: React.ChangeEvent<HTMLSelectElement>): void => {
-    //     props.setUpdates({ type: 'SET_FILTER_FIELD', data: e.target.value });
-    // };
+
     const yes=(<span style={{ color: 'green', marginRight: '0.5em' }}>✔</span>);
     const no=(<span style={{ marginRight: '0.5em' }}>⚠️</span>);
 
@@ -171,15 +169,6 @@ export function Page3Flat(props: Props) {
                     >Filter {!filterList.length? ` (to enable, add a filter on ID field on the source sheet)`:` for ${ props.data.worksheet.filter }`}
                     </Checkbox>
                     <br />
-                    {/* <div style={props.data.dashboardItems.allCurrentWorksheetItems.filters.length>0? {}:{ display: 'none' }}>
-                        <Selector
-                            status={filterStatus()? Status.set:Status.notpossible}
-                            onChange={changeFilter}
-                            list={filterList()}
-                            selected={props.data.worksheet.filter}
-                            type='filter'
-                        />
-                        </div> */}
                     <Checkbox
                         checked={props.data.worksheet.enableMarkSelection}
                         onClick={props.changeEnabled}

@@ -139,7 +139,6 @@ function Hierarchy(props: Props) {
                             if(debug) { console.log(`Order of fields from dataTablea: ${ colArray } => ${ JSON.stringify(dataTable.coumns) }`); }
                             let isSet: boolean=false;
                             dataTable.data.forEach((row: any, index: number) => {
-                                // for (const index of colArray){
                                     let parentId: string = 'Null';
                                     let key: string = '';
                                 for(let i=0;i<colArray.length;i++) {
@@ -148,21 +147,6 @@ function Hierarchy(props: Props) {
                                     const childLabelCol=colArray[i];
 
                                     const childLabel=row[childLabelCol].formattedValue;
-                                    // let key: string='';
-                                    // build key
-                                    // console.log(`building key for ${childLabel}`)
-    /*                                 for(let j=0;j<=i;j++) {
-                                        key+=row[colArray[j]].formattedValue;
-                                        if (j<i) { key+='|'; }
-                                        if (i === 0) { parentId = 'Null'}
-                                        else{
-                            
-                                            if (j < i){
-                                                parentId += row[colArray[j]].formattedValue ;
-                                            }
-                                            if (j < i-1){parentId += '|'}
-                                        } 
-                                    } */
                                     if (i === 0) {parentId = 'Null';}
                                     else {
                                         if (i === 1) {parentId = row[parentIDCol].formattedValue;}
@@ -170,13 +154,9 @@ function Hierarchy(props: Props) {
                                     }
                                     if (i === 0) {key = row[childIDCol].formattedValue}
                                     else {key += `${props.data.separator}${row[childIDCol].formattedValue}`}
-                                    // console.log(`built key ${key} for ${childLabel}`)
-
                                     const match=map.filter(itm =>
                                         itm.parent===parentId&&itm.label===childLabel&&itm.key===key
                                     );
-                                    // console.log(match);
-                                    // if(debug) { console.log(`${ match.length? `+ Adding`:`  - Skipping` } row: ${ parentId } -> ${ childLabel }(${ key })`); };
                                     if(!match.length) {
                                         map.push({ parent: parentId, label: childLabel, key, nodes: [] });
                                     }
@@ -187,22 +167,6 @@ function Hierarchy(props: Props) {
                                     }
 
                                 }
-
-
-
-                                // check for dupes and ignore
-                                /* const match=map.filter(itm =>
-                                    itm.parent===row[parentIDCol].formattedValue&&itm.label===row[childLabelCol].formattedValue&&itm.key===row[childIDCol].formattedValue
-                                );
-                                if(match.length&&debug) { console.log(`skipping dupe: ${ row[parentIDCol].formattedValue }/${ row[childLabelCol].formattedValue }/${ row[childIDCol].formattedValue }`); }
-                                if(!match.length) {
-                                    map.push({ parent: row[parentIDCol].formattedValue, label: row[childLabelCol].formattedValue, key: row[childIDCol].formattedValue, nodes: [] });
-                                }
-                                if(!isSet) {
-                                    isSet=true;
-                                    setCurrentLabel(row[childLabelCol].formattedValue);
-                                    setCurrentId(row[childIDCol].formattedValue);
-                                } */
                             });
                         }
                     });
@@ -212,11 +176,6 @@ function Hierarchy(props: Props) {
 
                 }
             });
-        
-/*         if(debug) { console.log(`map (stringify): vvv`); }
-        if(debug) { console.log(JSON.stringify(map)); }
-        if(debug) { console.log(`map (object): vvv`); }
-        if(debug) { console.log(map); } */
         buildHierarchy(map);
     };
 
@@ -229,10 +188,6 @@ function Hierarchy(props: Props) {
     }
     // credit to https://stackoverflow.com/a/58136016/7386278
     function buildHierarchy(_data: Tree[]): void {
-/*         if(debug) {
-            console.log(`buildHierarchy: incoming data? vvv`);
-            console.log(data);
-        } */
         clearHierarchy();
         let _tree: Tree[]=[]; // object we will return to set state
         const _childOf: any=[]; // array we will return to set state
@@ -240,58 +195,10 @@ function Hierarchy(props: Props) {
 
             const { key, parent }=item;
             _childOf[key]=_childOf[key]||[];
-            // console.log(`_childOf[key] key=${ key }`);
-            // console.log(_childOf[key]);
             item.nodes=_childOf[key];
-            // console.log(parent)
             const _hasParent=!(parent==='Null'||parseInt(parent, 10)===0||parent===''||parent===key);
-            // if(debug) { console.log(`hasParent?  ${ _hasParent }`); }
             _hasParent? (_childOf[parent]=_childOf[parent]||[]).push(item):_tree.push(item);
-            /* console.log(`\nfor ${index}-${JSON.stringify(item)}
-            \tchildOf[parent] = ${JSON.stringify(_childOf[parent],null,2)}
-            \tchildOf[key] = ${JSON.stringify(_childOf[key],null,2)}
-            `) */
-
         });
-        // console.log(`_childOf ___: ${ _childOf.length }  ${ Array.isArray(_childOf) }`);
-        // console.log(_childOf);
-        // console.log(`___`);
-        /* // logic if parent/child are not recursive
-        // props to Santiago Sanchez, SC Extraodinaire 12/19/19
-        if(!_tree.length&&Object.keys(_childOf).length) {
-            if(debug) { console.log(`found non-recursive hierarchy`); }
-            _tree.push({ parent: '', key: '(All)', label: '(All)', nodes: [] })
-            _childOf['(All)'] = [];
-            const alreadyFound: string[]=[];
-            for(const el in _childOf) {
-                if(_childOf.hasOwnProperty(el)) {
-                    if(debug) { console.log(_childOf[el]); }
-                    if(_childOf[el].length) {
-                        // tslint:disable-next-line prefer-for-of
-                        for(let i=0;i<_childOf[el].length;i++) {
-                            const { parent }=_childOf[el][i];
-                            console.log(`!alreadyFound.includes(parent): ${!alreadyFound.includes(parent)} 
-                            -- parent = ${parent}, el = ${JSON.stringify(el)}`)
-                            console.log(`already found: ${JSON.stringify(alreadyFound)}`)
-                            if(!alreadyFound.includes(parent)) {
-                                _childOf['(All)'].push({ parent: '(All)', key: _childOf[el].key, label: _childOf[el].label, nodes: _childOf[el].nodes });
-                                alreadyFound.push(parent);
-                                _tree[0].nodes.push({ parent: '(All)', key: parent, label: parent, nodes: _childOf[parent] });
-                            }
-                        }
-                    }
-                }
-            } 
-            if(debug) {
-                console.log(`now childOf: vvv`)
-                console.log(JSON.stringify(_childOf));
-                console.log(_childOf)
-                console.log(`_tree was not recursive... morphing into 2 level hierarchy!`);
-                console.log(`_tree`)
-                console.log(JSON.stringify(_tree));
-                console.log(_tree);
-            }
-        }*/
 
         _tree=sortTree(_tree); // sort the tree
         buildPathMap(_tree); // build a map of paths to children
@@ -310,10 +217,6 @@ function Hierarchy(props: Props) {
     // sort tree alphabetically within each node/parent
     function sortTree(_tree: Tree[]): Tree[] {
         if(_tree.length<=1) { return _tree; }
-        // if(debug) {
-        //     console.log(`tree.length ${ _tree.length }`);
-        //     console.log(`first node: ${ _tree[0].label }`);
-        // }
         function compare(a: Tree, b: Tree) {
             if(a.label>b.label) { return 1; }
             else if(b.label>a.label) { return -1; }
@@ -453,7 +356,7 @@ function Hierarchy(props: Props) {
                 }}
                 resetOpenNodesOnDataUpdate={true}
                 ref={childRef} 
-                separator={'»'}
+                /* separator={'»'} */
             />
         </div>
     );

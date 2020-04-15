@@ -17,33 +17,28 @@ interface Props {
 }
 
 export function Page2Flat(props: Props) {
-    // fieldArr is all fields on current worksheet
-    const [fieldArr, setFieldArr]=useState<string[]>([]);
     // availFields are fields on worksheet that are not added to hierarchy (aka worksheet.fields); used for childID selector
     const [availFields, setAvailFields]=useState<string[]>([]);
     // sans child is all available fields except child id field; used for left ul
     const [availFieldsSansChildId, setAvailFieldsSansChildId]=useState<string[]>([]);
-
-    useEffect(() => {
-        setFieldArr(props.data.dashboardItems.allCurrentWorksheetItems.fields.map(field => field));
-    }, [props.data.dashboardItems.allCurrentWorksheetItems.fields, props.data.worksheet.childId]);
+    const { fields: allFields }=props.data.dashboardItems.allCurrentWorksheetItems;
 
     useEffect(() => {
         const avail: string[]=[];
         const sansChildId: string[]=[];
         // tslint:disable prefer-for-of
-        for(let i=0;i<fieldArr.length;i++) {
-            if(props.data.worksheet.fields.indexOf(fieldArr[i])===-1 ) {
-                avail.push(fieldArr[i]);
-                if (fieldArr[i] !== props.data.worksheet.childId){
-                    sansChildId.push(fieldArr[i]);
+        for(let i=0;i<allFields.length;i++) {
+            if(!props.data.worksheet.fields.includes(allFields[i])) {
+                avail.push(allFields[i]);
+                if(allFields[i]!==props.data.worksheet.childId) {
+                    sansChildId.push(allFields[i]);
                 }
             }
         }
         // tslint:enable prefer-for-of
         setAvailFields(avail);
         setAvailFieldsSansChildId(sansChildId);
-    }, [fieldArr, props.data.worksheet.fields, props.data.worksheet.childId]);
+    }, [props.data.worksheet.fields, props.data.worksheet.childId]);
 
     // Handles selection in worksheet selection dropdown
     const worksheetChange=(e: React.ChangeEvent<HTMLSelectElement>): void => {
@@ -85,7 +80,6 @@ export function Page2Flat(props: Props) {
 
     const StaticFieldsItem=SortableElement(({ value }: any) => <li>{value}
         <RSButton value={value} onClick={addToList} color='white' size='xs' style={{ color: 'blue' }}>Add</RSButton>
-        {/* <RSButton value={value} onClick={props.setChild} color='white' size='xs' style={{ color: 'blue' }}>Key</RSButton> */}
     </li>);
 
     const StaticFieldsList=SortableContainer(({ items }: any) => {
@@ -93,7 +87,7 @@ export function Page2Flat(props: Props) {
         return (
             <ul className={'sortableList'}>
                 {items.map((value: any, index: any) => (
-                    <StaticFieldsItem key={`item-${ value }`} index={index} value={value} />
+                    <StaticFieldsItem key={`item-${ value }`} index={index} value={value} disabled={true}/>
                 ))}
             </ul>
         );
@@ -117,12 +111,11 @@ export function Page2Flat(props: Props) {
     // add to list
     const addToList=(evt?: any) => {
         const fields: string[]=extend(true, [], props.data.worksheet.fields);
-        // if(!_selectedProps.worksheet.hasOwnProperty('fields')) { _selectedProps.worksheet.fields=[]; }
         if(evt.target&&evt.target.value) {
             fields.push(evt.target.value);
         }
         else {
-            fieldArr.forEach(el => {
+            allFields.forEach(el => {
                 if(fields.indexOf(el)===-1&&el!==props.data.worksheet.childId) {
                     fields.push(el);
                 }
@@ -138,15 +131,9 @@ export function Page2Flat(props: Props) {
         kind: 'line' as 'line'|'outline'|'search',
         label: `Separator for ${ props.data.worksheet.childId } field formula.`,
         onChange: (e: any) => {
-            // const _selectedProps: SelectedProps=extend(true, {}, props.data);
-            // _selectedProps.separator=e.target.value;
-            // props.dispatchSelectedProps({ type: 'separator', data: e.target.value });
             props.setUpdates({ type: 'SET_SEPARATOR', data: e.target.value });
         },
         onClear: () => {
-            // const _selectedProps: SelectedProps=extend(true, {}, props.data);
-            // _selectedProps.separator='|';
-            // props.dispatchSelectedProps({ type: 'separator', data: '|' });
             props.setUpdates({ type: 'SET_SEPARATOR', data: '|' });
         },
         style: { width: 200, paddingLeft: '9px' },
@@ -213,13 +200,11 @@ export function Page2Flat(props: Props) {
                             <>
                                 <StaticFieldsList
                                     items={availFieldsSansChildId}
-                                    onSortEnd={onSortEnd}
                                     lockAxis='y'
-                                    helperClass={'draggingSort'}
                                 />
 
                             </>
-                            :fieldArr.length?'All fields are used':'No fields available'}
+                            :allFields.length? 'All fields are used':'No fields available'}
                         <p />
 
                     </Col>

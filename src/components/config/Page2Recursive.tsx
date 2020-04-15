@@ -32,7 +32,6 @@ export function Page2Recursive(props: Props) {
     };
 
     const setChild=(e: React.ChangeEvent<HTMLSelectElement>): void => {
-
         props.setUpdates({ type: 'SET_CHILD_ID_FIELD', data: e.target.value });
     };
 

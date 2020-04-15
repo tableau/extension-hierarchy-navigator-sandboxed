@@ -82,20 +82,6 @@ const hierarchyAPI=(): any => {
         dispatch({ type: 'FETCH_INIT' });
 
         await tableau.extensions.initializeDialogAsync();
-
-        // isConfigure is TRUE when we are in the configuration; so this logic may seem a bit
-        // backwards but we only want to pass the configure object from the base extension
-        /*         if(_initialData.isConfigure) {
-                    await extensions.initializeAsync();
-                    setConfigEventHandler(extensions.settings.addEventListener(tableau.TableauEventType.SettingsChanged, (settingsEvent: any) => {
-                        if(debug) { console.log(`Tableau Event Handler: Settings Changed.`); }
-                        dispatch({ type: 'FETCH_INIT' });
-                        const currentData: HierarchyProps=extend(true, {}, state.data, loadSettings(settingsEvent.newSettings));
-                        dispatch({ type: 'FETCH_SUCCESS', data: currentData });
-                    }));
-                }
-                else { await extensions.initializeAsync({ configure }); }
-         */
         const _settings=loadSettings();
         if(debug) {
             console.log(`loading _settings: vvv`);

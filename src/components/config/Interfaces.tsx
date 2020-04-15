@@ -1,10 +1,5 @@
 /*  tslint:disable:max-classes-per-file */
 export {debug} from '../../../config';
-// import { DataType } from '@tableau/extensions-api-types/ExternalContract/Namespaces/Tableau';
-// import { Extensions } from '@tableau/extensions-api-types';
-// declare global {
-//     interface Window { tableau: { extensions: Extensions; }; }
-// }
 export enum HierType {
     FLAT='flat',
     RECURSIVE='recursive'
@@ -104,19 +99,3 @@ export const defaultSelectedProps: HierarchyProps={
     
     
 };
-
-
-
-// export const defaultAvailableProps: AvailableProps={
-//     parameters: [],
-//     worksheets: []
-// };
-// export const defaultWorksheet: AvailableWorksheet={ name: '', fields: [], filters: [] };
-
-
-// export interface HierarchyConfig {
-//     selectedProps: HierarchyProps;
-//     avaliableProps: AvailableProps;
-//     enumeratedProps: 
-// }
-
