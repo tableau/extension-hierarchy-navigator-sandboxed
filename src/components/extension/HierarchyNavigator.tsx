@@ -4,7 +4,7 @@ import 'babel-polyfill';
 import React, { useEffect, useState } from 'react';
 import * as ReactDOM from 'react-dom';
 import '../../css/style.css';
-import { debug, defaultSelectedProps, HierarchyProps } from '../config/Interfaces';
+import { debug, defaultSelectedProps, HierarchyProps } from '../API/Interfaces';
 import ParamHandler from './ParamHandler';
 
 function HierarchyNavigator() {

@@ -2,7 +2,7 @@ import { Checkbox } from '@tableau/tableau-ui';
 import React, { useEffect, useState } from 'react';
 
 import { Selector } from '../shared/Selector';
-import { debug, HierarchyProps, Status } from './Interfaces';
+import { debug, HierarchyProps, Status } from '../API/Interfaces';
 
 interface Props {
     data: HierarchyProps;

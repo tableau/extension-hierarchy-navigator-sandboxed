@@ -1,7 +1,7 @@
 import { Button, ButtonProps, DropdownSelect, DropdownSelectProps } from '@tableau/tableau-ui';
 import * as React from 'react';
 import '../../css/style.css';
-import {Status} from '../config/Interfaces';
+import {Status} from '../API/Interfaces';
 
 export interface SelectorProps {
     title?: string;

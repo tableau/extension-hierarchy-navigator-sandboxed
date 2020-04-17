@@ -10,7 +10,6 @@ export interface SimpleField {
     dataType: any, // should be DataType
 }
 export interface HierarchyProps {
-    isConfigure: boolean;
     bgColor: string;
     configComplete: boolean;
     separator: string;
@@ -21,10 +20,12 @@ export interface HierarchyProps {
     dashboardItems: AvailableProps;
 }
 export interface SelectedParameters {
-    childId: string,
-    childIdEnabled: boolean,
-    childLabel: string,
+    childId: string;
+    childIdEnabled: boolean;
+    childLabel: string;
     childLabelEnabled: boolean;
+    fields: string[];
+    level: string;
 }
 export interface AvailableProps {
     parameters: string[], // list of paramaters to be shown to user for selection
@@ -72,15 +73,15 @@ export const defaultSelectedProps: HierarchyProps={
         parameters: [],
         worksheets: [],
     },
-    
-    isConfigure: false,
     paramSuffix: ' Param',
     parameters:
     {
         childId: '',
         childIdEnabled: false,
         childLabel: '',
-        childLabelEnabled: false
+        childLabelEnabled: false,
+        fields: [],
+        level: 'Level Param',
     },
     separator: '|',
     type: HierType.FLAT,
@@ -96,6 +97,4 @@ export const defaultSelectedProps: HierarchyProps={
         parentId: '',
         status: Status.notpossible
     }
-    
-    
 };

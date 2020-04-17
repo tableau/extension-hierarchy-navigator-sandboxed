@@ -1,6 +1,6 @@
 import React, { ReactFragment, useEffect, useRef, useState } from 'react';
 import TreeMenu from 'react-simple-tree-menu';
-import { debug, HierType, HierarchyProps } from '../config/Interfaces';
+import { debug, HierType, HierarchyProps } from '../API/Interfaces';
 import { HierarchyState } from '../API/HierarchyAPI';
 
 interface Tree {
@@ -275,7 +275,6 @@ function Hierarchy(props: Props) {
 
     // when the id is changed on the dashboard, update extension values
     function setcurrentIdFromDashboard() {
-        if (!debounce()) {return;}
         if(debug) {
             console.log(`in setcurrentIdfromDash`);
             console.log(`props.currentId: ${ props.currentId }`);
@@ -301,7 +300,6 @@ function Hierarchy(props: Props) {
     }
     // when the label is changed on the dashboard, update extension values
     function setcurrentLabelFromDashboard() {
-        if (!debounce()) {return;}
         if(debug) { console.log(`in setcurrentLabelFromDash`); }
         let node;
         for(const el of pathMap) {

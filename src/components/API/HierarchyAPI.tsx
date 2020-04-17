@@ -1,13 +1,10 @@
 import * as t from '@tableau/extensions-api-types';
 import { useEffect, useReducer, useRef, useState } from 'react';
-import { debug, defaultSelectedProps, HierarchyProps, HierType, Status } from '../config/Interfaces';
 import * as React from 'react';
+import { debug, defaultSelectedProps, HierarchyProps, HierType, Status } from './Interfaces';
 
 const extend=require('extend');
 
-// declare global {
-//     interface Window { tableau: { extensions: Extensions; }; }
-// }
 export interface HierarchyState {
     doneLoading: boolean;
     isError: boolean;
@@ -129,8 +126,6 @@ const hierarchyAPI=(): any => {
         return res;
     };
 
-
-
     const changeHierType=(hierType: HierType) => {
         const changeHierTypeAsync=async () => {
             if(hierType===state.data.type) { return; }
@@ -150,8 +145,6 @@ const hierarchyAPI=(): any => {
     useEffect(() => {
         initAsync();
     }, []);
-
-
 
     const setUpdates=(action: { type: string, data: any; }): void => {
         const payload: HierarchyProps=extend(true, {}, state.data);
@@ -173,6 +166,7 @@ const hierarchyAPI=(): any => {
                     if(payload.worksheet.parentId===action.data) {
                         payload.worksheet.parentId=payload.worksheet.childId;
                     }
+                    if (payload.type === HierType.FLAT){payload.parameters.childId = `${ payload.worksheet.childId }${ payload.paramSuffix }`}
                     payload.worksheet.childId=action.data;
                     return dispatch({ type: 'FETCH_SUCCESS', data: payload });
                 }
@@ -214,6 +208,12 @@ const hierarchyAPI=(): any => {
                 {
                     // update parameter suffix
                     payload.paramSuffix=action.data;
+                    payload.parameters.level = `Level${ payload.paramSuffix }`
+                    payload.parameters.childId = `${ payload.worksheet.childId }${ payload.paramSuffix }`;
+                    payload.parameters.fields = [];
+                    for(const field of payload.worksheet.fields) {
+                        payload.parameters.fields.push(`${ field }${ payload.paramSuffix }`);
+                    }
                     return dispatch({ type: 'FETCH_SUCCESS', data: payload });
                 }
             case 'SET_SEPARATOR':
@@ -226,6 +226,12 @@ const hierarchyAPI=(): any => {
                 {
                     // update fields for flat hierarchy
                     payload.worksheet.fields=action.data;
+                    if (payload.type === HierType.FLAT){
+                        payload.parameters.fields = [];
+                        for(const field of payload.worksheet.fields) {
+                            payload.parameters.fields.push(`${ field }${ payload.paramSuffix }`);
+                        }
+                    }
                     payload.configComplete=evalConfigComplete(payload);
                     return dispatch({ type: 'FETCH_SUCCESS', data: payload });
                 }
@@ -311,7 +317,7 @@ const hierarchyAPI=(): any => {
 
             // if parameters added, assign them
             if(_initialData.parameters.childId==='') { _initialData.parameters.childId=_initialData.dashboardItems.parameters[0]||''; }
-            if(_initialData.parameters.childLabel==='') { _initialData.parameters.childLabel=_initialData.dashboardItems.parameters[0]||''; }
+            if(_initialData.parameters.childLabel==='') { _initialData.parameters.childLabel=_initialData.dashboardItems.parameters[1]||_initialData.dashboardItems.parameters[0]||''; }
         }
         catch(e) {
             if(debug) { console.log(`error in getWorksheetsFromDashboardAsyncWithoutAssignment: ${ e }`); }
@@ -382,7 +388,7 @@ const hierarchyAPI=(): any => {
                 if(payload.type===HierType.RECURSIVE) {
                     payload.parameters.childId=payload.dashboardItems.parameters[0]||'';
                 }
-                payload.parameters.childLabel=payload.dashboardItems.parameters[0]||'';
+                payload.parameters.childLabel=_initialData.dashboardItems.parameters[1]||payload.dashboardItems.parameters[0]||'';
 
             }
             catch(e) {
@@ -620,7 +626,7 @@ const hierarchyAPI=(): any => {
             if(d.parameters.childLabelEnabled&&!d.dashboardItems.parameters.includes(d.parameters.childLabel)) {
                 modifiedStr.push(`Child Label Parameter '${ d.parameters.childLabel }' no longer present.`);
                 d.parameters.childLabelEnabled=false;
-                d.parameters.childLabel=d.dashboardItems.parameters[0]||'';
+                d.parameters.childLabel=d.dashboardItems.parameters[1]||d.dashboardItems.parameters[0]||'';
             }
 
             // Check filter

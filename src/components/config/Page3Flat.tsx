@@ -2,8 +2,7 @@
 import { Checkbox, TextField } from '@tableau/tableau-ui';
 import React, { useEffect, useState } from 'react';
 import { Selector } from '../shared/Selector';
-import { debug, HierarchyProps, Status } from './Interfaces';
-import { inspect } from 'util';
+import { debug, HierarchyProps, Status } from '../API/Interfaces';
 
 const extend=require('extend');
 
@@ -15,32 +14,37 @@ interface Props {
 }
 
 export function Page3Flat(props: Props) {
-    const [flatFieldsForChildLabel, setFlatFieldsForChildLabel]=useState<string[]>([]);
-    const [generatedParams, setGeneratedParams]=useState<string[]>([]);
+    const [availParamsForChildLabel, setAvailParamsForChildLabel]=useState<string[]>([]);
     const [levelParam, setLevelParam]=useState<boolean>(false);
     const [filterList, setFilterList]=useState<string[]>([]);
+    
     // for flat hier; this is the list of params that are auto-generated
     useEffect(() => {
         const p: string[]=[];
-        p.push(`Level ${ props.data.paramSuffix }`);
-        p.push(`${ props.data.worksheet.childId }${ props.data.paramSuffix }`);
-        for(const field of props.data.worksheet.fields) {
+        p.push(props.data.parameters.level);
+        p.push(props.data.parameters.childId);
+        for(const field of props.data.parameters.fields) {
             p.push(`${ field }${ props.data.paramSuffix }`);
         }
-        setGeneratedParams(p);
-
-        const _flatFields: string[]=[];
+        const _flatParams: string[]=[];
         props.data.dashboardItems.parameters.forEach(param => {
-            if(!p.includes(param)) { _flatFields.push(param); }
+            if(!p.includes(param)) { _flatParams.push(param); }
         });
-        setFlatFieldsForChildLabel(_flatFields);
-        if(props.data.parameters.childLabel==='') { props.setUpdates({ type: 'SET_CHILD_LABEL_PARAMETER', data: _flatFields[0] }); }
+        setAvailParamsForChildLabel(_flatParams);
     }, [props.data.dashboardItems.parameters, props.data]);
 
+    // check level param upon page load
     useEffect(() => {
-        if(debug) { console.log(`checking if Level${ props.data.paramSuffix } is a viable numeric parameter`); }
+        if(debug) { console.log(`checking if ${props.data.parameters.level} is a viable numeric parameter`); }
+        checkLevelParam();
+
+        // legacy... to upgrade to new parameters format
+        if (props.data.parameters.fields.length !== props.data.worksheet.fields.length){
+            props.setUpdates({type: 'SET_FIELDS', data: props.data.worksheet.fields});
+        }
     }, []);
 
+    // set the available filter that matches the childId field
     useEffect(() => {
         const { filters }=props.data.dashboardItems.allCurrentWorksheetItems;
         const res=filters.filter(filter => {
@@ -51,12 +55,15 @@ export function Page3Flat(props: Props) {
 
     }, [props.data.worksheet.childId, props.data.dashboardItems.allCurrentWorksheetItems.filters]);
 
-
     // Is there a parameter that exists that matches the name/type?
     // This is used on Page3Flat to check if the Level parameter of type int is present
     // String parameters are the only one stored hence the need for an additional check
     useEffect(() => {
+        checkLevelParam();
+    }, [props.data.paramSuffix]);
 
+    // function to set the 
+    const checkLevelParam = () => {
         const check=async () => {
             await window.tableau.extensions.dashboardContent!.dashboard.getParametersAsync()
                 .then(params => {
@@ -64,7 +71,7 @@ export function Page3Flat(props: Props) {
                     if(debug) { console.log(`parameters found`); }
                     for(const p of params) {
                         if(debug) { console.log(p); }
-                        if(p.dataType==='int'&&p.name===`Level${ props.data.paramSuffix }`) {
+                        if(p.dataType==='int'&&p.name===props.data.parameters.level ) {
                             console.log(`matching ${ p.dataType } & ${ p.name }. Returning true`);
                             return setLevelParam(true);
                         }
@@ -74,8 +81,7 @@ export function Page3Flat(props: Props) {
                 });
         };
         check();
-
-    }, [props.data.paramSuffix]);
+    }
 
     const inputProps={
         errorMessage: undefined,
@@ -95,19 +101,15 @@ export function Page3Flat(props: Props) {
     const no=(<span style={{ marginRight: '0.5em' }}>⚠️</span>);
 
     const idPresent=() => {
-        return props.data.dashboardItems.parameters.includes(`${ props.data.worksheet.childId }${ props.data.paramSuffix }`)? yes:no;
+        return props.data.dashboardItems.parameters.includes(`${ props.data.parameters.childId }`)? yes:no;
     };
     const labelPresent=() => {
         return props.data.dashboardItems.parameters.includes(`${ props.data.parameters.childLabel }`)? yes:no;
     };
-    const paramPresent=(field: string) => {
-        const fullField = `${field}${ props.data.paramSuffix }`;
-        console.log(`paramPresent for field: ${ field }${ props.data.paramSuffix }?  ${props.data.dashboardItems.parameters.includes(fullField)}`);
-        console.log(`${props.data.dashboardItems.parameters.join(', ')}`)
-        return props.data.dashboardItems.parameters.includes(`${ field }${ props.data.paramSuffix }`)? yes:no;
+    const paramPresent=(param: string) => {
+        return props.data.dashboardItems.parameters.includes(`${ param }`)? yes:no;
     };
 
-    // PARAMETERS CONTENT
     return (
         <>
             <div className='sectionStyle mb-2'>
@@ -117,13 +119,13 @@ export function Page3Flat(props: Props) {
                     <TextField {...inputProps} />
                     <br />
                     <Checkbox
-                        disabled={!flatFieldsForChildLabel.length}
+                        disabled={!availParamsForChildLabel.length}
                         checked={props.data.parameters.childLabelEnabled}
                         onClick={props.changeEnabled}
                         onChange={props.changeEnabled}
                         data-type='label'
                     >
-                        Parameter for Child Label Field
+                        Parameter for Label (current value of any selected hierarchy member)
         </Checkbox>
                     <br />
                     <Selector
@@ -131,7 +133,7 @@ export function Page3Flat(props: Props) {
                         status={props.data.parameters.childLabelEnabled?
                             (props.data.dashboardItems.parameters.length? Status.set:Status.notpossible):Status.notpossible}
                         onChange={props.changeParam}
-                        list={flatFieldsForChildLabel}
+                        list={availParamsForChildLabel}
                         selected={props.data.parameters.childLabel}
                         type='label'
                     />
@@ -140,18 +142,14 @@ export function Page3Flat(props: Props) {
             <br />
 
                     <ul>
-                        <li style={{ listStyleType: 'none', marginLeft: '-1.2em' }}>{levelParam? yes:no} [Level{props.data.paramSuffix}]: Current level of selected item in the hierarchy (1..n)</li>
-
-
-                        <li style={{ listStyleType: 'none', marginLeft: '-1.2em' }}>{idPresent()} {`[${ props.data.worksheet.childId }${ props.data.paramSuffix }]`}: ID of the current selected field </li>
-
-
+                        <li style={{ listStyleType: 'none', marginLeft: '-1.2em' }}>{levelParam? yes:no} [{props.data.parameters.level}]: Current level of selected item in the hierarchy (1..n)</li>
+                        <li style={{ listStyleType: 'none', marginLeft: '-1.2em' }}>{idPresent()} {`[${ props.data.parameters.childId }]`}: ID of the current selected field </li>
                         {props.data.parameters.childLabelEnabled? (<li style={{ listStyleType: 'none', marginLeft: '-1.2em' }}>{labelPresent()} {`[${ props.data.parameters.childLabel }]`}: Label of the current selected field</li>):<></>}
                     </ul>
                 And parameters for the fields in the hierarchy:
             <ul>
-                        {props.data.worksheet.fields.map((field) => {
-                            return <li style={{ listStyleType: 'none', marginLeft: '-1.2em' }} key={field+'_item'}>{paramPresent(field)} {`[${ field }${ props.data.paramSuffix }]`}: Value of field or Null</li>;
+                        {props.data.parameters.fields.map((param) => {
+                            return <li style={{ listStyleType: 'none', marginLeft: '-1.2em' }} key={param+'_item'} value={param}>{paramPresent(param)} {`[${ param }]`}: Value of field or Null</li>;
                         })}
                     </ul>
                 </div>

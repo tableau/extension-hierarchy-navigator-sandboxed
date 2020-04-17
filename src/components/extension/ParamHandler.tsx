@@ -1,7 +1,7 @@
 import { Parameter, Worksheet } from '@tableau/extensions-api-types';
 import * as t from '@tableau/extensions-api-types';
 import React, { useEffect, useState } from 'react';
-import { debug, HierarchyProps, HierType } from '../config/Interfaces';
+import { debug, HierarchyProps, HierType } from '../API/Interfaces';
 import Hierarchy from './Hierarchy';
 
 interface Props {
@@ -14,7 +14,7 @@ function ParamHandler(props: Props) {
     const [currentId, setCurrentId]=useState<string>('');
     const [currentLabel, setCurrentLabel]=useState<string>('');
     const [dataFromExtension, setDataFromExtension]=useState<any>();
-    const _temporaryEventHandlers: { childId?: () => {}, childLabel?: () => {}; }={}; // not using useState here because state was having trouble holding functions and executing them later
+    const temporaryEventHandlers: { childId?: () => {}, childLabel?: () => {}; }={ childId: undefined, childLabel: undefined }; // not using useState here because state was having trouble holding functions and executing them later
 
 
     // will be called with user selects new value in hierarchy
@@ -90,33 +90,32 @@ function ParamHandler(props: Props) {
             console.log(`fp: parameters`);
             console.log(props.data.parameters);
         }
-        const res: any=[];
+        const res: { childId?: t.Parameter, childLabel?: t.Parameter, level?: t.Parameter, fields?: t.Parameter[]; }={};
         if(props.data.worksheet.name!=='') {
             if(props.data.type===HierType.RECURSIVE) {
 
                 // RECURSIVE
                 if(props.data.parameters.childIdEnabled) {
-                    res[0]=await props.dashboard.findParameterAsync(props.data.parameters.childId);
+                    res.childId=await props.dashboard.findParameterAsync(props.data.parameters.childId);
                 }
                 if(props.data.parameters.childLabelEnabled) {
-                    res[1]=await props.dashboard.findParameterAsync(props.data.parameters.childLabel);
+                    res.childLabel=await props.dashboard.findParameterAsync(props.data.parameters.childLabel);
                 }
             }
 
             else if(props.data.type===HierType.FLAT) {
-                res[0]=await props.dashboard.findParameterAsync(`Level${ props.data.paramSuffix }`);
-                res[1]=await props.dashboard.findParameterAsync(`${ props.data.worksheet.childId }${ props.data.paramSuffix }`);
+                res.level=await props.dashboard.findParameterAsync(props.data.parameters.level);
+                res.childId=await props.dashboard.findParameterAsync(props.data.parameters.childId);
                 console.log(`childLabel enabled (${ props.data.parameters.childLabelEnabled }) and looking for param -- ${ props.data.parameters.childLabel }`);
                 if(props.data.parameters.childLabelEnabled) {
-                    res[2]=await props.dashboard.findParameterAsync(`${ props.data.parameters.childLabel }`);
+                    res.childLabel=await props.dashboard.findParameterAsync(props.data.parameters.childLabel);
                     console.log(`found childLabel: ${ res[2] }`);
                 }
-                for(let i=0;i<props.data.worksheet.fields.length;i++) {
-                    // todo: turn into promise.all
-                    const param=`${ props.data.worksheet.fields[i] }${ props.data.paramSuffix }`;
+                res.fields=[];
+                for(const param of props.data.parameters.fields) {
                     console.log(`looking for param ${ param }`);
-                    res[i+3]=await props.dashboard.findParameterAsync(param);
-                    console.log(res[i+3]);
+                    const p=await props.dashboard.findParameterAsync(param);
+                    if(typeof p!=='undefined') { res.fields.push(p); }
                 }
             }
         }
@@ -129,17 +128,16 @@ function ParamHandler(props: Props) {
 
     // sets event listeners so they can be called later and released
     async function setEventListeners() {
-        if(props.data.type===HierType.FLAT) { return; }
-        const [childIdParam, childLabelParam]: t.Parameter[]=await (findParameters());
+        const { childId, childLabel }=await (findParameters());
         if(props.data.parameters.childIdEnabled||props.data.parameters.childLabelEnabled) {
             clearEventHandlers(); // just in case.
             if(debug) { console.log(`setEventHandleListeners`); }
             if(debug) { console.log(`setting event handle listeners`); }
-            if(childLabelParam) {
-                _temporaryEventHandlers.childLabel=childLabelParam.addEventListener(tableau.TableauEventType.ParameterChanged, eventDashboardChangeLabel);
+            if(childLabel) {
+                temporaryEventHandlers.childLabel=childLabel.addEventListener(tableau.TableauEventType.ParameterChanged, eventDashboardChangeLabel);
             }
-            if(childIdParam) {
-                _temporaryEventHandlers.childId=childIdParam.addEventListener(tableau.TableauEventType.ParameterChanged, eventDashboardChangeId);
+            if(childId) {
+                temporaryEventHandlers.childId=childId.addEventListener(tableau.TableauEventType.ParameterChanged, eventDashboardChangeId);
             }
             if(debug) { console.log(`done setting event handle listeners`); }
         }
@@ -150,17 +148,16 @@ function ParamHandler(props: Props) {
 
     // clear any event handlers that have been set
     function clearEventHandlers() {
-        if(props.data.type===HierType.FLAT) { return; }
         if(debug) { console.log(`clearing event handle listeners`); }
         // Object.keys(_temporaryEventHandlers).forEach(function(fn){ fn()});
         // _temporaryEventHandlers=[];
-        if(_temporaryEventHandlers.childId) {
-            _temporaryEventHandlers.childId();
-            _temporaryEventHandlers.childId=undefined;
+        if(temporaryEventHandlers.childId) {
+            temporaryEventHandlers.childId();
+            temporaryEventHandlers.childId=undefined;
         }
-        if(_temporaryEventHandlers.childLabel) {
-            _temporaryEventHandlers.childLabel();
-            _temporaryEventHandlers.childLabel=undefined;
+        if(temporaryEventHandlers.childLabel) {
+            temporaryEventHandlers.childLabel();
+            temporaryEventHandlers.childLabel=undefined;
         }
     }
 
@@ -174,7 +171,6 @@ function ParamHandler(props: Props) {
             // await asyncForEach(props.dashboard.worksheets, async (worksheet: Worksheet) => {
             if(props.data.worksheet.filterEnabled) {
                 if(debug) { console.log(`clearing filter props.data.worksheet.filter: ${ props.data.worksheet.filter }`); }
-
                 await worksheet.clearFilterAsync(props.data.worksheet.filter);
             }
             if(debug) { console.log(`worksheet: ${ props.data.worksheet.name } for childId: ${ props.data.worksheet.childId }`); }
@@ -199,19 +195,20 @@ function ParamHandler(props: Props) {
     // then send the updated value to the hierarchy for evaluation
     async function eventDashboardChangeId() {
         // retrieve param so we get the latest value
-        const cp=await props.dashboard.findParameterAsync(props.data.parameters.childId);
-        setCurrentId(cp!.currentValue.value||'');
-
+        let cp: t.Parameter|undefined;
+        if(props.data.type===HierType.RECURSIVE) { cp=await props.dashboard.findParameterAsync(props.data.parameters.childId); }
+        else {
+            cp=await props.dashboard.findParameterAsync(props.data.parameters.childId);
+        }
+        setCurrentId(cp!.currentValue.value);
     };
     async function eventDashboardChangeLabel() {
         const cl=await props.dashboard.findParameterAsync(props.data.parameters.childLabel);
-        setCurrentLabel(cl!.currentValue.value||'');
+        setCurrentLabel(cl!.currentValue.value);
     };
 
     async function setParamDataFromExtension(incomingData: { currentId: string, currentLabel: string, childrenById?: string[], childrenByLabel?: string[]; }) {
 
-        // childIdParam, childLabelParam for HierType.RECURSIVE
-        // childIdParam, field1 param, field2 param... fieldn param
         setCurrentId(incomingData.currentId);
         setCurrentLabel(incomingData.currentLabel);
 
@@ -219,106 +216,63 @@ function ParamHandler(props: Props) {
             return value.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&');
         }
 
+        const { level, childId, childLabel, fields }=await (findParameters());
+
+        try {
+            if(typeof childId!=='undefined') {
+                if(childId.dataType===tableau.DataType.Int) {
+                    const converted=parseInt(incomingData.currentId, 10);
+                    if(!isNaN(converted)) { childId.changeValueAsync(converted); };
+                }
+                else {
+                    childId.changeValueAsync(incomingData.currentId);
+                }
+            }
+        }
+        catch(e) {
+            if(debug) { console.log(`can't set childId param: ${ e.message }`); }
+        }
+        try {
+            if(typeof childLabel!=='undefined') {
+                if(childLabel.dataType===tableau.DataType.Int) {
+                    const converted=parseInt(incomingData.currentLabel, 10);
+                    if(!isNaN(converted)) { childLabel.changeValueAsync(converted); };
+                }
+                else {
+                    console.log(`setting param ${ incomingData.currentLabel } to`);
+                    console.log(childLabel);
+                    childLabel.changeValueAsync(incomingData.currentLabel);
+                }
+            }
+        }
+        catch(e) {
+            if(debug) { console.log(`can't set childLabel param: ${ e.message }`); }
+        }
         if(props.data.type===HierType.FLAT) {
-            const [levelParam, childIdParam, childLabelParam, ...fieldParams]: Parameter[]=await (findParameters());
-            const level=(incomingData.currentId.match(new RegExp(escapeRegex(props.data.separator), 'g'))?.length||0)+1;
+            const currentLevel=(incomingData.currentId.match(new RegExp(escapeRegex(props.data.separator), 'g'))?.length||0)+1;
             try {
-                if(levelParam.dataType===tableau.DataType.Int) { levelParam.changeValueAsync(level); }
+                if(typeof level!=='undefined'&&level.dataType===tableau.DataType.Int) { level.changeValueAsync(currentLevel); }
             }
             catch(e) {
                 if(debug) { console.log(`can't set level param: ${ e.message }`); }
             }
-            try {
-                if(childIdParam.dataType===tableau.DataType.Int) {
-                    const converted = parseInt(incomingData.currentId, 10);
-                    if (!isNaN(converted)) {childIdParam.changeValueAsync(converted)};
-                }
-                else {
-                    childIdParam.changeValueAsync(incomingData.currentId);
-                }
-            }
-            catch(e) {
-                if(debug) { console.log(`can't set childId param: ${ e.message }`); }
-            }
-            try {
-                if(childLabelParam.dataType===tableau.DataType.Int) {
-                    const converted = parseInt(incomingData.currentLabel, 10);
-                    if (!isNaN(converted)) {childLabelParam.changeValueAsync(converted)};
-                }
-                else {
-                    childLabelParam.changeValueAsync(incomingData.currentLabel);
-                }
-            }
-            catch(e) {
 
-                if(debug) { console.log(`can't set childLabel param: ${ e.message }`); }
-            }
             const fieldVals=incomingData.currentId.split(props.data.separator);
-            for(let i=0;i<props.data.worksheet.fields.length;i++) {
-                try {
-                    if(typeof fieldParams[i]==='undefined') { continue; }
-                    if (fieldParams[i].dataType === tableau.DataType.Int){
-                        const converted = parseInt(fieldVals[i], 10);
-                        if (!isNaN(converted)) {fieldParams[i].changeValueAsync(converted)};
+            if(typeof fields!=='undefined'&&fieldVals.length>0) {
+                for(let i=0;i<fields.length;i++) {
+                    try {
+                        if(typeof fields==='undefined') { continue; }
+                        if(fields[i].dataType===tableau.DataType.Int) {
+                            const converted=parseInt(fieldVals[i], 10);
+                            if(!isNaN(converted)) { fields[i].changeValueAsync(converted); };
+                        }
+                        else {
+                            fields[i].changeValueAsync(fieldVals[i]||'Null');
+                        }
                     }
-                    else {
-                        fieldParams[i].changeValueAsync(fieldVals[i]||'Null');
+                    catch(e) {
+                        console.error(`cannot set param for field ${ props.data.worksheet.fields[i] } (param should be ${ fields[i].name } Param) with value ${ fieldVals[i] }`);
                     }
-                }
-                catch(e) {
-                    console.error(`cannot set param for field ${ props.data.worksheet.fields[i] } (param should be ${ props.data.worksheet.fields[i] } Param) with value ${ fieldVals[i] }`);
-                }
-            }
-        }
-        else {
-            const [childIdParam, childLabelParam]=await (findParameters());
-            if(debug) { console.log(`setting Param Data: currentId: ${ incomingData.currentId }; currentLabel: ${ incomingData.currentLabel }, boolean? props.data.parameters.childIdEnabled&&childIdParam: ${ props.data.parameters.childIdEnabled&&childIdParam }`); }
-            clearEventHandlers();
-            if(props.data.parameters.childIdEnabled&&childIdParam) {
-                // await childIdParam.changeValueAsync(incomingData.currentId);
-                if(childIdParam.dataType===tableau.DataType.Int) {
-                    const converted = parseInt(incomingData.currentId, 10);
-                    if (!isNaN(converted)) {childIdParam.changeValueAsync(converted)};
-                }
-                else {
-                    childIdParam.changeValueAsync(incomingData.currentId);
-                }
-            }
-            if(props.data.parameters.childLabelEnabled&&childLabelParam) {
-                // await childLabelParam.changeValueAsync(incomingData.currentLabel);
-                try {
-                    if(childLabelParam.dataType===tableau.DataType.Int) {
-                        const converted = parseInt(incomingData.currentLabel, 10);
-                        if (!isNaN(converted)) {childLabelParam.changeValueAsync(converted)};
-                    }
-                    else {
-                        childLabelParam.changeValueAsync(incomingData.currentLabel);
-                    }
-                }
-                catch(e) {
-                    if(debug) { console.log(`can't set childLabel param: ${ e.message }`); }
-                }
-            }
-        }
-
-        // if we don't pass children, we are resetting the data 
-        // and should skip setting the filter/mark selection
-        if(incomingData.childrenById&&incomingData.childrenByLabel) {
-            const worksheet=await findWorksheet();
-            if(typeof worksheet==='undefined') { return; }
-            if(props.data.worksheet.filterEnabled) {
-                // determine if the current filter is based off Id or Label
-                const replaceArr=props.data.worksheet.filter===props.data.worksheet.childId? incomingData.childrenById:incomingData.childrenByLabel;
-
-                if(debug) { console.log(`replacing filter (${ props.data.worksheet.filter }) with values ${ JSON.stringify(replaceArr) }`); }
-                await worksheet.applyFilterAsync(props.data.worksheet.filter, replaceArr, tableau.FilterUpdateType.Replace, { isExcludeMode: false });
-            }
-            if(props.data.worksheet.enableMarkSelection) {
-                {
-                    await worksheet.selectMarksByValueAsync([{
-                        fieldName: props.data.worksheet.childId,
-                        value: incomingData.childrenById
-                    }], tableau.SelectionUpdateType.Replace);
                 }
             }
         }

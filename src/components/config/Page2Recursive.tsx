@@ -1,6 +1,6 @@
 import React from 'react';
 import { Selector } from '../shared/Selector';
-import { HierarchyProps, Status } from './Interfaces';
+import { HierarchyProps, Status } from '../API/Interfaces';
 
 interface Props {
     data: HierarchyProps;

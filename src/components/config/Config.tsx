@@ -10,7 +10,7 @@ import flatHier from '../../images/FlatHier.jpeg';
 import recursiveHier from '../../images/RecursiveHier.jpeg';
 import HierarchyAPI from '../API/HierarchyAPI';
 import Colors from './Colors';
-import { debug, HierarchyProps, HierType } from './Interfaces';
+import { debug, HierarchyProps, HierType } from '../API/Interfaces';
 import { Page2Flat } from './Page2Flat';
 import { Page2Recursive } from './Page2Recursive';
 import { Page3Flat } from './Page3Flat';
