@@ -2,6 +2,7 @@ import * as t from '@tableau/extensions-api-types';
 import { useEffect, useReducer, useRef, useState } from 'react';
 import * as React from 'react';
 import { debug, defaultSelectedProps, HierarchyProps, HierType, Status } from './Interfaces';
+import {paramWithCorrectSpaces} from './Utils';
 
 const extend=require('extend');
 
@@ -593,7 +594,7 @@ const hierarchyAPI=(): any => {
 
                 // Check Child Id
                 if(!d.dashboardItems.allCurrentWorksheetItems.fields.includes(d.worksheet.childId)) {
-                    modifiedStr.push(`ID Column '(${ d.worksheet.childId })' no longer present.`);
+                    modifiedStr.push(`ID Column '(${ paramWithCorrectSpaces(d.worksheet.childId) })' no longer present.`);
                     // is there a field that isn't used?
                     if(d.dashboardItems.allCurrentWorksheetItems.fields.length>d.worksheet.fields.length) {
                         // find first match and set it

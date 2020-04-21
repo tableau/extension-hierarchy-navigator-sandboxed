@@ -276,6 +276,28 @@ function ParamHandler(props: Props) {
                 }
             }
         }
+
+        // if we don't pass children, we are resetting the data 
+        // and should skip setting the filter/mark selection
+        if(incomingData.childrenById&&incomingData.childrenByLabel) {
+            const worksheet=await findWorksheet();
+            if(typeof worksheet==='undefined') { return; }
+            if(props.data.worksheet.filterEnabled) {
+                // determine if the current filter is based off Id or Label
+                const replaceArr=props.data.worksheet.filter===props.data.worksheet.childId? incomingData.childrenById:incomingData.childrenByLabel;
+
+                if(debug) { console.log(`replacing filter (${ props.data.worksheet.filter }) with values ${ JSON.stringify(replaceArr) }`); }
+                await worksheet.applyFilterAsync(props.data.worksheet.filter, replaceArr, tableau.FilterUpdateType.Replace, { isExcludeMode: false });
+            }
+            if(props.data.worksheet.enableMarkSelection) {
+                {
+                    await worksheet.selectMarksByValueAsync([{
+                        fieldName: props.data.worksheet.childId,
+                        value: incomingData.childrenById
+                    }], tableau.SelectionUpdateType.Replace);
+                }
+            }
+        }
         setEventListeners();
     }
 

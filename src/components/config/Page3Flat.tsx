@@ -1,10 +1,9 @@
 // import {  DataType } from '@tableau/extensions-api-types/ExternalContract/Namespaces/Tableau';
 import { Checkbox, TextField } from '@tableau/tableau-ui';
 import React, { useEffect, useState } from 'react';
-import { Selector } from '../shared/Selector';
 import { debug, HierarchyProps, Status } from '../API/Interfaces';
-
-const extend=require('extend');
+import { paramWithCorrectSpaces } from '../API/Utils';
+import { Selector } from '../shared/Selector';
 
 interface Props {
     data: HierarchyProps;
@@ -109,7 +108,6 @@ export function Page3Flat(props: Props) {
     const paramPresent=(param: string) => {
         return props.data.dashboardItems.parameters.includes(`${ param }`)? yes:no;
     };
-
     return (
         <>
             <div className='sectionStyle mb-2'>
@@ -144,12 +142,12 @@ export function Page3Flat(props: Props) {
                     <ul>
                         <li style={{ listStyleType: 'none', marginLeft: '-1.2em' }}>{levelParam? yes:no} [{props.data.parameters.level}]: Current level of selected item in the hierarchy (1..n)</li>
                         <li style={{ listStyleType: 'none', marginLeft: '-1.2em' }}>{idPresent()} {`[${ props.data.parameters.childId }]`}: ID of the current selected field </li>
-                        {props.data.parameters.childLabelEnabled? (<li style={{ listStyleType: 'none', marginLeft: '-1.2em' }}>{labelPresent()} {`[${ props.data.parameters.childLabel }]`}: Label of the current selected field</li>):<></>}
+                        {props.data.parameters.childLabelEnabled? (<li style={{ listStyleType: 'none', marginLeft: '-1.2em' }}>{labelPresent()} {`[${ paramWithCorrectSpaces(props.data.parameters.childLabel) }]`}: Label of the current selected field</li>):<></>}
                     </ul>
                 And parameters for the fields in the hierarchy:
             <ul>
                         {props.data.parameters.fields.map((param) => {
-                            return <li style={{ listStyleType: 'none', marginLeft: '-1.2em' }} key={param+'_item'} value={param}>{paramPresent(param)} {`[${ param }]`}: Value of field or Null</li>;
+                            return <li style={{ listStyleType: 'none', marginLeft: '-1.2em' }} key={param+'_item'} value={param}>{paramPresent(param)} {`[${paramWithCorrectSpaces(param)}]`}: Value of field or Null</li>;
                         })}
                     </ul>
                 </div>
