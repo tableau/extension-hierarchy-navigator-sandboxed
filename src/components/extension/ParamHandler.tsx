@@ -1,4 +1,4 @@
-import { Parameter, Worksheet } from '@tableau/extensions-api-types';
+import { Worksheet } from '@tableau/extensions-api-types';
 import * as t from '@tableau/extensions-api-types';
 import React, { useEffect, useState } from 'react';
 import { debug, HierarchyProps, HierType } from '../API/Interfaces';

@@ -2,7 +2,7 @@ import * as t from '@tableau/extensions-api-types';
 import { useEffect, useReducer, useRef, useState } from 'react';
 import * as React from 'react';
 import { debug, defaultSelectedProps, HierarchyProps, HierType, Status } from './Interfaces';
-import {paramWithCorrectSpaces} from './Utils';
+import {withHTMLSpaces} from './Utils';
 
 const extend=require('extend');
 
@@ -137,7 +137,6 @@ const hierarchyAPI=(): any => {
             _initialData.dashboardItems.parameters=await getParamListFromDashboardAsync();
             // dispatch({ type: 'ERROR', data: 'Extension needs reconfiguration.' });
             await getWorksheetsFilterAndFieldsFromDashboardAsyncWithAssignments(_initialData);
-            console.log(`finished resetAsync`);
         };
         changeHierTypeAsync();
     };
@@ -167,7 +166,8 @@ const hierarchyAPI=(): any => {
                     if(payload.worksheet.parentId===action.data) {
                         payload.worksheet.parentId=payload.worksheet.childId;
                     }
-                    if (payload.type === HierType.FLAT){payload.parameters.childId = `${ payload.worksheet.childId }${ payload.paramSuffix }`}
+                    if (payload.type === HierType.FLAT){payload.parameters.childId = `${ action.data }${ payload.paramSuffix }`}
+                    console.log(`PARAM CHILD ID set to ${payload.parameters.childId}`)
                     payload.worksheet.childId=action.data;
                     return dispatch({ type: 'FETCH_SUCCESS', data: payload });
                 }
@@ -202,7 +202,7 @@ const hierarchyAPI=(): any => {
             case 'SET_BG_COLOR':
                 {
                     // update background color
-                    payload.bgColor=action.data;
+                    payload.options.bgColor=action.data;
                     return dispatch({ type: 'FETCH_SUCCESS', data: payload });
                 }
             case 'SET_PARAM_SUFFiX':
@@ -276,6 +276,24 @@ const hierarchyAPI=(): any => {
                     payload.parameters.childLabelEnabled=action.data;
                     return dispatch({ type: 'FETCH_SUCCESS', data: payload });
                 }
+            case 'TOGGLE_SEARCH_DISPLAY':
+                {
+                    // enable/disable title
+                    payload.options.hideSearch=action.data;
+                    return dispatch({ type: 'FETCH_SUCCESS', data: payload });
+                }
+            case 'TOGGLE_TITLE_DISABLED':
+                {
+                    // enable/disable title
+                    payload.options.titleEnabled=action.data;
+                    return dispatch({ type: 'FETCH_SUCCESS', data: payload });
+                }
+            case 'SET_TITLE':
+                {
+                    // set title
+                    payload.options.title=action.data;
+                    return dispatch({ type: 'FETCH_SUCCESS', data: payload });
+                }
             case 'CHANGE_HIER_TYPE':
                 changeHierType(action.data);
                 break;
@@ -317,8 +335,19 @@ const hierarchyAPI=(): any => {
             });
 
             // if parameters added, assign them
-            if(_initialData.parameters.childId==='') { _initialData.parameters.childId=_initialData.dashboardItems.parameters[0]||''; }
-            if(_initialData.parameters.childLabel==='') { _initialData.parameters.childLabel=_initialData.dashboardItems.parameters[1]||_initialData.dashboardItems.parameters[0]||''; }
+            if(_initialData.parameters.childId==='') { 
+                // _initialData.parameters.childId=_initialData.dashboardItems.parameters[0]||''; 
+                if(_initialData.type===HierType.RECURSIVE) {
+                    _initialData.parameters.childId=_initialData.dashboardItems.parameters[0]||'';
+                }
+                else {
+                    _initialData.parameters.childId=`${_initialData.worksheet.childId}${_initialData.paramSuffix}`;    
+                }
+            }
+            
+            if(_initialData.parameters.childLabel==='') {                 
+                _initialData.parameters.childLabel=_initialData.dashboardItems.parameters.find(p=>p!==_initialData.parameters.childId) || ''; 
+            }
         }
         catch(e) {
             if(debug) { console.log(`error in getWorksheetsFromDashboardAsyncWithoutAssignment: ${ e }`); }
@@ -389,7 +418,11 @@ const hierarchyAPI=(): any => {
                 if(payload.type===HierType.RECURSIVE) {
                     payload.parameters.childId=payload.dashboardItems.parameters[0]||'';
                 }
-                payload.parameters.childLabel=_initialData.dashboardItems.parameters[1]||payload.dashboardItems.parameters[0]||'';
+                else {
+                    payload.parameters.childId=`${payload.worksheet.childId}${payload.paramSuffix}`;    
+                }
+                console.log(`setting PARAM CHILDLABEL to one of: ${_initialData.dashboardItems.parameters.find(p=>p!==payload.parameters.childId)} or ''`)
+                payload.parameters.childLabel=_initialData.dashboardItems.parameters.find(p=>p!==payload.parameters.childId)||'';
 
             }
             catch(e) {
@@ -411,7 +444,7 @@ const hierarchyAPI=(): any => {
     };
 
     useEffect(() => {
-        console.log(`initasyncloading: ${initAsyncLoading}; getWorksheetsRunning: ${getWorksheetsRunning.current}`)
+/*         console.log(`initasyncloading: ${initAsyncLoading}; getWorksheetsRunning: ${getWorksheetsRunning.current}`) */
         if(!initAsyncLoading.current && !getWorksheetsRunning.current) { getWorksheetsFilterAndFieldsFromDashboardAsyncWithAssignments(); }
     }, [currentWorksheetName, initAsyncLoading, getWorksheetsRunning]);
 
@@ -594,7 +627,7 @@ const hierarchyAPI=(): any => {
 
                 // Check Child Id
                 if(!d.dashboardItems.allCurrentWorksheetItems.fields.includes(d.worksheet.childId)) {
-                    modifiedStr.push(`ID Column '(${ paramWithCorrectSpaces(d.worksheet.childId) })' no longer present.`);
+                    modifiedStr.push(`ID Column '(${ withHTMLSpaces(d.worksheet.childId) })' no longer present.`);
                     // is there a field that isn't used?
                     if(d.dashboardItems.allCurrentWorksheetItems.fields.length>d.worksheet.fields.length) {
                         // find first match and set it

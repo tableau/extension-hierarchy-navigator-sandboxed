@@ -9,9 +9,15 @@ export interface SimpleField {
     fieldName: string;
     dataType: any, // should be DataType
 }
-export interface HierarchyProps {
+export interface Options {
     bgColor: string;
+    hideSearch: boolean;
+    title: string;
+    titleEnabled: boolean;
+}
+export interface HierarchyProps {
     configComplete: boolean;
+    options: Options;
     separator: string;
     type: HierType;
     paramSuffix: string;
@@ -63,7 +69,6 @@ export const defaultParameter: SimpleParameter={ name: '', dataType: tableau.Dat
 export const defaultField: SimpleField={ fieldName: '', dataType: tableau.DataType.String };
 export const defaultFilter: FilterType={ fieldName: '', isAvailable: false };
 export const defaultSelectedProps: HierarchyProps={
-    bgColor: '#F3F3F3',
     configComplete: false,
     dashboardItems: {
         allCurrentWorksheetItems: {
@@ -72,6 +77,12 @@ export const defaultSelectedProps: HierarchyProps={
         },
         parameters: [],
         worksheets: [],
+    },
+    options: {
+        bgColor: '#F3F3F3',
+        hideSearch: false,
+        title: 'Hierarchy Navigator',
+        titleEnabled: true
     },
     paramSuffix: ' Param',
     parameters:

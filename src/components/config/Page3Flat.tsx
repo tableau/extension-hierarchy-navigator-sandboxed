@@ -2,7 +2,7 @@
 import { Checkbox, TextField } from '@tableau/tableau-ui';
 import React, { useEffect, useState } from 'react';
 import { debug, HierarchyProps, Status } from '../API/Interfaces';
-import { paramWithCorrectSpaces } from '../API/Utils';
+import { withHTMLSpaces } from '../API/Utils';
 import { Selector } from '../shared/Selector';
 
 interface Props {
@@ -71,11 +71,9 @@ export function Page3Flat(props: Props) {
                     for(const p of params) {
                         if(debug) { console.log(p); }
                         if(p.dataType==='int'&&p.name===props.data.parameters.level ) {
-                            console.log(`matching ${ p.dataType } & ${ p.name }. Returning true`);
                             return setLevelParam(true);
                         }
                     }
-                    console.log(`no match; returning false`);
                     setLevelParam(false);
                 });
         };
@@ -141,13 +139,13 @@ export function Page3Flat(props: Props) {
 
                     <ul>
                         <li style={{ listStyleType: 'none', marginLeft: '-1.2em' }}>{levelParam? yes:no} [{props.data.parameters.level}]: Current level of selected item in the hierarchy (1..n)</li>
-                        <li style={{ listStyleType: 'none', marginLeft: '-1.2em' }}>{idPresent()} {`[${ props.data.parameters.childId }]`}: ID of the current selected field </li>
-                        {props.data.parameters.childLabelEnabled? (<li style={{ listStyleType: 'none', marginLeft: '-1.2em' }}>{labelPresent()} {`[${ paramWithCorrectSpaces(props.data.parameters.childLabel) }]`}: Label of the current selected field</li>):<></>}
+                        <li style={{ listStyleType: 'none', marginLeft: '-1.2em' }}>{idPresent()} {`[${ withHTMLSpaces(props.data.parameters.childId) }]`}: ID of the current selected field </li>
+                        {props.data.parameters.childLabelEnabled? (<li style={{ listStyleType: 'none', marginLeft: '-1.2em' }}>{labelPresent()} {`[${ withHTMLSpaces(props.data.parameters.childLabel) }]`}: Label of the current selected field</li>):<></>}
                     </ul>
                 And parameters for the fields in the hierarchy:
             <ul>
                         {props.data.parameters.fields.map((param) => {
-                            return <li style={{ listStyleType: 'none', marginLeft: '-1.2em' }} key={param+'_item'} value={param}>{paramPresent(param)} {`[${paramWithCorrectSpaces(param)}]`}: Value of field or Null</li>;
+                            return <li style={{ listStyleType: 'none', marginLeft: '-1.2em' }} key={param+'_item'} value={param}>{paramPresent(param)} {`[${withHTMLSpaces(param)}]`}: Value of field or Null</li>;
                         })}
                     </ul>
                 </div>

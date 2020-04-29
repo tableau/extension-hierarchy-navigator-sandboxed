@@ -1,14 +1,15 @@
-
 import { TextField } from '@tableau/tableau-ui';
-import React, { useEffect, useState } from 'react';
-import { Selector } from '../shared/Selector';
-import { HierarchyProps, Status } from '../API/Interfaces';
-const extend=require('extend');
 import arrayMove from 'array-move';
+import React, { useEffect, useState } from 'react';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { Button as RSButton, Col, Container, Row } from 'reactstrap';
 import dragHandle from '../../images/Drag-handle-01.png';
+import { HierarchyProps, Status } from '../API/Interfaces';
+import { withHTMLSpaces } from '../API/Utils';
+import { Selector } from '../shared/Selector';
 
+
+const extend=require('extend');
 interface Props {
     data: HierarchyProps;
     setUpdates: (obj: { type: string, data: any; }) => void;
@@ -62,12 +63,11 @@ export function Page2Flat(props: Props) {
         }
     };
     const DragHandle=(() => <img src={dragHandle} width='25px' height='25px' />);
-    const SortableItem=SortableElement(({ value }: any) => <li><DragHandle />{value}
+    const SortableItem=SortableElement(({ value }: any) => <li value={value}><DragHandle />{withHTMLSpaces(value)}
         <RSButton value={value} onClick={removeFromList} color='white' size='xs' style={{ color: 'red' }}>X</RSButton>
     </li>);
 
     const SortableList=SortableContainer(({ items }: any) => {
-        console.log(`sortable list recevied ${ JSON.stringify(items) }`);
         if(!items) { return (<li>No items</li>); }
         return (
             <ul className={'sortableList'}>
@@ -78,7 +78,7 @@ export function Page2Flat(props: Props) {
         );
     });
 
-    const StaticFieldsItem=SortableElement(({ value }: any) => <li>{value}
+    const StaticFieldsItem=SortableElement(({ value }: any) => <li value={value}>{withHTMLSpaces(value)}
         <RSButton value={value} onClick={addToList} color='white' size='xs' style={{ color: 'blue' }}>Add</RSButton>
     </li>);
 
@@ -121,9 +121,6 @@ export function Page2Flat(props: Props) {
                 }
             });
         }
-        // props.setStatePassThru({ selectedProps: _selectedProps });
-
-        // props.dispatchSelectedProps({ type: 'worksheetProps', data: { fields } });
         props.setUpdates({ type: 'SET_FIELDS', data: fields });
     };
     const inputProps={
@@ -143,7 +140,7 @@ export function Page2Flat(props: Props) {
     const formula=() => {
         let f='';
         for(let i=0;i<props.data.worksheet.fields.length;i++) {
-            f+=`[${ props.data.worksheet.fields[i] }]`;
+            f+=`[${ withHTMLSpaces(props.data.worksheet.fields[i]) }]`;
             if(i<props.data.worksheet.fields.length-1) {
                 f+=`+'${ props.data.separator }'+`;
             }

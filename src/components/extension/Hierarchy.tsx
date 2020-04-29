@@ -1,7 +1,10 @@
+import { TextField } from '@tableau/tableau-ui';
 import React, { ReactFragment, useEffect, useRef, useState } from 'react';
-import TreeMenu from 'react-simple-tree-menu';
-import { debug, HierType, HierarchyProps } from '../API/Interfaces';
-import { HierarchyState } from '../API/HierarchyAPI';
+import TreeMenu, { ItemComponent } from 'react-simple-tree-menu';
+import Chevrondown from '../../images/Chevrondown.svg';
+import Chevronright from '../../images/Chevronright.svg';
+import { debug, HierarchyProps, HierType } from '../API/Interfaces';
+import { NONAME } from 'dns';
 
 interface Tree {
     key: string,
@@ -16,7 +19,7 @@ interface PathMap {
     path: string;
 }
 interface Props {
-    data:HierarchyProps
+    data: HierarchyProps;
     lastUpdated: Date;
     setDataFromExtension: (data: { currentId: string, currentLabel: string, childrenById?: string[], childrenByLabel?: string[]; }) => void;
     currentLabel: string;
@@ -24,7 +27,7 @@ interface Props {
 }
 
 function Hierarchy(props: Props) {
-   
+
     const lastUpdated=useRef<number>(new Date().valueOf());
     const childRef=useRef<any>(null);
     const [currentLabel, setCurrentLabel]=useState(props.currentLabel);
@@ -32,6 +35,14 @@ function Hierarchy(props: Props) {
     const [pathMap, setPathMap]=useState<PathMap[]>([]);
     const [childOf, setChildOf]=useState([]);
     const [tree, setTree]=useState<Tree[]>([]);
+    const [searchVal, setSearchVal]=useState('');
+    const iconStyle={
+        height: '50%',
+        verticalAlign: 'middle',
+        width: 'auto'
+    };
+    const openedIcon=<img src={Chevrondown} alt='⌄' style={iconStyle} />;
+    const closedIcon=<img src={Chevronright} alt='›' style={iconStyle} />;
 
     let _pathMap: PathMap[]=[];
 
@@ -39,7 +50,7 @@ function Hierarchy(props: Props) {
     useEffect(() => {
         if(props.currentId!==currentId&&props.data.configComplete) {
             // if we set state locally we don't want to re-run state when props is updated in paramhandler
-            if (!debounce()) {return;}
+            if(!debounce()) { return; }
             setcurrentIdFromDashboard();
         }
     }, [props.currentId]);
@@ -48,7 +59,7 @@ function Hierarchy(props: Props) {
     useEffect(() => {
         if(props.currentLabel!==currentLabel&&props.data.configComplete) {
             // if we set state locally we don't want to re-run state when props is updated in paramhandler
-            if (!debounce()) {return;}
+            if(!debounce()) { return; }
             setcurrentLabelFromDashboard();
         }
     }, [props.currentLabel]);
@@ -69,113 +80,114 @@ function Hierarchy(props: Props) {
     // this function handles loading and of stored values and live params 
     async function loadHierarchyFromDataSource() {
         const map: any[]=[];
-      
-            await asyncForEach(window.tableau.extensions.dashboardContent!.dashboard.worksheets, async (worksheet: any) => {
-                if(worksheet.name===props.data.worksheet.name) {
-                    if(debug) { console.log(`found worksheet: ${ worksheet.name }`); }
-                    await worksheet.getSummaryDataAsync().then(async (dataTable: any) => {
+
+        await asyncForEach(window.tableau.extensions.dashboardContent!.dashboard.worksheets, async (worksheet: any) => {
+            if(worksheet.name===props.data.worksheet.name) {
+                if(debug) { console.log(`found worksheet: ${ worksheet.name }`); }
+                await worksheet.getSummaryDataAsync().then(async (dataTable: any) => {
 
 
-                        if(props.data.type===HierType.RECURSIVE) {
+                    if(props.data.type===HierType.RECURSIVE) {
 
-                            let parentIDCol=0;
-                            let childLabelCol=1;
-                            let childIDCol=2;
+                        let parentIDCol=0;
+                        let childLabelCol=1;
+                        let childIDCol=2;
 
-                            await asyncForEach(dataTable.columns, (column: any) => {
-                                if(column.fieldName===props.data.worksheet.parentId) {
-                                    parentIDCol=column.index;
+                        await asyncForEach(dataTable.columns, (column: any) => {
+                            if(column.fieldName===props.data.worksheet.parentId) {
+                                parentIDCol=column.index;
+                            }
+                            else if(column.fieldName===props.data.worksheet.childLabel) {
+                                childLabelCol=column.index;
+                            }
+                            if(column.fieldName===props.data.worksheet.childId) {
+                                childIDCol=column.index;
+                            }
+                        });
+                        if(debug) { console.log(`parentCol: ${ parentIDCol }  childCol: ${ childLabelCol } keyCol: ${ childIDCol }`); }
+                        let isSet: boolean=false;
+                        let count=0;
+                        dataTable.data.forEach((row: any, index: number) => {
+                            // check for dupes and ignore
+                            if(debug) {
+                                if(count<10) {
+                                    if(count===0) { console.log(`outputting first 10 rows of data`); }
+                                    console.log(row);
+                                    count++;
                                 }
-                                else if(column.fieldName===props.data.worksheet.childLabel) {
-                                    childLabelCol=column.index;
+                                if(count===10) {
+                                    console.log(`first 10 rows of map (data loading)`);
+                                    // console.log(map);
+                                    console.log(JSON.stringify(map));
+                                    count++;
                                 }
-                                if(column.fieldName===props.data.worksheet.childId) {
-                                    childIDCol=column.index;
-                                }
+                            }
+                            const match=map.filter(itm =>
+                                itm.parent===row[parentIDCol].formattedValue&&itm.label===row[childLabelCol].formattedValue&&itm.key===row[childIDCol].formattedValue
+                            );
+                            if(match.length&&debug) { console.log(`skipping dupe: ${ row[parentIDCol].formattedValue }/${ row[childLabelCol].formattedValue }/${ row[childIDCol].formattedValue }`); }
+                            if(!match.length) {
+                                map.push({ parent: row[parentIDCol].formattedValue, label: row[childLabelCol].formattedValue, key: row[childIDCol].formattedValue, nodes: [] });
+                            }
+                            if(!isSet) {
+                                isSet=true;
+                                setCurrentLabel(row[childLabelCol].formattedValue);
+                                setCurrentId(row[childIDCol].formattedValue);
+                            }
+                        });
+                    }
+                    else {
+                        // console.log(`datatable vvv`);
+                        // console.log(JSON.stringify(dataTable));
+                        // flat tree/hierarchy type
+                        const colArray: number[]=[];
+                        // set colArray values to indexes of fields in the order they are returned
+                        await asyncForEach(dataTable.columns, (column: any) => {
+                            props.data.worksheet.fields.forEach((field, index) => {
+                                if(field===column.fieldName) { colArray[index]=column.index; }
                             });
-                            if(debug) { console.log(`parentCol: ${ parentIDCol }  childCol: ${ childLabelCol } keyCol: ${ childIDCol }`); }
-                            let isSet: boolean=false;
-                            let count = 0;
-                            dataTable.data.forEach((row: any, index: number) => {
-                                // check for dupes and ignore
-                                if (debug) {
-                                    if (count < 10){
-                                        if (count===0) {console.log(`outputting first 10 rows of data`);}
-                                        console.log(row);
-                                        count++;
-                                    }
-                                    if (count===10){
-                                        console.log(`first 10 rows of map (data loading)`)
-                                        // console.log(map);
-                                        console.log(JSON.stringify(map));
-                                        count++;
-                                    }
+                        });
+                        if(debug) { console.log(`Order of fields from dataTablea: ${ colArray } => ${ JSON.stringify(dataTable.coumns) }`); }
+                        let isSet: boolean=false;
+                        dataTable.data.forEach((row: any, index: number) => {
+                            let parentId: string='Null';
+                            let key: string='';
+                            for(let i=0;i<colArray.length;i++) {
+                                const parentIDCol=colArray[i-1];
+                                const childIDCol=colArray[i];
+                                const childLabelCol=colArray[i];
+
+                                const childLabel=row[childLabelCol].formattedValue;
+                                if(i===0) { parentId='Null'; }
+                                else {
+                                    if(i===1) { parentId=row[parentIDCol].formattedValue; }
+                                    else { parentId+=`${ props.data.separator }${ row[parentIDCol].formattedValue }`; }
                                 }
+                                if(i===0) { key=row[childIDCol].formattedValue; }
+                                else { key+=`${ props.data.separator }${ row[childIDCol].formattedValue }`; }
                                 const match=map.filter(itm =>
-                                    itm.parent===row[parentIDCol].formattedValue&&itm.label===row[childLabelCol].formattedValue&&itm.key===row[childIDCol].formattedValue
+                                    itm.parent===parentId&&itm.label===childLabel&&itm.key===key
                                 );
-                                if(match.length&&debug) { console.log(`skipping dupe: ${ row[parentIDCol].formattedValue }/${ row[childLabelCol].formattedValue }/${ row[childIDCol].formattedValue }`); }
                                 if(!match.length) {
-                                    map.push({ parent: row[parentIDCol].formattedValue, label: row[childLabelCol].formattedValue, key: row[childIDCol].formattedValue, nodes: [] });
+                                    map.push({ parent: parentId, label: childLabel, key, nodes: [] });
                                 }
                                 if(!isSet) {
                                     isSet=true;
-                                    setCurrentLabel(row[childLabelCol].formattedValue);
-                                    setCurrentId(row[childIDCol].formattedValue);
+                                    setCurrentLabel(childLabel);
+                                    setCurrentId(key);
                                 }
-                            });
-                        }
-                        else {
-                            // console.log(`datatable vvv`);
-                            // console.log(JSON.stringify(dataTable));
-                            // flat tree/hierarchy type
-                            const colArray: number[]=[];
-                            // set colArray values to indexes of fields in the order they are returned
-                            await asyncForEach(dataTable.columns, (column: any) => {
-                                props.data.worksheet.fields.forEach((field, index) => {
-                                    if(field===column.fieldName) { colArray[index]=column.index; }
-                                });
-                            });
-                            if(debug) { console.log(`Order of fields from dataTablea: ${ colArray } => ${ JSON.stringify(dataTable.coumns) }`); }
-                            let isSet: boolean=false;
-                            dataTable.data.forEach((row: any, index: number) => {
-                                    let parentId: string = 'Null';
-                                    let key: string = '';
-                                for(let i=0;i<colArray.length;i++) {
-                                    const parentIDCol=colArray[i-1];
-                                    const childIDCol = colArray[i];
-                                    const childLabelCol=colArray[i];
 
-                                    const childLabel=row[childLabelCol].formattedValue;
-                                    if (i === 0) {parentId = 'Null';}
-                                    else {
-                                        if (i === 1) {parentId = row[parentIDCol].formattedValue;}
-                                        else { parentId += `${props.data.separator}${row[parentIDCol].formattedValue}`}
-                                    }
-                                    if (i === 0) {key = row[childIDCol].formattedValue}
-                                    else {key += `${props.data.separator}${row[childIDCol].formattedValue}`}
-                                    const match=map.filter(itm =>
-                                        itm.parent===parentId&&itm.label===childLabel&&itm.key===key
-                                    );
-                                    if(!match.length) {
-                                        map.push({ parent: parentId, label: childLabel, key, nodes: [] });
-                                    }
-                                    if(!isSet) {
-                                        isSet=true;
-                                        setCurrentLabel(childLabel);
-                                        setCurrentId(key);
-                                    }
-
-                                }
-                            });
-                        }
-                    });
-                    if(debug) { console.log('done getting props.data...');
-                    console.log(map)
+                            }
+                        });
+                    }
+                });
+                if(debug) {
+                    console.log('done getting props.data...');
+                    console.log(map);
                 }
 
-                }
-            });
+            }
+        });
         buildHierarchy(map);
     };
 
@@ -191,7 +203,7 @@ function Hierarchy(props: Props) {
         clearHierarchy();
         let _tree: Tree[]=[]; // object we will return to set state
         const _childOf: any=[]; // array we will return to set state
-        _data.forEach((item,index) => {
+        _data.forEach((item, index) => {
 
             const { key, parent }=item;
             _childOf[key]=_childOf[key]||[];
@@ -245,7 +257,7 @@ function Hierarchy(props: Props) {
 
     // set values if user selects a value in the extension
     async function setSelectedFromExtension(label: string, key: string) {
-        if (!debounce()) {return;}
+        if(!debounce()) { return; }
         if(debug) {
             console.log(`setSelectedFromExtension`);
             console.log(`about to set label:${ label } and key: ${ key }`);
@@ -266,12 +278,12 @@ function Hierarchy(props: Props) {
         return out;
     }
 
-    const debounce = ():boolean => {
-        const newDt = new Date().valueOf();
-        if (newDt-lastUpdated.current < 250) {return false};
-        lastUpdated.current = newDt;
+    const debounce=(): boolean => {
+        const newDt=new Date().valueOf();
+        if(newDt-lastUpdated.current<250) { return false; };
+        lastUpdated.current=newDt;
         return true;
-    }
+    };
 
     // when the id is changed on the dashboard, update extension values
     function setcurrentIdFromDashboard() {
@@ -338,26 +350,63 @@ function Hierarchy(props: Props) {
         }
     }
 
-    // display state info?
     const debugState: ReactFragment=(<div>State: {`id:${ currentId } label:${ currentLabel }`}<p />
         Last updated: {`${ typeof (props.lastUpdated)==='undefined'? 'none':props.lastUpdated }`} <p /></div>);
     const showDebugState=debug? debugState:(<div />);
+
+    const searchStyle = props.data.options.hideSearch ? { width: '100%', margin: '0 18 0 18' } : {display: 'none'};
+    const textFieldProps={
+        kind: 'search' as 'line'|'outline'|'search'|undefined,
+        placeholder: 'Type and search',
+        style: searchStyle,
+        value: searchVal
+    };
+
+    // tslint:disable jsx-no-lambda
     return (
-        <div>
+        <div style={{width: '100%'}} >
             {showDebugState}
+            {props.data.options.titleEnabled && (<span style={{fontWeight:'bold',color:'rgba(79,79,79,1)' }}>{props.data.options.title}</span>)}
             <TreeMenu
                 data={tree}
-                // tslint:disable-next-line jsx-no-lambda
                 onClickItem={async ({ label, key }) => {
                     if(debug) { console.log(`selected... ${ label }, ${ key }`); }
                     await setSelectedFromExtension(label, key.split('/').pop()||'');
                 }}
                 resetOpenNodesOnDataUpdate={true}
-                ref={childRef} 
-                /* separator={'»'} */
-            />
+                ref={childRef}
+            /* separator={'»'} */
+            >
+                {({ search, items }) => (
+                    <>
+                        <TextField {...textFieldProps}
+                            onChange={(e: any) => {
+                                setSearchVal(e.target.value);
+                                if(typeof search!=='undefined') { search(e.target.value); }
+                            }}
+                            onClear={() => {
+                                if(typeof search!=='undefined') { search(''); }
+                                setSearchVal('');
+                            }}
+                            
+                        /><br />
+                        {/* <Input onChange={e => search(e.target.value)} placeholder="Type and search" /> */}
+                        <ul className='rstm-tree-item-group'>
+                            {items.map(({ key, ...props }) => (
+                                <ItemComponent
+                                    key={key}
+                                    {...props}
+                                    openedIcon={openedIcon}
+                                    closedIcon={closedIcon}
+                                />
+                            ))}
+                        </ul>
+                    </>
+                )}
+            </TreeMenu>
         </div>
     );
+    // tslint:enable jsx-no-lambda
 
 }
 

@@ -9,8 +9,14 @@ body {
     box-sizing: border-box;
     height: 100%;
     width: 100%;
-    overflow-y: auto;
+    /* overflow-y: auto; */
 }
+
+/* * { 
+    -moz-box-sizing: border-box; 
+    -webkit-box-sizing: border-box; 
+     box-sizing: border-box; 
+} */
 
 #container {
     height: 100%;
@@ -52,15 +58,14 @@ body {
     font-size: 20px;
     font-family: Arial, Helvetica, sans-serif;
 }
-
-.right {
+ .right {
     padding: 40px;
     display: flex;
     align-items: center;
     align-content: center;
     justify-content: flex-start;
     flex-wrap: wrap;
-}
+} 
 
 .iheader {
     font-size: 64px;
@@ -283,28 +288,41 @@ select::-ms-expand {
   
   .rstm-tree-item-group {
     list-style-type: none;
-    padding-left: 0;
+    padding-left: 0px;
+    padding-right: 0px;
     border-top: 1px solid #ccc;
     text-align: left;
-    width: 100vw; 
-    font-family: "Benton Sans";}
+    /* width: 100vw;  */
+    font-family: "Benton Sans";
+    display: inline;
+}
   
   .rstm-tree-item {
     /* padding: 0.75rem 1rem; */
     cursor: pointer;
     color: #333;
     background: none;
-    border-bottom: 1px solid #ccc;
+    /* border-bottom: 1px solid #ccc; */
     box-shadow: none;
     z-index: unset;
     position: relative; 
-    display: flex;
-    height: 15px;
-    width: 100%}
+    white-space: nowrap;
+    /* 
+    Uncomment below if ellipses are to be used;
+    also may need adjustments to --active below
+    overflow: hidden;
+    text-overflow: ellipses;
+    */
+}
     .rstm-tree-item--active {
-      color: white;
-      background: #179ed3;
-      border-bottom: none; }
+      background: #d1d1d1;
+      border-bottom: none; 
+      /* Below are to fix background width to take full div ;
+      if ellipsis are desired; have to comment these out */
+      width: 100%;
+      display: table;
+      box-sizing: border-box;
+    }
     .rstm-tree-item--focused {
       box-shadow: 0 0 5px 0 #222;
       z-index: 999; }

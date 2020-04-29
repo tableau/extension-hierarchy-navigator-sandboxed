@@ -78,13 +78,13 @@ function HierarchyNavigator() {
     }, []);
 
     useEffect(() => {
-        document.body.style.backgroundColor=data.bgColor;
-    }, [data.bgColor]);
+        document.body.style.backgroundColor=data.options.bgColor;
+    }, [data.options.bgColor]);
 
     return (
         <>
             {!doneLoading? (<div aria-busy='true' className='overlay'><div className='centerOnPage'><div className='spinnerBg centerOnPage'>{}</div><Spinner color='light' /></div></div>):undefined}
-            <div style={{ overflowX: 'hidden' }}>
+            <div>
                 <p />
                     <ParamHandler
                         data={data}

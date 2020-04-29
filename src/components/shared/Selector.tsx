@@ -2,7 +2,7 @@ import { Button, ButtonProps, DropdownSelect, DropdownSelectProps } from '@table
 import * as React from 'react';
 import '../../css/style.css';
 import {Status} from '../API/Interfaces';
-import {paramWithCorrectSpaces} from '../API/Utils';
+import {withHTMLSpaces} from '../API/Utils';
 export interface SelectorProps {
     title?: string;
     status?: Status;
@@ -22,7 +22,7 @@ export const Selector: React.SFC<SelectorProps> = (props) => {
         kind: 'line',
         onChange: props.onChange,
         onSelect: props.onChange,
-        value: paramWithCorrectSpaces(props.selected),
+        value: withHTMLSpaces(props.selected),
     };
     const buttonProps: ButtonProps = {
         disabled: props.status !== Status.set,
@@ -51,7 +51,7 @@ export const Selector: React.SFC<SelectorProps> = (props) => {
                     <DropdownSelect 
                         {...dropdownSelectProps} className='w-100'
                         data-type={props.type}>
-                        {props.list.map(option => <option key={option} value={option}>{paramWithCorrectSpaces(option)}</option>)}
+                        {props.list.map(option => <option key={option} value={option}>{withHTMLSpaces(option)}</option>)}
                         
                     </DropdownSelect>
                 </div>
