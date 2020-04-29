@@ -5,7 +5,7 @@ import { Extensions } from '@tableau/extensions-api-types';
 import { Button, Checkbox, Spinner, TextField } from '@tableau/tableau-ui';
 import React, { useState } from 'react';
 import * as ReactDOM from 'react-dom';
-import { Button as RSButton, Col, Container, Row, Alert } from 'reactstrap';
+import { Button as RSButton, Col, Container, Row, Alert, UncontrolledAlert } from 'reactstrap';
 import flatHier from '../../images/FlatHier.jpeg';
 import recursiveHier from '../../images/RecursiveHier.jpeg';
 import HierarchyAPI from '../API/HierarchyAPI';
@@ -158,7 +158,7 @@ function Configure(props: any) {
             <br />
             <div style={{ marginLeft: '9px' }}>
                 <Checkbox
-                    checked={data.options.hideSearch}
+                    checked={data.options.searchEnabled}
                     onChange={changeSearch}
                 >
                     Show search box
@@ -224,6 +224,9 @@ function Configure(props: any) {
     const onDismiss=() => {
         setUpdates({ type: 'CLEAR_ERROR' });
     };
+    const onDismissWarning=() => {
+        setUpdates({ type: 'CLEAR_WARNING' });
+    };
     return (
         <>
             {!doneLoading? (<div aria-busy='true' className='overlay'><div className='centerOnPage'><div className='spinnerBg centerOnPage'>{}</div><Spinner color='light' /></div></div>):undefined}
@@ -286,6 +289,9 @@ function Configure(props: any) {
 
                 </Row>
             </Container>
+            <Alert isOpen={data.options.warningEnabled} color='primary' toggle={onDismissWarning}>
+            This app requires specific setup instructions.  Please read the documentation (https://github.com/tableau/extension-hierarchy-navigator-sandboxed) before use.
+            </Alert>
             <Alert color='warning' isOpen={isError} toggle={onDismiss}>
                 {errorStr}
             </Alert>

@@ -279,7 +279,7 @@ const hierarchyAPI=(): any => {
             case 'TOGGLE_SEARCH_DISPLAY':
                 {
                     // enable/disable title
-                    payload.options.hideSearch=action.data;
+                    payload.options.searchEnabled=action.data;
                     return dispatch({ type: 'FETCH_SUCCESS', data: payload });
                 }
             case 'TOGGLE_TITLE_DISABLED':
@@ -292,6 +292,12 @@ const hierarchyAPI=(): any => {
                 {
                     // set title
                     payload.options.title=action.data;
+                    return dispatch({ type: 'FETCH_SUCCESS', data: payload });
+                }
+            case 'CLEAR_WARNING':
+                {
+                    // enable/disable warning
+                    payload.options.warningEnabled=false;
                     return dispatch({ type: 'FETCH_SUCCESS', data: payload });
                 }
             case 'CHANGE_HIER_TYPE':

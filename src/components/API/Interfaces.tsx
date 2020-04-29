@@ -11,9 +11,10 @@ export interface SimpleField {
 }
 export interface Options {
     bgColor: string;
-    hideSearch: boolean;
+    searchEnabled: boolean;
     title: string;
     titleEnabled: boolean;
+    warningEnabled: boolean;
 }
 export interface HierarchyProps {
     configComplete: boolean;
@@ -80,9 +81,10 @@ export const defaultSelectedProps: HierarchyProps={
     },
     options: {
         bgColor: '#F3F3F3',
-        hideSearch: false,
+        searchEnabled: true,
         title: 'Hierarchy Navigator',
-        titleEnabled: true
+        titleEnabled: true,
+        warningEnabled: true
     },
     paramSuffix: ' Param',
     parameters:

@@ -354,7 +354,7 @@ function Hierarchy(props: Props) {
         Last updated: {`${ typeof (props.lastUpdated)==='undefined'? 'none':props.lastUpdated }`} <p /></div>);
     const showDebugState=debug? debugState:(<div />);
 
-    const searchStyle = props.data.options.hideSearch ? { width: '100%', margin: '0 18 0 18' } : {display: 'none'};
+    const searchStyle = props.data.options.searchEnabled ? { width: '100%', margin: '0 18 0 18' } : {display: 'none'};
     const textFieldProps={
         kind: 'search' as 'line'|'outline'|'search'|undefined,
         placeholder: 'Type and search',
