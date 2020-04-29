@@ -15,7 +15,7 @@ class Home extends React.Component<any, any> {
 						</div>
 						<div className='right'>
 							<h4 className='big'>What is it?</h4>
-							<p>This extension allows you to take recursive data and visualize it and enable interactions with other dashboard components.  </p>
+							<p>This extension allows you to take flat/dimensional or recursive data and visualize it and enable interactions with other dashboard components.  </p>
 							<p>Why? Because users have been <a href='https://community.tableau.com/ideas/1083'>asking</a> for this for a long time.</p>
 							<h4 className='big'>Using the Extension</h4>
 							<ol>
