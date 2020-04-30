@@ -16,7 +16,16 @@ function HierarchyNavigator() {
     const configure=(): any => {
         if(debug) { console.log(`calling CONFIGURE`); }
 
-        const popupUrl=`config.html`;
+        let popupUrl=`config.html`;
+        console.log (`version: ${window.tableau.extensions.environment.tableauVersion}`);
+        console.log(`hostname: ${window.location.hostname}`);
+        console.log(window.location)
+        const version = window.tableau.extensions.environment.tableauVersion.split('.');
+        // if version < 2019.3 need an absolute URL
+        if (parseInt(version[0], 10)===2018 || ( parseInt(version[0], 10)===2019 && parseInt(version[1],10)<3)) {
+            const href = window.location.href;
+            popupUrl = window.location.href.substring(0, href.lastIndexOf('/')) + '/config.html';
+        }
         window.tableau.extensions.ui.displayDialogAsync(popupUrl, '', { height: 725, width: 500 }).then((closePayload: string) => {
 
             if(debug) { console.log(`returning from Configure! ${ closePayload }`); }
