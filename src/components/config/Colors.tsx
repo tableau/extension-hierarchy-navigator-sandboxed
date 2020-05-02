@@ -14,7 +14,7 @@ class Colors extends React.Component<any> {
                 <Container>
                     <Row>
                         <Col className='col-sm'>
-                            Background Color
+                            Background Color (color picker pop-up may open behind this window)
                         </Col>
                     </Row>
                     <Row>

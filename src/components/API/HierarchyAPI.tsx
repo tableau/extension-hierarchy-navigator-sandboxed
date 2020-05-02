@@ -1,8 +1,9 @@
-import * as t from '@tableau/extensions-api-types';
+// import * as t from '@tableau/extensions-api-types';
+import { Dashboard, Parameter, Worksheet } from '@tableau/extensions-api-types';
 import { useEffect, useReducer, useRef, useState } from 'react';
 import * as React from 'react';
-import { debug, defaultSelectedProps, HierarchyProps, HierType, Status } from './Interfaces';
-import {withHTMLSpaces} from './Utils';
+import { debug, defaultSelectedProps, HierarchyProps, HierType, SelectedParameters, Status } from './Interfaces';
+import { withHTMLSpaces } from './Utils';
 
 const extend=require('extend');
 
@@ -34,7 +35,7 @@ const dataFetchReducer=(state: HierarchyState, action: { type: string, data?: an
                 isError: false,
                 isLoading: true,
             } as HierarchyState;
-        case 'FETCH_SUCCESS':  
+        case 'FETCH_SUCCESS':
             return {
                 ...state,
                 data: action.data,
@@ -85,7 +86,8 @@ const hierarchyAPI=(): any => {
             console.log(`loading _settings: vvv`);
             console.log(_settings);
         }
-        _initialData.dashboardItems.parameters=await getParamListFromDashboardAsync();
+        const _params=await getParamListFromDashboardAsync();
+        _initialData.dashboardItems.parameters=_params;
         // validate settings
         // true means all good; false means some data didn't pass the logic
         // skip if current worksheet name is blank (initial load)
@@ -102,7 +104,7 @@ const hierarchyAPI=(): any => {
                     dispatch({ type: 'ERROR', data: msg });
                     break;
                 case 'FAIL':
-                    _initialData.dashboardItems.parameters=await getParamListFromDashboardAsync();
+                    _initialData.dashboardItems.parameters=_params;
                     await getWorksheetsFilterAndFieldsFromDashboardAsyncWithAssignments(_initialData);
                     dispatch({ type: 'ERROR', data: `Configuration could not be restored.` });
                     break;
@@ -121,7 +123,7 @@ const hierarchyAPI=(): any => {
     const loadSettings=(): any => {
         const _settings=tableau.extensions.settings.getAll();
         let res={};
-        if (debug) {console.log(`loadSettings: raw settings = ${ JSON.stringify(_settings) }`);}
+        if(debug) { console.log(`loadSettings: raw settings = ${ JSON.stringify(_settings) }`); }
         if(typeof _settings.data==='undefined') { return res; }
         res=JSON.parse(_settings.data);
         return res;
@@ -130,7 +132,7 @@ const hierarchyAPI=(): any => {
     const changeHierType=(hierType: HierType) => {
         const changeHierTypeAsync=async () => {
             if(hierType===state.data.type) { return; }
-            if (debug) {console.log(`begin resetAsync`);}
+            if(debug) { console.log(`begin resetAsync`); }
             dispatch({ type: 'FETCH_INIT' });
             const _initialData: HierarchyProps=extend(true, {}, defaultSelectedProps);
             _initialData.type=hierType;
@@ -166,8 +168,8 @@ const hierarchyAPI=(): any => {
                     if(payload.worksheet.parentId===action.data) {
                         payload.worksheet.parentId=payload.worksheet.childId;
                     }
-                    if (payload.type === HierType.FLAT){payload.parameters.childId = `${ action.data }${ payload.paramSuffix }`}
-                    console.log(`PARAM CHILD ID set to ${payload.parameters.childId}`)
+                    if(payload.type===HierType.FLAT) { payload.parameters.childId=`${ action.data }${ payload.paramSuffix }`; }
+                    console.log(`PARAM CHILD ID set to ${ payload.parameters.childId }`);
                     payload.worksheet.childId=action.data;
                     return dispatch({ type: 'FETCH_SUCCESS', data: payload });
                 }
@@ -209,9 +211,9 @@ const hierarchyAPI=(): any => {
                 {
                     // update parameter suffix
                     payload.paramSuffix=action.data;
-                    payload.parameters.level = `Level${ payload.paramSuffix }`
-                    payload.parameters.childId = `${ payload.worksheet.childId }${ payload.paramSuffix }`;
-                    payload.parameters.fields = [];
+                    payload.parameters.level=`Level${ payload.paramSuffix }`;
+                    payload.parameters.childId=`${ payload.worksheet.childId }${ payload.paramSuffix }`;
+                    payload.parameters.fields=[];
                     for(const field of payload.worksheet.fields) {
                         payload.parameters.fields.push(`${ field }${ payload.paramSuffix }`);
                     }
@@ -226,15 +228,26 @@ const hierarchyAPI=(): any => {
             case 'SET_FIELDS':
                 {
                     // update fields for flat hierarchy
+                    let _hasChanged=false;
                     payload.worksheet.fields=action.data;
-                    if (payload.type === HierType.FLAT){
-                        payload.parameters.fields = [];
+                    if(payload.type===HierType.FLAT) {
+                        payload.parameters.fields=[];
                         for(const field of payload.worksheet.fields) {
                             payload.parameters.fields.push(`${ field }${ payload.paramSuffix }`);
                         }
+                        payload.dashboardItems.flatParameters=availableFlatParamList(payload.parameters, payload.dashboardItems.parameters);
+                        if(!payload.dashboardItems.flatParameters.includes(payload.parameters.childLabel)||payload.parameters.childLabel==='') {
+                            payload.parameters.childLabel=payload.dashboardItems.flatParameters[0]||'';
+                            if(payload.parameters.childLabelEnabled) {
+                                payload.parameters.childLabelEnabled=false;
+                                _hasChanged=true;
+                            }
+                        }
                     }
                     payload.configComplete=evalConfigComplete(payload);
-                    return dispatch({ type: 'FETCH_SUCCESS', data: payload });
+                    dispatch({ type: 'FETCH_SUCCESS', data: payload });
+                    if(_hasChanged) { dispatch({ type: 'ERROR', data: `Please recheck your Label parameter.  It has changed and has been disabled.` }); };
+                    return;
                 }
             case 'SET_FILTER_FIELD':
                 {
@@ -317,52 +330,60 @@ const hierarchyAPI=(): any => {
 
     // this method will get the current worksheets and fields for the given worksheet.name without populating data.worksheets or data.parameters
     // it is for validating settings after getAll()
-    const getWorksheetsFilterAndFieldsFromDashboardAsyncWithoutAssignments=async (_initialData: HierarchyProps):Promise<HierarchyProps> => {
-        return new Promise(async (resolve, reject)=>{
-            getWorksheetsRunning.current = true;
+    const getWorksheetsFilterAndFieldsFromDashboardAsyncWithoutAssignments=async (_initialData: HierarchyProps): Promise<HierarchyProps> => {
+        return new Promise(async (resolve, reject) => {
+            getWorksheetsRunning.current=true;
 
-        if(debug) { console.log(`getWorksheetsFilterAndFieldsFromDashboardAsyncWithoutAssignments`); }
-        if(typeof tableau.extensions.dashboardContent==='undefined') { await tableau.extensions.initializeDialogAsync(); }
-        try {
-            setCurrentWorksheetName(_initialData.worksheet.name);
-            // step 2: get current worksheet object
-            await asyncForEach(tableau.extensions.dashboardContent!.dashboard.worksheets, async (worksheet: t.Worksheet) => {
-                if(worksheet.name===_initialData.worksheet.name) {
-                    if(debug) {
-                        console.log(`worksheet: vvv`);
-                        console.log(worksheet);
+            if(debug) { console.log(`getWorksheetsFilterAndFieldsFromDashboardAsyncWithoutAssignments`); }
+            if(typeof tableau.extensions.dashboardContent==='undefined') { await tableau.extensions.initializeDialogAsync(); }
+            try {
+                setCurrentWorksheetName(_initialData.worksheet.name);
+                // step 2: get current worksheet object
+                await asyncForEach(tableau.extensions.dashboardContent!.dashboard.worksheets, async (worksheet: Worksheet) => {
+                    if(worksheet.name===_initialData.worksheet.name) {
+                        if(debug) {
+                            console.log(`worksheet: vvv`);
+                            console.log(worksheet);
+                        }
+                        _initialData.dashboardItems.allCurrentWorksheetItems.fields=await getWorksheetFieldsAsync(worksheet);;
+
+                        _initialData.dashboardItems.allCurrentWorksheetItems.filters=await getWorksheetFilters(worksheet);
                     }
-                    _initialData.dashboardItems.allCurrentWorksheetItems.fields=await getWorksheetFieldsAsync(worksheet);;
+                    if(_initialData.dashboardItems.worksheets.indexOf(worksheet.name)===-1) { _initialData.dashboardItems.worksheets.push(worksheet.name); }
 
-                    _initialData.dashboardItems.allCurrentWorksheetItems.filters=await getWorksheetFilters(worksheet);
-                }
-                if(_initialData.dashboardItems.worksheets.indexOf(worksheet.name)===-1) { _initialData.dashboardItems.worksheets.push(worksheet.name); }
+                });
 
-            });
 
-            // if parameters added, assign them
-            if(_initialData.parameters.childId==='') { 
-                // _initialData.parameters.childId=_initialData.dashboardItems.parameters[0]||''; 
+                // check to see if params were previously blank but now exist
+                // mismatches will be picked up by validate
                 if(_initialData.type===HierType.RECURSIVE) {
-                    _initialData.parameters.childId=_initialData.dashboardItems.parameters[0]||'';
+                    if(_initialData.parameters.childId==='') {
+                        _initialData.parameters.childId=_initialData.dashboardItems.parameters[0]||'';
+                    }
+                    if(_initialData.parameters.childLabel==='') {
+                        _initialData.parameters.childLabel=_initialData.dashboardItems.parameters.find(p => p!==_initialData.parameters.childId)||'';
+                    }
                 }
                 else {
-                    _initialData.parameters.childId=`${_initialData.worksheet.childId}${_initialData.paramSuffix}`;    
+                    // flat hier
+                    if(_initialData.parameters.childId==='') {
+                        _initialData.parameters.childId=_initialData.dashboardItems.parameters[0]||'';
+                    }
+                    if(_initialData.parameters.childLabel==='') {
+                        _initialData.dashboardItems.flatParameters=availableFlatParamList(_initialData.parameters, _initialData.dashboardItems.parameters);
+                        _initialData.parameters.childLabel=_initialData.dashboardItems.flatParameters[0]||'';
+                    }
                 }
-            }
-            
-            if(_initialData.parameters.childLabel==='') {                 
-                _initialData.parameters.childLabel=_initialData.dashboardItems.parameters.find(p=>p!==_initialData.parameters.childId) || ''; 
-            }
-        }
-        catch(e) {
-            if(debug) { console.log(`error in getWorksheetsFromDashboardAsyncWithoutAssignment: ${ e }`); }
 
-        }
-        if(debug) { console.log(`finished getWorksheetsFromDashboardAsyncWithoutAssignment`); }
-        getWorksheetsRunning.current = false;
-        resolve(_initialData) ;
-        })
+            }
+            catch(e) {
+                if(debug) { console.log(`error in getWorksheetsFromDashboardAsyncWithoutAssignment: ${ e }`); }
+
+            }
+            if(debug) { console.log(`finished getWorksheetsFromDashboardAsyncWithoutAssignment`); }
+            getWorksheetsRunning.current=false;
+            resolve(_initialData);
+        });
     };
 
     /* when Ext loads or user selects a new worksheet:
@@ -374,8 +395,8 @@ const hierarchyAPI=(): any => {
      */
     const getWorksheetsFilterAndFieldsFromDashboardAsyncWithAssignments=async (_initialData?: HierarchyProps) => {
         // if initAsync is still loading, skip this.  Will return when it finishes.
-        return new Promise(async(resolve:any, reject:any) => {
-            getWorksheetsRunning.current = true;
+        return new Promise(async (resolve: any, reject: any) => {
+            getWorksheetsRunning.current=true;
             if(debug) { console.log(`getWorksheetsFilterAndFieldsFromDashboardAsyncWithAssignments`); }
             dispatch({ type: 'FETCH_INIT' });
             if(typeof _initialData==='undefined') { _initialData=state.data; }
@@ -385,7 +406,7 @@ const hierarchyAPI=(): any => {
             if(typeof tableau.extensions.dashboardContent==='undefined') { await tableau.extensions.initializeDialogAsync(); }
             try {
                 // step 2: get current worksheet object
-                await asyncForEach(tableau.extensions.dashboardContent!.dashboard.worksheets, async (worksheet: t.Worksheet) => {
+                await asyncForEach(tableau.extensions.dashboardContent!.dashboard.worksheets, async (worksheet: Worksheet) => {
                     if(debug) {
                         console.log(`worksheet ${ worksheet.name }: vvv`);
                         console.log(worksheet);
@@ -423,12 +444,14 @@ const hierarchyAPI=(): any => {
                 });
                 if(payload.type===HierType.RECURSIVE) {
                     payload.parameters.childId=payload.dashboardItems.parameters[0]||'';
+                    console.log(`setting PARAM CHILDLABEL to one of: ${ _initialData.dashboardItems.parameters.find(p => p!==payload.parameters.childId) } or ''`);
+                    payload.parameters.childLabel=_initialData.dashboardItems.parameters.find(p => p!==payload.parameters.childId)||'';
                 }
                 else {
-                    payload.parameters.childId=`${payload.worksheet.childId}${payload.paramSuffix}`;    
+                    payload.parameters.childId=`${ payload.worksheet.childId }${ payload.paramSuffix }`;
+                    payload.dashboardItems.flatParameters=availableFlatParamList(payload.parameters, payload.dashboardItems.parameters);
+                    payload.parameters.childLabel=payload.dashboardItems.flatParameters[0]||'';
                 }
-                console.log(`setting PARAM CHILDLABEL to one of: ${_initialData.dashboardItems.parameters.find(p=>p!==payload.parameters.childId)} or ''`)
-                payload.parameters.childLabel=_initialData.dashboardItems.parameters.find(p=>p!==payload.parameters.childId)||'';
 
             }
             catch(e) {
@@ -442,7 +465,7 @@ const hierarchyAPI=(): any => {
             payload.configComplete=evalConfigComplete(payload);
             dispatch({ type: 'FETCH_SUCCESS', data: payload });
             if(debug) { console.log(`finished getWorksheetsFromDashboardAsyncWithAssignments`); }
-            getWorksheetsRunning.current = false;
+            getWorksheetsRunning.current=false;
             resolve();
         });
 
@@ -450,8 +473,8 @@ const hierarchyAPI=(): any => {
     };
 
     useEffect(() => {
-/*         console.log(`initasyncloading: ${initAsyncLoading}; getWorksheetsRunning: ${getWorksheetsRunning.current}`) */
-        if(!initAsyncLoading.current && !getWorksheetsRunning.current) { getWorksheetsFilterAndFieldsFromDashboardAsyncWithAssignments(); }
+        /*         console.log(`initasyncloading: ${initAsyncLoading}; getWorksheetsRunning: ${getWorksheetsRunning.current}`) */
+        if(!initAsyncLoading.current&&!getWorksheetsRunning.current) { getWorksheetsFilterAndFieldsFromDashboardAsyncWithAssignments(); }
     }, [currentWorksheetName, initAsyncLoading, getWorksheetsRunning]);
 
     // solve forEach with promise issue - https://codeburst.io/javascript-async-await-with-foreach-b6ba62bbf404
@@ -461,13 +484,28 @@ const hierarchyAPI=(): any => {
         }
     };
 
+    /* for Flat hierarchies -
+    take the given inputs 
+    level, childId, fields[] and available parameters
+    and return a unique list of parameters that are still left for childLabel */
+    const availableFlatParamList=(selectedParams: SelectedParameters, availableParameters: string[]): string[] => {
+        const { level, childId, fields }=selectedParams;
+        const p: string[]=[];
+        console.log(`p param list: ${ p }`);
+        availableParameters.forEach(param => {
+            if(param!==level&&param!==childId&&!fields.includes(param)) { p.push(param); }
+        });
+        console.log(`setting p: ${ p }`);
+        return p;
+    };
+
     /*
     Get the fields for a give worksheet
     */
-    const getWorksheetFieldsAsync=async (worksheet: t.Worksheet):Promise<string[]> => {
-        return new Promise(async (resolve, reject)=>{
+    const getWorksheetFieldsAsync=async (worksheet: Worksheet): Promise<string[]> => {
+        return new Promise(async (resolve, reject) => {
 
-            if (debug) {console.log(`getWorksheetFieldAsync`);}
+            if(debug) { console.log(`getWorksheetFieldAsync`); }
             try {
                 const tempFields: string[]=[];
                 const dataTable: any=await worksheet.getSummaryDataAsync();
@@ -491,15 +529,15 @@ const hierarchyAPI=(): any => {
                 console.error(err);
                 reject([]);
             }
-        })
-        };
-        
-        // retrieve parameters for the dashboard
+        });
+    };
+
+    // retrieve parameters for the dashboard
     const getParamListFromDashboardAsync=async (): Promise<string[]> => {
         if(debug) {
             console.log(`begin loadParamList`);
         }
-        const _params: t.Parameter[]=await tableau.extensions.dashboardContent!.dashboard.getParametersAsync();
+        const _params: Parameter[]=await tableau.extensions.dashboardContent!.dashboard.getParametersAsync();
         const params: string[]=[];
         if(debug) { console.log(`parameters found`); }
         for(const p of _params) {
@@ -507,7 +545,7 @@ const hierarchyAPI=(): any => {
             if(p.allowableValues.type===tableau.ParameterValueType.All&&(p.dataType===tableau.DataType.String||p.dataType===tableau.DataType.Int)) {
                 params.push(p.name);
             }
-            else { if (debug) {console.log(` --- skipping ${ p.name }`);} }
+            else { if(debug) { console.log(` --- skipping ${ p.name }`); } }
         }
         // TODO: case insensitive sort was returning incorrect results
         if(params.length>0) {
@@ -525,8 +563,8 @@ const hierarchyAPI=(): any => {
         return params;
     };
 
-    const getWorksheetFilters=async (worksheet: t.Worksheet):Promise<string[]> => {
-        return new Promise(async (resolve, reject)=>{
+    const getWorksheetFilters=async (worksheet: Worksheet): Promise<string[]> => {
+        return new Promise(async (resolve, reject) => {
 
             const _filters=await worksheet.getFiltersAsync();
             if(debug) { console.log(`Filters!`); }
@@ -540,7 +578,7 @@ const hierarchyAPI=(): any => {
                 }
             }
             resolve(filters);
-        })
+        });
     };
 
     // if we have a worksheet, childId/parentId (for recursive) or fields.length>2 (for flat) we can set configComplete to true

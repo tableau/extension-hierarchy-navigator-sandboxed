@@ -13,25 +13,9 @@ interface Props {
 }
 
 export function Page3Flat(props: Props) {
-    const [availParamsForChildLabel, setAvailParamsForChildLabel]=useState<string[]>([]);
     const [levelParam, setLevelParam]=useState<boolean>(false);
     const [filterList, setFilterList]=useState<string[]>([]);
     
-    // for flat hier; this is the list of params that are auto-generated
-    useEffect(() => {
-        const p: string[]=[];
-        p.push(props.data.parameters.level);
-        p.push(props.data.parameters.childId);
-        for(const field of props.data.parameters.fields) {
-            p.push(`${ field }${ props.data.paramSuffix }`);
-        }
-        const _flatParams: string[]=[];
-        props.data.dashboardItems.parameters.forEach(param => {
-            if(!p.includes(param)) { _flatParams.push(param); }
-        });
-        setAvailParamsForChildLabel(_flatParams);
-    }, [props.data.dashboardItems.parameters, props.data]);
-
     // check level param upon page load
     useEffect(() => {
         if(debug) { console.log(`checking if ${props.data.parameters.level} is a viable numeric parameter`); }
@@ -115,7 +99,7 @@ export function Page3Flat(props: Props) {
                     <TextField {...inputProps} />
                     <br />
                     <Checkbox
-                        disabled={!availParamsForChildLabel.length}
+                        disabled={!props.data.dashboardItems.flatParameters.length}
                         checked={props.data.parameters.childLabelEnabled}
                         onClick={props.changeEnabled}
                         onChange={props.changeEnabled}
@@ -129,7 +113,7 @@ export function Page3Flat(props: Props) {
                         status={props.data.parameters.childLabelEnabled?
                             (props.data.dashboardItems.parameters.length? Status.set:Status.notpossible):Status.notpossible}
                         onChange={props.changeParam}
-                        list={availParamsForChildLabel}
+                        list={props.data.dashboardItems.flatParameters}
                         selected={props.data.parameters.childLabel}
                         type='label'
                     />

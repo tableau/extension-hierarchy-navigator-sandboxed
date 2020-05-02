@@ -5,10 +5,7 @@ export enum HierType {
     RECURSIVE='recursive'
 } 
 export enum Status { 'notpossible', 'notset', 'set', 'hidden' }
-export interface SimpleField {
-    fieldName: string;
-    dataType: any, // should be DataType
-}
+
 export interface Options {
     bgColor: string;
     searchEnabled: boolean;
@@ -35,7 +32,8 @@ export interface SelectedParameters {
     level: string;
 }
 export interface AvailableProps {
-    parameters: string[], // list of paramaters to be shown to user for selection
+    parameters: string[], // all available dashboard parameters
+    flatParameters: string[], // parameters available for flat hierarchy child label (excludes level, id, field+suffix array)
     worksheets: string[]; // list of available worksheets 
     allCurrentWorksheetItems: AvailableWorksheet;
 }
@@ -55,20 +53,7 @@ export interface SelectedWorksheet {
     fields: string[]; // used for flat hierarchy
     status: Status;
 }
-export interface SimpleParameter {
-    name: string,
-    dataType: any;  // should be DataType
-}
 
-export interface FilterType {
-    fieldName: string;
-    isAvailable?: boolean;
-    filterType?: any;
-}
-
-export const defaultParameter: SimpleParameter={ name: '', dataType: tableau.DataType.String };
-export const defaultField: SimpleField={ fieldName: '', dataType: tableau.DataType.String };
-export const defaultFilter: FilterType={ fieldName: '', isAvailable: false };
 export const defaultSelectedProps: HierarchyProps={
     configComplete: false,
     dashboardItems: {
@@ -76,6 +61,7 @@ export const defaultSelectedProps: HierarchyProps={
             fields: [],
             filters: []
         },
+        flatParameters: [],
         parameters: [],
         worksheets: [],
     },
@@ -93,7 +79,7 @@ export const defaultSelectedProps: HierarchyProps={
         childIdEnabled: false,
         childLabel: '',
         childLabelEnabled: false,
-        fields: [],
+        fields: [], // for flat hier, auto-generated field+suffix parameters
         level: 'Level Param',
     },
     separator: '|',

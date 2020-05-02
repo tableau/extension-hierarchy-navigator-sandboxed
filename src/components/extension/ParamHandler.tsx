@@ -1,12 +1,11 @@
-import { Worksheet } from '@tableau/extensions-api-types';
-import * as t from '@tableau/extensions-api-types';
+import { Dashboard, Parameter, Worksheet } from '@tableau/extensions-api-types';
 import React, { useEffect, useState } from 'react';
 import { debug, HierarchyProps, HierType } from '../API/Interfaces';
 import Hierarchy from './Hierarchy';
 
 interface Props {
     data: HierarchyProps;
-    dashboard: t.Dashboard;
+    dashboard: Dashboard;
 }
 
 function ParamHandler(props: Props) {
@@ -62,11 +61,11 @@ function ParamHandler(props: Props) {
 
     // finds the worksheet in the dashboard that matches the user selected worksheet
     // returns the worksheet
-    async function findWorksheet(): Promise<t.Worksheet|undefined> {
+    async function findWorksheet(): Promise<Worksheet|undefined> {
         if(debug) { console.log(`findWorksheet: props.data.worksheet: ${ props.data.worksheet.name }`); }
         let ws: Worksheet|undefined;
         if(props.data.worksheet.name!=='') {
-            await asyncForEach(props.dashboard.worksheets, (currWorksheet: t.Worksheet) => {
+            await asyncForEach(props.dashboard.worksheets, (currWorksheet: Worksheet) => {
                 if(currWorksheet.name===props.data.worksheet.name) {
                     if(debug) {
                         console.log(`fW: found worksheet : ${ currWorksheet.name }`);
@@ -90,7 +89,7 @@ function ParamHandler(props: Props) {
             console.log(`fp: parameters`);
             console.log(props.data.parameters);
         }
-        const res: { childId?: t.Parameter, childLabel?: t.Parameter, level?: t.Parameter, fields?: t.Parameter[]; }={};
+        const res: { childId?: Parameter, childLabel?: Parameter, level?: Parameter, fields?: Parameter[]; }={};
         if(props.data.worksheet.name!=='') {
             if(props.data.type===HierType.RECURSIVE) {
 
@@ -195,7 +194,7 @@ function ParamHandler(props: Props) {
     // then send the updated value to the hierarchy for evaluation
     async function eventDashboardChangeId() {
         // retrieve param so we get the latest value
-        let cp: t.Parameter|undefined;
+        let cp: Parameter|undefined;
         if(props.data.type===HierType.RECURSIVE) { cp=await props.dashboard.findParameterAsync(props.data.parameters.childId); }
         else {
             cp=await props.dashboard.findParameterAsync(props.data.parameters.childId);

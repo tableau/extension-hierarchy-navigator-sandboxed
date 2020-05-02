@@ -161,7 +161,7 @@ function Configure(props: any) {
                     checked={data.options.searchEnabled}
                     onChange={changeSearch}
                 >
-                    Show search box
+                    Show Search Box
                 </Checkbox>
                 <br />
                 <Checkbox
