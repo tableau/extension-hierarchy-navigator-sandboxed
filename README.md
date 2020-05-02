@@ -12,7 +12,7 @@ This extension allows you to visualize your flat/dimensional or recursive data i
 ## How to use an Extension
 This extension is hosted on <a href="https://tableau.github.io/extension-hierarchy-navigator-sandboxed">Github.io Pages</a>
 
-## Download the [manifest file](https://tableau.github.io/extension-hierarchy-navigator-sandboxed/hierarchynavigator-1.0.trex) and [workbook with examples and directions](https://tableau.github.io/extension-hierarchy-navigator-sandboxed/Hierarchy%20Navigator%20Extension.twbx)
+## Download the [manifest file](https://tableau.github.io/extension-hierarchy-navigator-sandboxed/hierarchynavigator-1.0.trex) and [workbook with examples and directions](https://tableau.github.io/extension-hierarchy-navigator-sandboxed/Hierarchy%20Navigator%20Extension.twbx) and a [2018.2 workbook with a flat/dimensional hierarchy](https://tableau.github.io/extension-hierarchy-navigator-sandboxed/Dimensional-Flat%20example%20Hierarchy%20Navigator_v2018.2.twbx) that also shows "dynamic" drill-down.
 
 ![Animated Image](/src/images/AnimatedSample.gif)
 

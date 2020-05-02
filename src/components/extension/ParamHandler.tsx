@@ -108,11 +108,11 @@ function ParamHandler(props: Props) {
                 console.log(`childLabel enabled (${ props.data.parameters.childLabelEnabled }) and looking for param -- ${ props.data.parameters.childLabel }`);
                 if(props.data.parameters.childLabelEnabled) {
                     res.childLabel=await props.dashboard.findParameterAsync(props.data.parameters.childLabel);
-                    console.log(`found childLabel: ${ res[2] }`);
+                    if(debug) { console.log(`found childLabel: ${ res.childLabel }`); }
                 }
                 res.fields=[];
                 for(const param of props.data.parameters.fields) {
-                    console.log(`looking for param ${ param }`);
+                    if(debug) { console.log(`looking for param ${ param }`); }
                     const p=await props.dashboard.findParameterAsync(param);
                     if(typeof p!=='undefined') { res.fields.push(p); }
                 }
@@ -218,7 +218,7 @@ function ParamHandler(props: Props) {
         const { level, childId, childLabel, fields }=await (findParameters());
 
         try {
-            if(typeof childId!=='undefined') {
+            if(typeof childId!=='undefined' && (props.data.parameters.childIdEnabled || props.data.type === HierType.FLAT)) {
                 if(childId.dataType===tableau.DataType.Int) {
                     const converted=parseInt(incomingData.currentId, 10);
                     if(!isNaN(converted)) { childId.changeValueAsync(converted); };
@@ -232,14 +232,17 @@ function ParamHandler(props: Props) {
             if(debug) { console.log(`can't set childId param: ${ e.message }`); }
         }
         try {
-            if(typeof childLabel!=='undefined') {
+            if(typeof childLabel!=='undefined' && props.data.parameters.childLabelEnabled) {
                 if(childLabel.dataType===tableau.DataType.Int) {
                     const converted=parseInt(incomingData.currentLabel, 10);
                     if(!isNaN(converted)) { childLabel.changeValueAsync(converted); };
                 }
                 else {
-                    console.log(`setting param ${ incomingData.currentLabel } to`);
-                    console.log(childLabel);
+                    if(debug) {
+                        console.log(`setting param `);
+                        console.log(childLabel);
+                        console.log(`to ${ incomingData.currentLabel }`);
+                    }
                     childLabel.changeValueAsync(incomingData.currentLabel);
                 }
             }

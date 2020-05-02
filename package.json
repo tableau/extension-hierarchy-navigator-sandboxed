@@ -20,7 +20,7 @@
     "parcel-build-sandbox-dev": "npm run clean && parcel build src/*.html src/resources/tableau.extensions.1.latest.js --public-url '.' --out-dir docs",
     "parcel-watch-sandbox-dev": "parcel watch src/* --public-url '.' --out-dir docs",
     "parcel-build-sandbox-production": "parcel build src/*.html --public-url '.' --out-dir docs --no-source-maps",
-    "parcel-server-no-sandbox": "parcel serve src/*.html --public-url '/sandbox/extension-hierarchy-navigator-sandboxed' --port 8765 --out-dir docs",
+    "parcel-serve-no-sandbox": "parcel serve src/*.html --public-url '/sandbox/extension-hierarchy-navigator-sandboxed' --port 8765 --out-dir docs",
     "start": "npm run build && npx tabextsandbox --config sandbox-config.json",
     "clean": "rm -rf docs/*",
     "lint": "npm run jslint && npm run tslint",
