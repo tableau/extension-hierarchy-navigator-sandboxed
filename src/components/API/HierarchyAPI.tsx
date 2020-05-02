@@ -369,8 +369,9 @@ const hierarchyAPI=(): any => {
                     if(_initialData.parameters.childId==='') {
                         _initialData.parameters.childId=_initialData.dashboardItems.parameters[0]||'';
                     }
+                    // always set list for flat parameters; then check to see if id is null
+                    _initialData.dashboardItems.flatParameters=availableFlatParamList(_initialData.parameters, _initialData.dashboardItems.parameters);
                     if(_initialData.parameters.childLabel==='') {
-                        _initialData.dashboardItems.flatParameters=availableFlatParamList(_initialData.parameters, _initialData.dashboardItems.parameters);
                         _initialData.parameters.childLabel=_initialData.dashboardItems.flatParameters[0]||'';
                     }
                 }
