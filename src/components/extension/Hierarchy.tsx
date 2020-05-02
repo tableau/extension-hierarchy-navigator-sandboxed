@@ -3,8 +3,8 @@ import React, { ReactFragment, useEffect, useRef, useState } from 'react';
 import TreeMenu, { ItemComponent } from 'react-simple-tree-menu';
 import Chevrondown from '../../images/Chevrondown.svg';
 import Chevronright from '../../images/Chevronright.svg';
-import { debug, HierarchyProps, HierType } from '../API/Interfaces';
-import { NONAME } from 'dns';
+import { debugOverride, HierarchyProps, HierType } from '../API/Interfaces';
+
 
 interface Tree {
     key: string,
@@ -27,7 +27,7 @@ interface Props {
 }
 
 function Hierarchy(props: Props) {
-
+    const {debug=false||debugOverride} = props.data.options;
     const lastUpdated=useRef<number>(new Date().valueOf());
     const childRef=useRef<any>(null);
     const [currentLabel, setCurrentLabel]=useState(props.currentLabel);
@@ -280,7 +280,7 @@ function Hierarchy(props: Props) {
 
     const debounce=(): boolean => {
         const newDt=new Date().valueOf();
-        if(newDt-lastUpdated.current<250) { return false; };
+        if(newDt-lastUpdated.current< (props.data.options.debounce || 250) ) { return false; };
         lastUpdated.current=newDt;
         return true;
     };
@@ -350,7 +350,9 @@ function Hierarchy(props: Props) {
         }
     }
 
-    const debugState: ReactFragment=(<div>State: {`id:${ currentId } label:${ currentLabel }`}<p />
+    const debugState: ReactFragment=(<div style={{position: 'relative', top: 0, marginTop: '10px'}}>
+        Debug: {props.data.options.debug?'true':'false'} <p />
+        State: {`id:${ currentId } label:${ currentLabel }`}<p />
         Last updated: {`${ typeof (props.lastUpdated)==='undefined'? 'none':props.lastUpdated }`} <p /></div>);
     const showDebugState=debug? debugState:(<div />);
 
@@ -365,8 +367,7 @@ function Hierarchy(props: Props) {
     // tslint:disable jsx-no-lambda
     return (
         <div style={{width: '100%'}} >
-            {showDebugState}
-            {props.data.options.titleEnabled && (<span style={{fontWeight:'bold',color:'rgba(79,79,79,1)' }}>{props.data.options.title}</span>)}
+            {props.data.options.titleEnabled && (<span style={{fontWeight:500,color:'rgba(79,79,79,1)' }}>{props.data.options.title}</span>)}
             <TreeMenu
                 data={tree}
                 onClickItem={async ({ label, key }) => {
@@ -404,6 +405,7 @@ function Hierarchy(props: Props) {
                     </>
                 )}
             </TreeMenu>
+            {showDebugState}
         </div>
     );
     // tslint:enable jsx-no-lambda

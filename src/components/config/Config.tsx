@@ -2,19 +2,19 @@
 import '../../css/style.css';
 
 import { Extensions } from '@tableau/extensions-api-types';
-import { Button, Checkbox, Spinner, TextField } from '@tableau/tableau-ui';
-import React, { useState } from 'react';
+import { Button, Spinner } from '@tableau/tableau-ui';
+import React, { useEffect, useState } from 'react';
 import * as ReactDOM from 'react-dom';
-import { Button as RSButton, Col, Container, Row, Alert, UncontrolledAlert } from 'reactstrap';
+import { Alert, Button as RSButton, Col, Container, Row } from 'reactstrap';
 import flatHier from '../../images/FlatHier.jpeg';
 import recursiveHier from '../../images/RecursiveHier.jpeg';
 import HierarchyAPI from '../API/HierarchyAPI';
-import Colors from './Colors';
-import { debug, HierarchyProps, HierType } from '../API/Interfaces';
+import { debugOverride, HierarchyProps, HierType } from '../API/Interfaces';
 import { Page2Flat } from './Page2Flat';
 import { Page2Recursive } from './Page2Recursive';
 import { Page3Flat } from './Page3Flat';
 import { Page3Recursive } from './Page3Recursive';
+import { Page4 } from './Page4';
 
 
 declare global {
@@ -25,6 +25,11 @@ function Configure(props: any) {
     const [state, setCurrentWorksheetName, setUpdates]=HierarchyAPI();
     const [selectedTabIndex, setSelectedTabIndex]=useState(0);
     const { data, isLoading, isError, errorStr, doneLoading }: { data: HierarchyProps, isLoading: boolean, isError: boolean, errorStr: string, doneLoading: boolean; }=state;
+    const [debug, setDebug]=useState(debugOverride);
+
+    useEffect(()=>{
+        setDebug(state.data.options.debug || debugOverride);
+    },[state.data.options.debug])
 
     // event fired when one of the parameters/filter/mark selection is changed
     const changeEnabled=(e: React.MouseEvent<HTMLInputElement>|React.ChangeEvent<HTMLInputElement>) => {
@@ -54,11 +59,7 @@ function Configure(props: any) {
         }
     };
 
-    // Handles change in background color input
-    const bgChange=(color: any): void => {
-        setUpdates({ type: 'SET_BG_COLOR', data: color.target.value });
 
-    };
     // handles changing either the childId or parentId field in the hierarchy
     const changeParam=(e: React.ChangeEvent<HTMLSelectElement>): void => {
         const type: string|null=e.target.getAttribute('data-type');
@@ -125,63 +126,10 @@ function Configure(props: any) {
             </Row>
         </div>
     );
-    //  PAGE 3 CONTENT
-    const inputProps={
-        disabled: !data.options.titleEnabled,
-        errorMessage: undefined,
-        kind: 'line' as 'line'|'outline'|'search',
-        // label: `Title for Extension`,
-        onChange: (e: any) => {
-            setUpdates({ type: 'SET_TITLE', data: e.target.value });
-        },
-        onClear: () => {
-            setUpdates({ type: 'SET_TITLE', data: 'Hierarchy Navigator' });
-        },
-        style: { width: 200, paddingLeft: '9px' },
-        value: data.options.title
-    };
-    const changeTitleEnabled=(e: React.ChangeEvent<HTMLInputElement>): void => {
-        console.log(`title en setting: ${ e.target.checked }`);
-        setUpdates({ type: 'TOGGLE_TITLE_DISABLED', data: e.target.checked });
-    };
-    const changeSearch=(e: React.ChangeEvent<HTMLInputElement>): void => {
-        setUpdates({ type: 'TOGGLE_SEARCH_DISPLAY', data: e.target.checked });
-    };
-    page[3].content=(
-        <div className='sectionStyle mb-2'>
-            <b>Options</b>
-            <br />
-            <Colors bg={data.options.bgColor}
-                onBGChange={bgChange}
-                enabled={true}
-            />
-            <br />
-            <div style={{ marginLeft: '9px' }}>
-                <Checkbox
-                    checked={data.options.searchEnabled}
-                    onChange={changeSearch}
-                >
-                    Show Search Box
-                </Checkbox>
-                <br />
-                <Checkbox
-                    checked={data.options.titleEnabled}
-                    onChange={changeTitleEnabled}
-                >
-                    Show Title
-                </Checkbox>
-                <br />
-                <div style={{ marginLeft: '9px' }}>
-                <TextField {...inputProps} />
-                </div>
-            </div>
-        </div>
-    );
 
     function returnPage(index: number) {
         switch(index) {
             case 0:
-            case 3:
                 return (<span>{page[index].content}</span>);
             case 1:
                 if(data.type===HierType.FLAT) {
@@ -217,6 +165,11 @@ function Configure(props: any) {
 
                     />;
                 }
+            case 3:
+                return <Page4
+                    data={data}
+                    setUpdates={setUpdates}
+                />
             default:
                 return (<div>Not here yet</div>);
         }

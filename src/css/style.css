@@ -3,7 +3,7 @@ html,
 body {
     margin: 0;
     padding: 0;
-    font-family:  'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family:  'Benton Sans';
     font-size: 12px;
     color: rgba(0, 0, 0, 0.8);
     box-sizing: border-box;
@@ -156,7 +156,6 @@ p {
 input[type="color"] {
     /* background-color: #fff; */
     padding: 0;
-    margin-left: 6px;
     border: 1px solid #666666;
     box-shadow: none;
     width: 16px;
@@ -205,7 +204,6 @@ input[type="color"] {
 
 .parameter {
     width: 100%;
-	font-family: Arial, Helvetica, sans-serif;
 	font-size: 12px;
 	padding-left:6px;
 	border: solid 1px #CBCBCB;
@@ -229,7 +227,6 @@ input[type="color"] {
 }
 
 .delimiter-text-field > input {
-    font-family: Arial, Helvetica, sans-serif;
     padding-right: 0;
     text-align: center;
 }
@@ -250,26 +247,22 @@ select::-ms-expand {
 }
 .headerStyle {
     background-color: #f5f5f5;
-    font-family: "Benton Sans";
     font-size: 12px;
     height: 30px;
     padding: 5px 0px 5px 18px 
 }
 .dropdownStyle {
-    font-family: "Benton Sans";
     font-size: 12px;
     margin: auto; 
     padding: 5px 38px 0px 10px;
 }
 .sectionStyle {
-    font-family: "Benton Sans";
     font-size: 12px;
     font-weight: "bold"; 
     padding: 5px 28px 0px 18px;
     margin-top: 18px;
 }
 .labelStyle {
-    font-family: "Benton Sans";
     font-size: 10px;
     /* margin: auto;  */
     padding: 1px 0px 0px 9px;

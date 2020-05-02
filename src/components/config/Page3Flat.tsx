@@ -1,7 +1,7 @@
 // import {  DataType } from '@tableau/extensions-api-types/ExternalContract/Namespaces/Tableau';
 import { Checkbox, TextField } from '@tableau/tableau-ui';
 import React, { useEffect, useState } from 'react';
-import { debug, HierarchyProps, Status } from '../API/Interfaces';
+import { debugOverride, HierarchyProps, Status } from '../API/Interfaces';
 import { withHTMLSpaces } from '../API/Utils';
 import { Selector } from '../shared/Selector';
 
@@ -15,7 +15,7 @@ interface Props {
 export function Page3Flat(props: Props) {
     const [levelParam, setLevelParam]=useState<boolean>(false);
     const [filterList, setFilterList]=useState<string[]>([]);
-    
+    const {debug=false||debugOverride} = props.data.options;
     // check level param upon page load
     useEffect(() => {
         if(debug) { console.log(`checking if ${props.data.parameters.level} is a viable numeric parameter`); }

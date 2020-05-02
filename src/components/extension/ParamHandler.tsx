@@ -1,6 +1,6 @@
 import { Dashboard, Parameter, Worksheet } from '@tableau/extensions-api-types';
 import React, { useEffect, useState } from 'react';
-import { debug, HierarchyProps, HierType } from '../API/Interfaces';
+import { debugOverride, HierarchyProps, HierType } from '../API/Interfaces';
 import Hierarchy from './Hierarchy';
 
 interface Props {
@@ -14,6 +14,7 @@ function ParamHandler(props: Props) {
     const [currentLabel, setCurrentLabel]=useState<string>('');
     const [dataFromExtension, setDataFromExtension]=useState<any>();
     const temporaryEventHandlers: { childId?: () => {}, childLabel?: () => {}; }={ childId: undefined, childLabel: undefined }; // not using useState here because state was having trouble holding functions and executing them later
+    const {debug=false||debugOverride} = props.data.options;
 
 
     // will be called with user selects new value in hierarchy
@@ -127,21 +128,26 @@ function ParamHandler(props: Props) {
 
     // sets event listeners so they can be called later and released
     async function setEventListeners() {
-        const { childId, childLabel }=await (findParameters());
-        if(props.data.parameters.childIdEnabled||props.data.parameters.childLabelEnabled) {
+        if (props.data.options.dashboardListenersEnabled){
+            const { childId, childLabel }=await (findParameters());
             clearEventHandlers(); // just in case.
-            if(debug) { console.log(`setEventHandleListeners`); }
-            if(debug) { console.log(`setting event handle listeners`); }
-            if(childLabel) {
-                temporaryEventHandlers.childLabel=childLabel.addEventListener(tableau.TableauEventType.ParameterChanged, eventDashboardChangeLabel);
+            if(props.data.parameters.childIdEnabled||props.data.parameters.childLabelEnabled) {
+                if(debug) { console.log(`setEventHandleListeners`); }
+                if(debug) { console.log(`setting event handle listeners`); }
+                if(childLabel) {
+                    temporaryEventHandlers.childLabel=childLabel.addEventListener(tableau.TableauEventType.ParameterChanged, eventDashboardChangeLabel);
+                }
+                if(childId) {
+                    temporaryEventHandlers.childId=childId.addEventListener(tableau.TableauEventType.ParameterChanged, eventDashboardChangeId);
+                }
+                if(debug) { console.log(`done setting event handle listeners`); }
             }
-            if(childId) {
-                temporaryEventHandlers.childId=childId.addEventListener(tableau.TableauEventType.ParameterChanged, eventDashboardChangeId);
+            else {
+                if(debug) { console.log(`skipping set event handlers because neither param is enabled.`); }
             }
-            if(debug) { console.log(`done setting event handle listeners`); }
         }
         else {
-            if(debug) { console.log(`skipping set event handlers because neither param is enabled.`); }
+            if (debug) {console.log(`skipping setting event handlers because dashboardListenersEnabled: ${props.data.options.dashboardListenersEnabled}`)}
         }
     }
 

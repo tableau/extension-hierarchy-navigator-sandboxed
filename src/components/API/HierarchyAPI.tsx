@@ -1,8 +1,8 @@
 // import * as t from '@tableau/extensions-api-types';
-import { Dashboard, Parameter, Worksheet } from '@tableau/extensions-api-types';
+import { Parameter, Worksheet } from '@tableau/extensions-api-types';
 import { useEffect, useReducer, useRef, useState } from 'react';
 import * as React from 'react';
-import { debug, defaultSelectedProps, HierarchyProps, HierType, SelectedParameters, Status } from './Interfaces';
+import { debugOverride, defaultSelectedProps, HierarchyProps, HierType, SelectedParameters, Status } from './Interfaces';
 import { withHTMLSpaces } from './Utils';
 
 const extend=require('extend');
@@ -23,6 +23,7 @@ const initialData: HierarchyState={
 };
 
 const dataFetchReducer=(state: HierarchyState, action: { type: string, data?: any; }) => {
+    const {debug=false||debugOverride} = state.data.options;
     if(debug) {
         console.log(`dataFetchReducer receivied: ${ action.type }`);
         console.log(action.data);
@@ -73,6 +74,11 @@ const hierarchyAPI=(): any => {
     const initAsyncLoading=useRef<boolean>(true);
     const getWorksheetsRunning=useRef<boolean>(false);
     const [state, dispatch]=useReducer(dataFetchReducer, initialData);
+    const [debug, setDebug]=useState(debugOverride);
+
+    useEffect(()=>{
+        setDebug(state.data.options.debug || debugOverride);
+    },[state.data.options.debug])
 
     // if we are loading, or reset the data, re-init
     const initAsync=async (_initialData: HierarchyProps=extend(true, {}, defaultSelectedProps)) => {
@@ -137,7 +143,6 @@ const hierarchyAPI=(): any => {
             const _initialData: HierarchyProps=extend(true, {}, defaultSelectedProps);
             _initialData.type=hierType;
             _initialData.dashboardItems.parameters=await getParamListFromDashboardAsync();
-            // dispatch({ type: 'ERROR', data: 'Extension needs reconfiguration.' });
             await getWorksheetsFilterAndFieldsFromDashboardAsyncWithAssignments(_initialData);
         };
         changeHierTypeAsync();
@@ -267,6 +272,7 @@ const hierarchyAPI=(): any => {
                     payload.worksheet.enableMarkSelection=action.data;
                     return dispatch({ type: 'FETCH_SUCCESS', data: payload });
                 }
+
             case 'TOGGLE_ID_PARAMETER_ENABLED':
                 {
                     // enable/disable id parameter
@@ -289,6 +295,7 @@ const hierarchyAPI=(): any => {
                     payload.parameters.childLabelEnabled=action.data;
                     return dispatch({ type: 'FETCH_SUCCESS', data: payload });
                 }
+            // BEGIN OPTIONS 
             case 'TOGGLE_SEARCH_DISPLAY':
                 {
                     // enable/disable title
@@ -307,6 +314,25 @@ const hierarchyAPI=(): any => {
                     payload.options.title=action.data;
                     return dispatch({ type: 'FETCH_SUCCESS', data: payload });
                 }
+            case 'TOGGLE_DEBUG':
+                {
+                    // update debug true/false
+                    payload.options.debug=action.data;
+                    return dispatch({ type: 'FETCH_SUCCESS', data: payload });
+                }
+            case 'SET_DEBOUNCE':
+                {
+                    // set debounce time
+                    payload.options.debounce=action.data;
+                    return dispatch({ type: 'FETCH_SUCCESS', data: payload });
+                }
+            case 'TOGGLE_DASHBOARD_LISTENERS':
+                {
+                    // set if parameters should listen for dashboard actions
+                    payload.options.dashboardListenersEnabled=action.data;
+                    return dispatch({ type: 'FETCH_SUCCESS', data: payload });
+                }
+            // END OPTIONS
             case 'CLEAR_WARNING':
                 {
                     // enable/disable warning

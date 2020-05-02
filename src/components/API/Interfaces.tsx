@@ -1,5 +1,5 @@
 /*  tslint:disable:max-classes-per-file */
-export {debug} from '../../../config';
+export {debugOverride} from '../../../config';
 export enum HierType {
     FLAT='flat',
     RECURSIVE='recursive'
@@ -8,6 +8,9 @@ export enum Status { 'notpossible', 'notset', 'set', 'hidden' }
 
 export interface Options {
     bgColor: string;
+    dashboardListenersEnabled: boolean;
+    debug: boolean;
+    debounce: number;
     searchEnabled: boolean;
     title: string;
     titleEnabled: boolean;
@@ -67,10 +70,13 @@ export const defaultSelectedProps: HierarchyProps={
     },
     options: {
         bgColor: '#F3F3F3',
+        dashboardListenersEnabled: false,
+        debounce: 250,
+        debug: false,
         searchEnabled: true,
         title: 'Hierarchy Navigator',
         titleEnabled: true,
-        warningEnabled: true
+        warningEnabled: true,
     },
     paramSuffix: ' Param',
     parameters:
