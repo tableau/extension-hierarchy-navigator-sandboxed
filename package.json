@@ -46,13 +46,13 @@
     "reactstrap": "^8.4.1",
     "semistandard": "^14.2.0",
     "source-map-loader": "^0.2.4",
-    "style-loader": "^1.0.1",
-    "ts-loader": "^7.0.2",
+    "style-loader": "^1.2.1",
+    "ts-loader": "^7.0.5",
     "tslint": "^6.1.2",
     "tslint-config-prettier": "^1.10.0",
     "tslint-react": "^5.0.0",
     "tslint-react-hooks": "^2.2.2",
-    "typescript": "^3.8.3"
+    "typescript": "^3.9.3"
   },
   "homepage": "https://tableau.github.io/extension-hierarchy-navigator-sandboxed",
   "semistandard": {

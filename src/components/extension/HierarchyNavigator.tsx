@@ -26,7 +26,7 @@ function HierarchyNavigator() {
             const href = window.location.href;
             popupUrl = window.location.href.substring(0, href.lastIndexOf('/')) + '/config.html';
         }
-        window.tableau.extensions.ui.displayDialogAsync(popupUrl, '', { height: 725, width: 500 }).then((closePayload: string) => {
+        window.tableau.extensions.ui.displayDialogAsync(popupUrl, '', { height: 650, width: 500 }).then((closePayload: string) => {
 
             if(debug) { console.log(`returning from Configure! ${ closePayload }`); }
             if(closePayload==='true') {
@@ -36,6 +36,7 @@ function HierarchyNavigator() {
                     let settingsData={};
                     if(settings.data) {
                         settingsData=JSON.parse(settings.data);
+                        // for compatibility from published 1.0 version to 1.1 
                         if(debug) {
                             console.log(`loaded settingsData:`);
                             console.log(settingsData);
@@ -83,13 +84,46 @@ function HierarchyNavigator() {
                 }
             }
             setDoneLoading(true);
+            document.body.style.backgroundColor = data.options.highlightColor || defaultSelectedProps.options.highlightColor;
+            document.body.style.backgroundColor=data.options.bgColor || defaultSelectedProps.options.bgColor;
         });
     }, []);
 
     useEffect(() => {
-        document.body.style.backgroundColor=data.options.bgColor;
+        document.body.style.backgroundColor = data.options.highlightColor || defaultSelectedProps.options.highlightColor;
+    }, [data.options.highlightColor]);
+    useEffect(() => {
+        document.body.style.backgroundColor=data.options.bgColor || defaultSelectedProps.options.bgColor;
     }, [data.options.bgColor]);
+    useEffect(() => {
+        document.body.style.fontSize=data.options.fontSize || defaultSelectedProps.options.fontSize;
+    }, [data.options.fontSize]);
+    useEffect(() => {
+        
+        let f = data.options.fontFamily || defaultSelectedProps.options.fontFamily;
+        const semi = /;/g;
+        const imp = /!important/g
+        let important = false;
+       if (f.search(imp) >= 0) {
+        f = f.replace(semi, '');
+        f = f.replace(imp, '');
+        important = true;
+       }
+        document.body.style.setProperty('font-family', f, important?'important':'')
 
+    }, [data.options.fontFamily]);
+    useEffect(() => {
+        const semi = /;/g;
+        const imp = /!important/g
+        let important = false;
+        let c = data.options.fontColor || defaultSelectedProps.options.fontColor;
+       if (c.search(imp) >= 0) {
+        c = c.replace(semi, '');
+        c = c.replace(imp, '');
+        important = true;
+       }
+       document.body.style.setProperty('color', c, important?'important':'')
+    }, [data.options.fontColor]);
     return (
         <>
             {!doneLoading? (<div aria-busy='true' className='overlay'><div className='centerOnPage'><div className='spinnerBg centerOnPage'>{}</div><Spinner color='light' /></div></div>):undefined}

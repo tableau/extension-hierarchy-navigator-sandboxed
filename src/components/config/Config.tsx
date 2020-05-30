@@ -249,7 +249,7 @@ function Configure(props: any) {
                 {errorStr}
             </Alert>
             {returnPage(selectedTabIndex)}
-            <div className='d-flex flex-row-reverse'>
+            <div className='d-flex flex-row-reverse' style={{position: 'absolute', bottom: '10px', width: '100%'}}>
                 <div className='p-2'>
                     {[1, 2, 3].includes(selectedTabIndex)&&
                         <Button

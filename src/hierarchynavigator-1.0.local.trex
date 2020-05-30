@@ -5,7 +5,7 @@
        <name resource-id="name"/>
        <description>Hierarchy Navigator Parameter</description>
        <author name="Russ Goldin" email="Rgoldin@tableau.com" organization="Tableau" website="https://tableau.github.io/extension-hierarchy-navigator-sandboxed/" />
-       <min-api-version>1.0</min-api-version>
+       <min-api-version>1.1</min-api-version>
        <source-location>
           <url>http://localhost:8765/sandbox/extension-hierarchy-navigator-sandboxed/hierarchynavigator.html</url>
        </source-location>

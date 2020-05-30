@@ -11,6 +11,10 @@ export interface Options {
     dashboardListenersEnabled: boolean;
     debug: boolean;
     debounce: number;
+    fontFamily: string;
+    fontColor: string;
+    fontSize: string;
+    highlightColor: string;
     searchEnabled: boolean;
     title: string;
     titleEnabled: boolean;
@@ -73,6 +77,10 @@ export const defaultSelectedProps: HierarchyProps={
         dashboardListenersEnabled: false,
         debounce: 250,
         debug: false,
+        fontColor: 'rgba(0, 0, 0, 0.8)',
+        fontFamily: '"Benton Sans", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif !important;',
+        fontSize: '12px',
+        highlightColor: '#d1d1d1',
         searchEnabled: true,
         title: 'Hierarchy Navigator',
         titleEnabled: true,

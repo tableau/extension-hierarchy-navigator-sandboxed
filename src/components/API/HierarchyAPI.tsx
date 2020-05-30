@@ -314,6 +314,30 @@ const hierarchyAPI=(): any => {
                     payload.options.title=action.data;
                     return dispatch({ type: 'FETCH_SUCCESS', data: payload });
                 }
+            case 'SET_FONT_FAMILY':
+                {
+                    // set font family
+                    payload.options.fontFamily=action.data;
+                    return dispatch({ type: 'FETCH_SUCCESS', data: payload });
+                }
+            case 'SET_FONT_COLOR':
+                {
+                    // set title
+                    payload.options.fontColor=action.data;
+                    return dispatch({ type: 'FETCH_SUCCESS', data: payload });
+                }
+            case 'SET_FONT_SIZE':
+                {
+                    // set title
+                    payload.options.fontSize=action.data;
+                    return dispatch({ type: 'FETCH_SUCCESS', data: payload });
+                }
+            case 'SET_HIGHLIGHT_COLOR':
+                {
+                    // set highlight
+                    payload.options.highlightColor=action.data;
+                    return dispatch({ type: 'FETCH_SUCCESS', data: payload });
+                }
             case 'TOGGLE_DEBUG':
                 {
                     // update debug true/false
@@ -721,7 +745,7 @@ const hierarchyAPI=(): any => {
             // Check Child ID Param; recursive only
             if(d.type===HierType.RECURSIVE) {
                 if(d.parameters.childIdEnabled&&!d.dashboardItems.parameters.includes(d.parameters.childId)) {
-                    modifiedStr.push(`Child ID Paramater is no longer present.`);
+                    modifiedStr.push(`Child ID Parameter is no longer present.`);
                     d.parameters.childIdEnabled=false;
                     d.parameters.childId=d.dashboardItems.parameters[0]||'';
                 }

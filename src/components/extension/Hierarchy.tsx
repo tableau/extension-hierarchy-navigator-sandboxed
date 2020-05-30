@@ -1,9 +1,8 @@
 import { TextField } from '@tableau/tableau-ui';
 import React, { ReactFragment, useEffect, useRef, useState } from 'react';
-import TreeMenu, { ItemComponent } from 'react-simple-tree-menu';
-import Chevrondown from '../../images/Chevrondown.svg';
-import Chevronright from '../../images/Chevronright.svg';
-import { debugOverride, HierarchyProps, HierType } from '../API/Interfaces';
+import TreeMenu, { ItemComponent, TreeMenuItem } from 'react-simple-tree-menu';
+import { debugOverride, HierarchyProps, HierType, defaultSelectedProps } from '../API/Interfaces';
+import { Input } from 'reactstrap';
 
 
 interface Tree {
@@ -27,7 +26,7 @@ interface Props {
 }
 
 function Hierarchy(props: Props) {
-    const {debug=false||debugOverride} = props.data.options;
+    const { debug=false||debugOverride }=props.data.options;
     const lastUpdated=useRef<number>(new Date().valueOf());
     const childRef=useRef<any>(null);
     const [currentLabel, setCurrentLabel]=useState(props.currentLabel);
@@ -41,8 +40,13 @@ function Hierarchy(props: Props) {
         verticalAlign: 'middle',
         width: 'auto'
     };
-    const openedIcon=<img src={Chevrondown} alt='⌄' style={iconStyle} />;
-    const closedIcon=<img src={Chevronright} alt='›' style={iconStyle} />;
+    const closedIcon=<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'>
+        <path fill={props.data.options.fontColor} fill-rule='evenodd' d='M12.7632424,18.2911068 L24.112,6.942 L22.698,5.528 L12.0561356,16.1697864 L1.414,5.528 L8.52651283e-14,6.942 L11.3490288,18.2911068 C11.7395531,18.6816311 12.3727181,18.6816311 12.7632424,18.2911068 Z' transform='matrix(0 1 1 0 0 0)' />
+    </svg>;
+
+    const openedIcon=<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'>
+        <path fill={props.data.options.fontColor} fill-rule='evenodd' d='M12.7632424,17.6209712 L24.112,6.27186438 L22.698,4.85786438 L12.0561356,15.4996508 L1.414,4.85786438 L4.08562073e-14,6.27186438 L11.3490288,17.6209712 C11.7395531,18.0114954 12.3727181,18.0114954 12.7632424,17.6209712 Z' />
+    </svg>;
 
     let _pathMap: PathMap[]=[];
 
@@ -280,7 +284,7 @@ function Hierarchy(props: Props) {
 
     const debounce=(): boolean => {
         const newDt=new Date().valueOf();
-        if(newDt-lastUpdated.current< (props.data.options.debounce || 250) ) { return false; };
+        if(newDt-lastUpdated.current<(props.data.options.debounce||250)) { return false; };
         lastUpdated.current=newDt;
         return true;
     };
@@ -335,7 +339,7 @@ function Hierarchy(props: Props) {
     // filter & mark selection
     function getChildren(type: string, _currentId: string=currentId) {
         if(debug) { console.log(`getting children for currentId: ${ _currentId } and type ${ type }`); }
-        if(!childOf[_currentId].length) { return [type==='id'? _currentId:currentLabel]; }
+        if(!childOf[_currentId]||!childOf[_currentId].length) { return [type==='id'? _currentId:currentLabel]; }
         const reducer=(accumulator: any[], currentValue: any) => {
             if(currentValue.nodes.length) { accumulator=currentValue.nodes.reduce(reducer, accumulator); }
             if(type==='id') { return [currentValue.key, ...accumulator]; }
@@ -350,24 +354,29 @@ function Hierarchy(props: Props) {
         }
     }
 
-    const debugState: ReactFragment=(<div style={{position: 'relative', top: 0, marginTop: '10px'}}>
-        Debug: {props.data.options.debug?'true':'false'} <p />
+    const debugState: ReactFragment=(<div style={{ position: 'relative', top: 0, marginTop: '10px' }}>
+        Debug: {props.data.options.debug? 'true':'false'} <p />
         State: {`id:${ currentId } label:${ currentLabel }`}<p />
         Last updated: {`${ typeof (props.lastUpdated)==='undefined'? 'none':props.lastUpdated }`} <p /></div>);
     const showDebugState=debug? debugState:(<div />);
 
-    const searchStyle = props.data.options.searchEnabled ? { width: '100%', margin: '0 18 0 18' } : {display: 'none'};
-    const textFieldProps={
-        kind: 'search' as 'line'|'outline'|'search'|undefined,
-        placeholder: 'Type and search',
-        style: searchStyle,
-        value: searchVal
-    };
+    const svgMagnifier = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"><path fill="${props.data.options.fontColor || defaultSelectedProps.options.fontColor}" d="M7.5 0C5.015 0 3 2.015 3 4.5S5.015 9 7.5 9 12 6.985 12 4.5 9.985 0 7.5 0zm0 8C5.567 8 4 6.433 4 4.5S5.567 1 7.5 1 11 2.567 11 4.5 9.433 8 7.5 8z"/><path fill="${props.data.options.fontColor || defaultSelectedProps.options.fontColor}" d="M5.026 7.858l-3.96 3.96c-.243.243-.641.243-.884 0s-.243-.641 0-.884l3.96-3.96c.243-.243.641-.243.884 0s.243.641 0 .884z"/></svg>`
+    const searchStyle:React.CSSProperties=props.data.options.searchEnabled? { width: '100%', margin: '0 18 0 18', color: props.data.options.fontColor, borderColor: props.data.options.fontColor, '--placeholderColor': props.data.options.fontColor || defaultSelectedProps.options.fontColor, background:`url("data:image/svg+xml,${encodeURIComponent(svgMagnifier)}") 6px center no-repeat border-box`, '-webkit-appearance': 'none',
+    backgroundColor: 'inherit',
+    border: '1px solid #cbcbcb',
+    borderRadius: '1px',
+    boxSizing: 'border-box',
+    fontFamily: 'inherit',
+    fontSize: 'inherit',
+    height: '24px',
+    paddingLeft: '27px'} as React.CSSProperties:{ display: 'none' };
 
+
+    const customStyleForActive = {'--highlightColor': props.data.options.highlightColor || defaultSelectedProps.options.highlightColor} as React.CSSProperties;
     // tslint:disable jsx-no-lambda
     return (
         <div style={{width: '100%'}} >
-            {props.data.options.titleEnabled && (<span style={{fontWeight:500,color:'rgba(79,79,79,1)' }}>{props.data.options.title}</span>)}
+            {props.data.options.titleEnabled && (<span style={{fontWeight:'bold' }}>{props.data.options.title}</span>)}
             <TreeMenu
                 data={tree}
                 onClickItem={async ({ label, key }) => {
@@ -379,8 +388,10 @@ function Hierarchy(props: Props) {
             /* separator={'»'} */
             >
                 {({ search, items }) => (
-                    <>
-                        <TextField {...textFieldProps}
+                    <>           
+                        <Input 
+                            style={searchStyle}
+                            placeholder='Type and search'
                             onChange={(e: any) => {
                                 setSearchVal(e.target.value);
                                 if(typeof search!=='undefined') { search(e.target.value); }
@@ -389,10 +400,10 @@ function Hierarchy(props: Props) {
                                 if(typeof search!=='undefined') { search(''); }
                                 setSearchVal('');
                             }}
-                            
-                        /><br />
+                            />                       
+                        <br />
                         {/* <Input onChange={e => search(e.target.value)} placeholder="Type and search" /> */}
-                        <ul className='rstm-tree-item-group'>
+                        <ul className='rstm-tree-item-group' style={customStyleForActive}>
                             {items.map(({ key, ...props }) => (
                                 <ItemComponent
                                     key={key}
