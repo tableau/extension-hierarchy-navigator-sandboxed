@@ -19,7 +19,7 @@ class Home extends React.Component<any, any> {
 							<p>Why? Because users have been <a href='https://community.tableau.com/ideas/1083'>asking</a> for this for a long time.</p>
 							<h4 className='big'>Using the Extension</h4>
 							<ol>
-                                <li>Download/find the <a href='https://tableau.github.io/extension-hierarchy-navigator-sandboxed/hierarchynavigator-1.0.trex'> manifest file</a>.</li>
+                                <li>Download/find the sandboxed <a href='https://tableau.github.io/extension-hierarchy-navigator-sandboxed/hierarchynavigator-1.0.sandboxed.trex'> manifest file</a>.</li>
 								<li>View the <a href='https://github.com/tableau/extension-hierarchy-navigator-sandboxed'>README</a> in the GitHub repository and <a href='https://tableau.github.io/extension-hierarchy-navigator-sandboxed/Hierarchy%20Navigator%20Extension.twbx'>download</a> the sample workbook with directions and examples.  This <a href='https://tableau.github.io/extension-hierarchy-navigator-sandboxed/Dimensional-Flat%20example%20Hierarchy%20Navigator_v2018.2.twbx'>workbook</a> is an example of a dimensional/flat hierarchy in 2018.2 (pre-parameter and set actions)</li>
 							</ol>
 							<p><b>Note:</b> You can add as many instances of this extension as you like!</p>

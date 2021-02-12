@@ -13,7 +13,7 @@
   "scripts": {
     "watch-compile": "npx nodemon --ignore docs --watch src -e tsx,js,html,css --exec 'npm run parcel-build-sandbox-dev'",
     "start-sandbox": "nodemon --watch docs -d 1 -e html,js,json,css,png --exec 'npx tabextsandbox --config sandbox-config.json'",
-    "build": "npm run lint && npm run clean && npm run parcel-build-sandbox-production && cp ./src/hierarchynavigator-1.0.trex ./docs && cp ./src/*.twbx ./docs",
+    "build": "npm run lint && npm run clean && npm run parcel-build-sandbox-production && cp ./src/*.trex ./docs && cp ./src/*.twbx ./docs",
     "parcel-build-sandbox-dev": "npm run clean && parcel build src/*.html src/resources/tableau.extensions.1.latest.js --public-url '.' --out-dir docs",
     "parcel-watch-sandbox-dev": "parcel watch src/* --public-url '.' --out-dir docs",
     "parcel-build-sandbox-production": "parcel build src/*.html --public-url '.' --out-dir docs --no-source-maps",
