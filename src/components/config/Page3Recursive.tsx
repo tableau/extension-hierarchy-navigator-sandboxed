@@ -41,7 +41,7 @@ export function Page3Recursive(props: Props) {
                     <Checkbox
                         disabled={!props.data.dashboardItems.parameters.length}
                         checked={props.data.parameters.childIdEnabled}
-                        onClick={props.changeEnabled}
+                        onChange={props.changeEnabled}
                         data-type='id'
                     >Parameter for Child Id Field
         </Checkbox>
@@ -55,7 +55,6 @@ export function Page3Recursive(props: Props) {
                     <Checkbox
                         disabled={!props.data.dashboardItems.parameters.length}
                         checked={props.data.parameters.childLabelEnabled}
-                        onClick={props.changeEnabled}
                         onChange={props.changeEnabled}
                         data-type='label'
                     >
@@ -79,7 +78,7 @@ export function Page3Recursive(props: Props) {
                         // for filter field
                         disabled={filterList.length===0}
                         checked={props.data.worksheet.filterEnabled}
-                        onClick={props.changeEnabled}
+                        onChange={props.changeEnabled}
                         data-type='filter'
                     >Filter {!filterList.length? ` (to enable, add a filter on Child ID  or Child Label field on the source sheet)`:''}
                     </Checkbox>
@@ -95,7 +94,7 @@ export function Page3Recursive(props: Props) {
                     </div>
                     <Checkbox
                         checked={props.data.worksheet.enableMarkSelection}
-                        onClick={props.changeEnabled}
+                        onChange={props.changeEnabled}
                         data-type='mark'
                     >Enable Mark Selection
                 </Checkbox>

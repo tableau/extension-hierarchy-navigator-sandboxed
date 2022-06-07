@@ -1,13 +1,13 @@
 {
   "compilerOptions": {
     "baseUrl": "./",
-    "outDir": "public/js",
-    "module": "esnext",
+    "outDir": "./dist/",
+    "module": "es6",
     "target": "es6",
-    "lib": ["es6", "dom"],
+    "lib": ["es6", "dom", "dom.iterable"],
     "sourceMap": true,
     "allowJs": true,
-    "jsx": "react",
+    "jsx": "react-jsx",
     "moduleResolution": "node",
     "rootDir": ".",
     "forceConsistentCasingInFileNames": true,
@@ -18,17 +18,11 @@
     "strictNullChecks": true,
     "suppressImplicitAnyIndexErrors": true,
     "noUnusedLocals": true,
-    "esModuleInterop": true,
     "typeRoots" : ["./node_modules/@types", "./node_modules/@tableau"],
     "types": ["node", "@tableau/extensions-api-types"],
-    "plugins": [
-        {
-          "name": "typescript-tslint-plugin",
-          "alwaysShowRuleFailuresAsWarnings": false,
-          "ignoreDefinitionFiles": true,
-          "configFile": "../tslint.json",
-          "suppressWhileTypeErrorsPresent": false
-        }
-      ]
-  }
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+  },
+  "include": ["src"],
+  "exclude": ["node_modules"]
 }

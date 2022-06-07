@@ -28,7 +28,7 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    height: 100%;
+    /* height: 100%; */
 }
 .icontainer {
     font-size: 18px;
@@ -304,7 +304,7 @@ select::-ms-expand {
     Uncomment below if ellipses are to be used;
     also may need adjustments to --active below
     overflow: hidden;
-    text-overflow: ellipses;
+    text-overflow: ellipsis;
     */
 }
     .rstm-tree-item--active {
@@ -331,8 +331,8 @@ select::-ms-expand {
 /* Line */
 .userhr { 
     display: inline-flex;
-    padding: 0px 15px 0px 15px;
-    margin: 0px 5px 0px 5px;
+    padding: 15px 15px 0px 15px;
+    margin: 15px 5px 0px 5px;
     overflow: hidden;
     border-top: 3px solid gray;
 }
@@ -352,7 +352,7 @@ select::-ms-expand {
 }
 .noMargin {
     margin: 0px !important;
-    display: inline-block;
+    display: inline-block !important;
 }
 .btn-circle:hover{
     cursor: default; 
@@ -362,7 +362,7 @@ select::-ms-expand {
     background: #F5F5F5;
     display: flex;
     text-align: center;
-    padding: 0px 18px 0px 18px;
+    /* padding: 0px 18px 0px 18px; */
 }
 
 /* dragging for SortableList */
@@ -419,3 +419,17 @@ select::-ms-expand {
     ::placeholder {
       color: var(--placeholderColor) !important;
   }
+
+ .hidden {
+    display: none;
+  }
+
+  .fullWidth {
+      display: 'flex'; 
+      width: 100%;
+}
+
+/* remove blue outline when clicking on hierarchy */
+:focus {
+    outline: none;
+}

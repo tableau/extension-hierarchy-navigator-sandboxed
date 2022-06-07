@@ -19,7 +19,7 @@ function ParamHandler(props: Props) {
 
     // will be called with user selects new value in hierarchy
     // this is set by child Hierarchy component
-    useEffect(() => {
+    React.useEffect(() => {
         if(props.data.configComplete) {
             if(debug) { console.log(`SETPARAMDATAFROMEXTENSION: ${ JSON.stringify(dataFromExtension) }`); }
             if(typeof (dataFromExtension)!=='undefined') {

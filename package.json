@@ -3,56 +3,43 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
-    "@types/http-server": "^0.10.0",
-    "array-move": "^2.2.1",
+    "array-move": "^4.0.0",
     "extend": "^3.0.2",
-    "parcel-bundler": "^1.12.4",
-    "react-simple-tree-menu": "^1.1.15",
-    "react-sortable-hoc": "^1.11.0"
+    "react-simple-tree-menu": "^1.1.18",
+    "react-sortable-hoc": "^2.0.0",
+    "tslib": "^2.4.0"
   },
   "scripts": {
-    "watch-compile": "npx nodemon --ignore docs --watch src -e tsx,js,html,css --exec 'npm run parcel-build-sandbox-dev'",
-    "start-sandbox": "nodemon --watch docs -d 1 -e html,js,json,css,png --exec 'npx tabextsandbox --config sandbox-config.json'",
-    "build": "npm run lint && npm run clean && npm run parcel-build-sandbox-production && cp ./src/*.trex ./docs && cp ./src/*.twbx ./docs",
-    "parcel-build-sandbox-dev": "npm run clean && parcel build src/*.html src/resources/tableau.extensions.1.latest.js --public-url '.' --out-dir docs",
-    "parcel-watch-sandbox-dev": "parcel watch src/* --public-url '.' --out-dir docs",
-    "parcel-build-sandbox-production": "parcel build src/*.html --public-url '.' --out-dir docs --no-source-maps",
-    "parcel-serve-no-sandbox": "parcel serve src/*.html --public-url '/sandbox/extension-hierarchy-navigator-sandboxed' --port 8765 --out-dir docs",
-    "start": "npm run build && npx tabextsandbox --config sandbox-config.json",
-    "clean": "rm -rf docs/*",
-    "lint": "npm run jslint && npm run tslint",
-    "jslint": "semistandard ./src/*/*.js",
-    "tslint": "./node_modules/.bin/tslint --config ./tslint.json ./*/*.ts*"
+    "start": "webpack-dev-server --open --mode development --hot",
+    "build": "npm run copy-resources && webpack --mode production --no-devtool",
+    "sandbox": "webpack --mode production --watch --progress --no-devtool & npx tabextsandbox --config sandbox-config.json",
+    "copy-resources": "mkdir -p ./docs; cp src/*.ico ./docs/ & cp src/*.trex ./docs/ & cp src/*.twbx ./docs/"
   },
   "devDependencies": {
-    "@tableau/extensions-api-types": "^1.3.1",
-    "@tableau/tabextsandbox": "^1.1.0",
-    "@tableau/tableau-ui": "^3.0.0",
-    "@types/jquery": "^3.3.29",
-    "@types/node": "^12.12.14",
-    "@types/react": "^16.9.15",
-    "@types/react-dom": "^16.9.4",
-    "@types/react-router-dom": "^5.1.3",
-    "@types/reactstrap": "^8.0.6",
-    "babel-core": "^6.26.3",
-    "babel-polyfill": "^6.26.0",
-    "css-loader": "^3.5.3",
-    "cssnano": "^4.1.10",
-    "nodemon": "^2.0.3",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
-    "react-router-dom": "^5.0.1",
-    "react-switch": "^5.0.0",
-    "reactstrap": "^8.4.1",
-    "semistandard": "^14.2.0",
-    "source-map-loader": "^0.2.4",
-    "style-loader": "^1.2.1",
-    "ts-loader": "^7.0.5",
-    "tslint": "^6.1.2",
-    "tslint-config-prettier": "^1.10.0",
-    "tslint-react": "^5.0.0",
-    "tslint-react-hooks": "^2.2.2",
-    "typescript": "^3.9.3"
+    "@babel/core": "^7.18.2",
+    "@babel/preset-env": "^7.18.2",
+    "@babel/preset-react": "^7.17.12",
+    "@babel/preset-typescript": "^7.17.12",
+    "@tableau/extensions-api-types": "^1.8.1",
+    "@tableau/tabextsandbox": "^1.2.1",
+    "@tableau/tableau-ui": "^3.7.0",
+    "@types/node": "^14.18.12",
+    "@types/react": "^17.0.43",
+    "@types/react-dom": "^18.0.5",
+    "@types/react-router-dom": "^5.3.3",
+    "@types/reactstrap": "^8.7.2",
+    "css-loader": "^6.7.1",
+    "html-loader": "^3.1.0",
+    "html-webpack-plugin": "^5.5.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "reactstrap": "^9.0.1",
+    "style-loader": "^3.3.1",
+    "ts-loader": "^9.2.8",
+    "typescript": "^4.6.3",
+    "webpack": "^5.72.0",
+    "webpack-cli": "^4.9.2",
+    "webpack-dev-server": "^4.8.1"
   },
   "homepage": "https://tableau.github.io/extension-hierarchy-navigator-sandboxed",
   "semistandard": {
@@ -72,5 +59,22 @@
   },
   "browserslist": [
     "last 2 Chrome versions"
-  ]
+  ],
+  "targets": {
+    "app": {
+      "distDir": "docs",
+      "publicUrl": ".",
+      "sourceMap": true
+    },
+    "engine": {
+      "distDir": "docs",
+      "publicUrl": ".",
+      "sourceMap": true
+    }
+  },
+  "alias": {
+    "tableau": {
+      "global": "./resources/tableau.extensions.1.latest.js"
+    }
+  }
 }

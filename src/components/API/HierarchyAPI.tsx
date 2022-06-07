@@ -86,7 +86,7 @@ const hierarchyAPI=(): any => {
         if(debug) { console.log(`begin initAsync`); }
         dispatch({ type: 'FETCH_INIT' });
 
-        await tableau.extensions.initializeDialogAsync();
+        await window.tableau.extensions.initializeDialogAsync();
         const _settings=loadSettings();
         if(debug) {
             console.log(`loading _settings: vvv`);
@@ -127,7 +127,7 @@ const hierarchyAPI=(): any => {
 
     // load settings from Extension
     const loadSettings=(): any => {
-        const _settings=tableau.extensions.settings.getAll();
+        const _settings=window.tableau.extensions.settings.getAll();
         let res={};
         if(debug) { console.log(`loadSettings: raw settings = ${ JSON.stringify(_settings) }`); }
         if(typeof _settings.data==='undefined') { return res; }
@@ -174,7 +174,7 @@ const hierarchyAPI=(): any => {
                         payload.worksheet.parentId=payload.worksheet.childId;
                     }
                     if(payload.type===HierType.FLAT) { payload.parameters.childId=`${ action.data }${ payload.paramSuffix }`; }
-                    console.log(`PARAM CHILD ID set to ${ payload.parameters.childId }`);
+                    if (debug) console.log(`PARAM CHILD ID set to ${ payload.parameters.childId }`);
                     payload.worksheet.childId=action.data;
                     return dispatch({ type: 'FETCH_SUCCESS', data: payload });
                 }
@@ -195,7 +195,7 @@ const hierarchyAPI=(): any => {
                     payload.parameters.childId=action.data;
                     return dispatch({ type: 'FETCH_SUCCESS', data: payload });
                 }
-            case 'SET_CHILD_LABEL_PARAMETER':
+            case 'SET_CHILD_LABEL_PARAMETER': 
                 {
                     // update childId from UI
                     // if childId = new parentId then switch values
@@ -338,6 +338,48 @@ const hierarchyAPI=(): any => {
                     payload.options.highlightColor=action.data;
                     return dispatch({ type: 'FETCH_SUCCESS', data: payload });
                 }
+            case 'SET_ITEM_CSS':
+                {
+                    // set item css
+                    payload.options.itemCSS=action.data;
+                    return dispatch({ type: 'FETCH_SUCCESS', data: payload });
+                }
+            case 'SET_OPENED_ICON_BASE64IMAGE':
+                {
+                    // set opened icon
+                    payload.options.openedIconBase64Image=action.data;
+                    return dispatch({ type: 'FETCH_SUCCESS', data: payload });
+                }
+            case 'SET_OPENED_ICON_ASCII':
+                {
+                    // set opened icon
+                    payload.options.openedIconAscii=action.data;
+                    return dispatch({ type: 'FETCH_SUCCESS', data: payload });
+                }
+            case 'SET_OPENED_ICON_TYPE':
+                {
+                    // set opened icon type
+                    payload.options.openedIconType=action.data;
+                    return dispatch({ type: 'FETCH_SUCCESS', data: payload });
+                }
+            case 'SET_CLOSED_ICON_BASE64IMAGE':
+                {
+                    // set closed icon
+                    payload.options.closedIconBase64Image=action.data;
+                    return dispatch({ type: 'FETCH_SUCCESS', data: payload });
+                }
+            case 'SET_CLOSED_ICON_ASCII':
+                {
+                    // set closed icon
+                    payload.options.closedIconAscii=action.data;
+                    return dispatch({ type: 'FETCH_SUCCESS', data: payload });
+                }
+            case 'SET_CLOSED_ICON_TYPE':
+                {
+                    // set closed icon type
+                    payload.options.closedIconType=action.data;
+                    return dispatch({ type: 'FETCH_SUCCESS', data: payload });
+                }
             case 'TOGGLE_DEBUG':
                 {
                     // update debug true/false
@@ -385,11 +427,11 @@ const hierarchyAPI=(): any => {
             getWorksheetsRunning.current=true;
 
             if(debug) { console.log(`getWorksheetsFilterAndFieldsFromDashboardAsyncWithoutAssignments`); }
-            if(typeof tableau.extensions.dashboardContent==='undefined') { await tableau.extensions.initializeDialogAsync(); }
+            if(typeof window.tableau.extensions.dashboardContent==='undefined') { await window.tableau.extensions.initializeDialogAsync(); }
             try {
                 setCurrentWorksheetName(_initialData.worksheet.name);
                 // step 2: get current worksheet object
-                await asyncForEach(tableau.extensions.dashboardContent!.dashboard.worksheets, async (worksheet: Worksheet) => {
+                await asyncForEach(window.tableau.extensions.dashboardContent!.dashboard.worksheets, async (worksheet: Worksheet) => {
                     if(worksheet.name===_initialData.worksheet.name) {
                         if(debug) {
                             console.log(`worksheet: vvv`);
@@ -454,10 +496,10 @@ const hierarchyAPI=(): any => {
             const payload: HierarchyProps=extend(true, {}, _initialData); // operate on a copy
             // step 1: Set worksheet name
             payload.worksheet.name=currentWorksheetName;
-            if(typeof tableau.extensions.dashboardContent==='undefined') { await tableau.extensions.initializeDialogAsync(); }
+            if(typeof window.tableau.extensions.dashboardContent==='undefined') { await window.tableau.extensions.initializeDialogAsync(); }
             try {
                 // step 2: get current worksheet object
-                await asyncForEach(tableau.extensions.dashboardContent!.dashboard.worksheets, async (worksheet: Worksheet) => {
+                await asyncForEach(window.tableau.extensions.dashboardContent!.dashboard.worksheets, async (worksheet: Worksheet) => {
                     if(debug) {
                         console.log(`worksheet ${ worksheet.name }: vvv`);
                         console.log(worksheet);
@@ -588,7 +630,7 @@ const hierarchyAPI=(): any => {
         if(debug) {
             console.log(`begin loadParamList`);
         }
-        const _params: Parameter[]=await tableau.extensions.dashboardContent!.dashboard.getParametersAsync();
+        const _params: Parameter[]=await window.tableau.extensions.dashboardContent!.dashboard.getParametersAsync();
         const params: string[]=[];
         if(debug) { console.log(`parameters found`); }
         for(const p of _params) {
@@ -657,11 +699,11 @@ const hierarchyAPI=(): any => {
             }
             const _data=extend(true, {}, state.data);
             delete _data.dashboardItems;
-            await tableau.extensions.settings.set('data', JSON.stringify(_data));
+            await window.tableau.extensions.settings.set('data', JSON.stringify(_data));
             // extensions.settings.set('worksheet', JSON.stringify(state.data.worksheet));
             // extensions.settings.set('bgColor', state.data.bgColor.toString());
-            tableau.extensions.settings.saveAsync().then(() => {
-                tableau.extensions.ui.closeDialog(state.data.configComplete.toString());
+            window.tableau.extensions.settings.saveAsync().then(() => {
+                window.tableau.extensions.ui.closeDialog(state.data.configComplete.toString());
             })
                 .catch((err: any) => {
                     if(debug) { console.log(`an error occurred closing the dialogue box: ${ err } ${ err.stack }`); }

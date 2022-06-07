@@ -1,19 +1,19 @@
-import { TextField } from '@tableau/tableau-ui';
-import arrayMove from 'array-move';
+import { TextField, TextFieldProps } from '@tableau/tableau-ui';
+import { InputAttrs } from '@tableau/tableau-ui/lib/src/utils/NativeProps';
+import {arrayMoveImmutable} from 'array-move';
 import React, { useEffect, useState } from 'react';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { Button as RSButton, Col, Container, Row } from 'reactstrap';
-import dragHandle from '../../images/Drag-handle-01.png';
+import dragHandle from '../../images/Drag-handle-01.png';  //'. /src/images/Drag-handle-01.png';
 import { HierarchyProps, Status } from '../API/Interfaces';
 import { withHTMLSpaces } from '../API/Utils';
 import { Selector } from '../shared/Selector';
-
-
 const extend=require('extend');
+
 interface Props {
     data: HierarchyProps;
     setUpdates: (obj: { type: string, data: any; }) => void;
-
+    onClear?: () => void;
     setCurrentWorksheetName: (s: string) => void;
 }
 
@@ -95,7 +95,7 @@ export function Page2Flat(props: Props) {
 
     // sort lists
     const onSortEnd=({ oldIndex, newIndex }: any) => {
-        const newOrder=arrayMove(props.data.worksheet.fields, oldIndex, newIndex);
+        const newOrder=arrayMoveImmutable(props.data.worksheet.fields, oldIndex, newIndex);
         props.setUpdates({ type: 'SET_FIELDS', data: newOrder });
     };
 
@@ -123,8 +123,8 @@ export function Page2Flat(props: Props) {
         }
         props.setUpdates({ type: 'SET_FIELDS', data: fields });
     };
-    const inputProps={
-        errorMessage: undefined,
+    const inputProps: TextFieldProps & InputAttrs & React.RefAttributes<HTMLInputElement>={
+        message: undefined,
         kind: 'line' as 'line'|'outline'|'search',
         label: `Separator for ${ props.data.worksheet.childId } field formula.`,
         onChange: (e: any) => {

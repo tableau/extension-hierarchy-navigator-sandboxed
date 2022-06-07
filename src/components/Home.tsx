@@ -1,15 +1,16 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import image from '../images/TableauHierarchyNavigator.png';
-
-class Home extends React.Component<any, any> {
-    public render() {
+import { createRoot } from 'react-dom/client';
+import '../css/style.css';
+import hierimage from "../images/TableauHierarchyNavigator.png";
+ 
+class AHome extends React.Component<any, any> {
+	public render() {	
         return (
 			<React.Fragment>
 				<div className='icontainer'>
 					<div className='box'>
 						<div className='left'>
-							<div><img src={image} width='45%'/></div>
+							<div><img src={hierimage} width='45%'/></div>
 							<h1 className='iheader'>Hierarchy Navigator Extension</h1>
 							<span className='tagline'>Recursive Data Visualized</span>
 						</div>
@@ -36,5 +37,8 @@ class Home extends React.Component<any, any> {
     }
 }
 
-export default Home;
-ReactDOM.render(<Home />, document.getElementById('app'));
+export default AHome;
+const container = document.getElementById('app') as HTMLElement;
+const root = createRoot(container);
+
+root.render(<AHome tab="home" />);

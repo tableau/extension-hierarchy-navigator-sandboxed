@@ -1,8 +1,8 @@
-import { TextField } from '@tableau/tableau-ui';
+// import { TextField } from '@tableau/tableau-ui';
 import React, { ReactFragment, useEffect, useRef, useState } from 'react';
-import TreeMenu, { ItemComponent, TreeMenuItem } from 'react-simple-tree-menu';
+import TreeMenu, { ItemComponent } from 'react-simple-tree-menu';
 import { debugOverride, HierarchyProps, HierType, defaultSelectedProps } from '../API/Interfaces';
-import { Input } from 'reactstrap';
+import { TextField } from '@tableau/tableau-ui';
 
 
 interface Tree {
@@ -23,6 +23,7 @@ interface Props {
     setDataFromExtension: (data: { currentId: string, currentLabel: string, childrenById?: string[], childrenByLabel?: string[]; }) => void;
     currentLabel: string;
     currentId: string;
+    onClear?: () => void;
 }
 
 function Hierarchy(props: Props) {
@@ -35,18 +36,39 @@ function Hierarchy(props: Props) {
     const [childOf, setChildOf]=useState([]);
     const [tree, setTree]=useState<Tree[]>([]);
     const [searchVal, setSearchVal]=useState('');
-    const iconStyle={
-        height: '50%',
-        verticalAlign: 'middle',
-        width: 'auto'
-    };
-    const closedIcon=<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'>
-        <path fill={props.data.options.fontColor} fill-rule='evenodd' d='M12.7632424,18.2911068 L24.112,6.942 L22.698,5.528 L12.0561356,16.1697864 L1.414,5.528 L8.52651283e-14,6.942 L11.3490288,18.2911068 C11.7395531,18.6816311 12.3727181,18.6816311 12.7632424,18.2911068 Z' transform='matrix(0 1 1 0 0 0)' />
-    </svg>;
 
-    const openedIcon=<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'>
-        <path fill={props.data.options.fontColor} fill-rule='evenodd' d='M12.7632424,17.6209712 L24.112,6.27186438 L22.698,4.85786438 L12.0561356,15.4996508 L1.414,4.85786438 L4.08562073e-14,6.27186438 L11.3490288,17.6209712 C11.7395531,18.0114954 12.3727181,18.0114954 12.7632424,17.6209712 Z' />
-    </svg>;
+    const defaultClosedIcon=<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'>
+         <path fill={props.data.options.fontColor} fillRule='evenodd' d='M12.7632424,18.2911068 L24.112,6.942 L22.698,5.528 L12.0561356,16.1697864 L1.414,5.528 L8.52651283e-14,6.942 L11.3490288,18.2911068 C11.7395531,18.6816311 12.3727181,18.6816311 12.7632424,18.2911068 Z' transform='matrix(0 1 1 0 0 0)' /> </svg>;
+    // const closedIconBase64Example = <img src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUA
+    // AAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO
+    //     9TXL0Y4OHwAAAABJRU5ErkJggg==" alt="Red dot" />
+    const defaultOpenedIcon=<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'>
+        <path fill={props.data.options.fontColor} fillRule='evenodd' d='M12.7632424,17.6209712 L24.112,6.27186438 L22.698,4.85786438 L12.0561356,15.4996508 L1.414,4.85786438 L4.08562073e-14,6.27186438 L11.3490288,17.6209712 C11.7395531,18.0114954 12.3727181,18.0114954 12.7632424,17.6209712 Z' /></svg>;
+     const [openedIcon, setOpenedIcon] = useState<any>(defaultOpenedIcon)
+     const [closedIcon, setClosedIcon] = useState<any>(defaultClosedIcon)
+ 
+ useEffect(() => {
+    // set the preview image when the type is changed
+    if (props.data.options.openedIconType === 'Default') {
+        setOpenedIcon(defaultOpenedIcon);
+    }
+    else if (props.data.options.openedIconType === 'Base64 Image') {
+        setOpenedIcon(<img src={props.data.options.openedIconBase64Image} width="12px" height="12px" />);
+    }
+    else if (props.data.options.openedIconType === 'Ascii') {
+        setOpenedIcon(props.data.options.openedIconAscii);
+    }
+    if (props.data.options.closedIconType === 'Default') {
+        setClosedIcon(defaultClosedIcon);
+    }
+    else if (props.data.options.closedIconType === 'Base64 Image') {
+        setClosedIcon(<img src={props.data.options.closedIconBase64Image} width="12px" height="12px" />);
+    }
+    else if (props.data.options.closedIconType === 'Ascii') {
+        setClosedIcon(props.data.options.closedIconAscii);
+    }
+
+}, [props.data.options.openedIconType, props.data.options.closedIconType])
 
     let _pathMap: PathMap[]=[];
 
@@ -141,8 +163,6 @@ function Hierarchy(props: Props) {
                         });
                     }
                     else {
-                        // console.log(`datatable vvv`);
-                        // console.log(JSON.stringify(dataTable));
                         // flat tree/hierarchy type
                         const colArray: number[]=[];
                         // set colArray values to indexes of fields in the order they are returned
@@ -212,20 +232,20 @@ function Hierarchy(props: Props) {
             const { key, parent }=item;
             _childOf[key]=_childOf[key]||[];
             item.nodes=_childOf[key];
-            const _hasParent=!(parent==='Null'||parseInt(parent, 10)===0||parent===''||parent===key);
+            const _hasParent=!(parent.toLowerCase()==='null'||parseInt(parent, 10)===0||parent===''||parent===key);
             _hasParent? (_childOf[parent]=_childOf[parent]||[]).push(item):_tree.push(item);
         });
-
         _tree=sortTree(_tree); // sort the tree
         buildPathMap(_tree); // build a map of paths to children
         setPathMap(_pathMap); // set the path var
         setChildOf(_childOf); // set children var
+        
         if(debug) {
             console.log('_tree: vvv');
             console.log(_tree);
         }
         setTree(_tree); // set the tree
-
+        
         // set parameters in dashboard
         props.setDataFromExtension({ currentLabel: _tree[0].label, currentId: _tree[0].key });
     }
@@ -360,17 +380,21 @@ function Hierarchy(props: Props) {
         Last updated: {`${ typeof (props.lastUpdated)==='undefined'? 'none':props.lastUpdated }`} <p /></div>);
     const showDebugState=debug? debugState:(<div />);
 
-    const svgMagnifier = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"><path fill="${props.data.options.fontColor || defaultSelectedProps.options.fontColor}" d="M7.5 0C5.015 0 3 2.015 3 4.5S5.015 9 7.5 9 12 6.985 12 4.5 9.985 0 7.5 0zm0 8C5.567 8 4 6.433 4 4.5S5.567 1 7.5 1 11 2.567 11 4.5 9.433 8 7.5 8z"/><path fill="${props.data.options.fontColor || defaultSelectedProps.options.fontColor}" d="M5.026 7.858l-3.96 3.96c-.243.243-.641.243-.884 0s-.243-.641 0-.884l3.96-3.96c.243-.243.641-.243.884 0s.243.641 0 .884z"/></svg>`
-    const searchStyle:React.CSSProperties=props.data.options.searchEnabled? { width: '100%', margin: '0 18 0 18', color: props.data.options.fontColor, borderColor: props.data.options.fontColor, '--placeholderColor': props.data.options.fontColor || defaultSelectedProps.options.fontColor, background:`url("data:image/svg+xml,${encodeURIComponent(svgMagnifier)}") 6px center no-repeat border-box`, '-webkit-appearance': 'none',
-    backgroundColor: 'inherit',
-    border: '1px solid #cbcbcb',
-    borderRadius: '1px',
-    boxSizing: 'border-box',
-    fontFamily: 'inherit',
-    fontSize: 'inherit',
-    height: '24px',
-    paddingLeft: '27px'} as React.CSSProperties:{ display: 'none' };
-
+    const searchStyle:React.CSSProperties=props.data.options.searchEnabled? { 
+        width: '100%', 
+        margin: '0 18 0 18', 
+        color: props.data.options.fontColor, 
+        borderColor: props.data.options.fontColor, '--placeholderColor': props.data.options.fontColor || defaultSelectedProps.options.fontColor, 
+        backgroundColor: 'inherit',
+        border: '1px solid #cbcbcb',
+        borderRadius: '1px',
+        boxSizing: 'border-box',
+        fontFamily: 'inherit',
+        fontSize: 'inherit',
+        height: '24px',
+        paddingLeft: '27px',
+        display: 'flex'
+     } as React.CSSProperties:{ display: 'none' };
 
     const customStyleForActive = {'--highlightColor': props.data.options.highlightColor || defaultSelectedProps.options.highlightColor} as React.CSSProperties;
     // tslint:disable jsx-no-lambda
@@ -385,31 +409,36 @@ function Hierarchy(props: Props) {
                 }}
                 resetOpenNodesOnDataUpdate={true}
                 ref={childRef}
+                debounceTime={125}
+                
             /* separator={'»'} */
             >
                 {({ search, items }) => (
-                    <>           
-                        <Input 
+                    <>
+                           
+                        <TextField 
+                            kind="search"
+                            className='fullWidth'
                             style={searchStyle}
                             placeholder='Type and search'
                             onChange={(e: any) => {
                                 setSearchVal(e.target.value);
+                                searchVal; // just so TS doesn't complain
                                 if(typeof search!=='undefined') { search(e.target.value); }
                             }}
                             onClear={() => {
                                 if(typeof search!=='undefined') { search(''); }
                                 setSearchVal('');
                             }}
-                            />                       
-                        <br />
-                        {/* <Input onChange={e => search(e.target.value)} placeholder="Type and search" /> */}
+                        />   
                         <ul className='rstm-tree-item-group' style={customStyleForActive}>
-                            {items.map(({ key, ...props }) => (
+                            {items.map(({ key, ...iprops }) => (
                                 <ItemComponent
                                     key={key}
-                                    {...props}
+                                    {...iprops}
                                     openedIcon={openedIcon}
                                     closedIcon={closedIcon}
+                                    style={props.data.options.itemCSS}
                                 />
                             ))}
                         </ul>

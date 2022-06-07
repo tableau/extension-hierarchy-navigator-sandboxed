@@ -1,5 +1,6 @@
 // import {  DataType } from '@tableau/extensions-api-types/ExternalContract/Namespaces/Tableau';
-import { Checkbox, TextField } from '@tableau/tableau-ui';
+import { Checkbox, TextField, TextFieldProps } from '@tableau/tableau-ui';
+import { InputAttrs } from '@tableau/tableau-ui/lib/src/utils/NativeProps';
 import React, { useEffect, useState } from 'react';
 import { debugOverride, HierarchyProps, Status } from '../API/Interfaces';
 import { withHTMLSpaces } from '../API/Utils';
@@ -10,6 +11,7 @@ interface Props {
     setUpdates: (obj: { type: string, data: any; }) => void;
     changeEnabled: (s: React.MouseEvent<HTMLInputElement, MouseEvent>|React.ChangeEvent<HTMLInputElement>) => void;
     changeParam: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+    onClear?: () => void;
 }
 
 export function Page3Flat(props: Props) {
@@ -64,8 +66,8 @@ export function Page3Flat(props: Props) {
         check();
     }
 
-    const inputProps={
-        errorMessage: undefined,
+    const inputProps: TextFieldProps & InputAttrs & React.RefAttributes<HTMLInputElement>={
+        message: undefined,
         kind: 'line' as 'line'|'outline'|'search',
         label: `Suffix for all Parameters.`,
         onChange: (e: any) => {
@@ -101,7 +103,6 @@ export function Page3Flat(props: Props) {
                     <Checkbox
                         disabled={!props.data.dashboardItems.flatParameters.length}
                         checked={props.data.parameters.childLabelEnabled}
-                        onClick={props.changeEnabled}
                         onChange={props.changeEnabled}
                         data-type='label'
                     >
@@ -142,14 +143,14 @@ export function Page3Flat(props: Props) {
                         // for filter field
                         disabled={!filterList.length}
                         checked={props.data.worksheet.filterEnabled}
-                        onClick={props.changeEnabled}
+                        onChange={props.changeEnabled}
                         data-type='filter'
                     >Filter {!filterList.length? ` (to enable, add a filter on ID field on the source sheet)`:` for ${ props.data.worksheet.filter }`}
                     </Checkbox>
                     <br />
                     <Checkbox
                         checked={props.data.worksheet.enableMarkSelection}
-                        onClick={props.changeEnabled}
+                        onChange={props.changeEnabled}
                         data-type='mark'
                     >Enable Mark Selection
                 </Checkbox>

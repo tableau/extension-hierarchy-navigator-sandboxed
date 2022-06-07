@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Selected } from '../shared/Selected';
 import { Selector } from '../shared/Selector';
-import {Status} from './Config';
+import { Status }  from '../API/Interfaces';
 
 interface SettingProps {
     status: Status;
