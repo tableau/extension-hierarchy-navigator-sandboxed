@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { createRoot } from 'react-dom/client';
+// import { createRoot } from 'react-dom/client'; // react 18
+import ReactDom from 'react-dom';
 import '../css/style.css';
 import hierimage from "../images/TableauHierarchyNavigator.png";
  
@@ -38,7 +39,13 @@ class AHome extends React.Component<any, any> {
 }
 
 export default AHome;
+/* 
+react 18
 const container = document.getElementById('app') as HTMLElement;
 const root = createRoot(container);
 
-root.render(<AHome tab="home" />);
+root.render(<AHome tab="home" />); */
+ReactDom.render(
+	<AHome tab="home" />
+	, document.getElementById('app')
+)

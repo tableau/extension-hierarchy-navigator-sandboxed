@@ -1,8 +1,9 @@
 import '../../resources/tableau.extensions.1.latest.js';
 import * as t from '@tableau/extensions-api-types';
 import { Spinner } from '@tableau/tableau-ui';
-import  React, { useEffect, useState } from 'react';
-import { createRoot } from 'react-dom/client';
+import  React, { useEffect, useState } from 'react';  
+//import { createRoot } from 'react-dom/client'; // react 18
+import ReactDom from 'react-dom';
 import '../../css/style.css';
 import { debugOverride, defaultSelectedProps, HierarchyProps } from '../API/Interfaces';
 import ParamHandler from './ParamHandler';
@@ -142,6 +143,12 @@ function HierarchyNavigator() {
     );
 }
 
+/* 
+react 18
 const container = document.getElementById('app') as HTMLElement;
 const root = createRoot(container);
-root.render(<HierarchyNavigator />);
+root.render(<HierarchyNavigator />); */
+ReactDom.render(
+	<HierarchyNavigator />
+	, document.getElementById('app')
+)

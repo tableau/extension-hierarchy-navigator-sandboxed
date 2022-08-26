@@ -1,3 +1,9 @@
+/*
+object-assign
+(c) Sindre Sorhus
+@license MIT
+*/
+
 /*!
   Copyright (c) 2018 Jed Watson.
   Licensed under the MIT License (MIT), see
@@ -1723,8 +1729,16 @@ PERFORMANCE OF THIS SOFTWARE.
       !*** ../api-internal-contract-js/lib/src/versioning/external/ExternalStackingVersionConverter.js ***!
       \***************************************************************************************************/
 
-/**
- * @license React
+/** @license React v0.19.1
+ * scheduler.production.min.js
+ *
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/** @license React v16.14.0
  * react-dom.production.min.js
  *
  * Copyright (c) Facebook, Inc. and its affiliates.
@@ -1733,8 +1747,7 @@ PERFORMANCE OF THIS SOFTWARE.
  * LICENSE file in the root directory of this source tree.
  */
 
-/**
- * @license React
+/** @license React v16.14.0
  * react-jsx-runtime.production.min.js
  *
  * Copyright (c) Facebook, Inc. and its affiliates.
@@ -1743,19 +1756,8 @@ PERFORMANCE OF THIS SOFTWARE.
  * LICENSE file in the root directory of this source tree.
  */
 
-/**
- * @license React
+/** @license React v16.14.0
  * react.production.min.js
- *
- * Copyright (c) Facebook, Inc. and its affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
-/**
- * @license React
- * scheduler.production.min.js
  *
  * Copyright (c) Facebook, Inc. and its affiliates.
  *

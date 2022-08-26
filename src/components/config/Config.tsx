@@ -1,11 +1,12 @@
 /* tslint:disable:jsx-no-lambda */
-import '../../css/bootstrap.css';
-import '../../css/style.css';
-import '../../resources/tableau.extensions.1.latest.js';
 import { Extensions } from '@tableau/extensions-api-types';
 import { Button, Pill, Spinner } from '@tableau/tableau-ui';
 import React, { useEffect, useState } from 'react';
-import { createRoot } from 'react-dom/client';
+import '../../css/bootstrap.css';
+import '../../css/style.css';
+import '../../resources/tableau.extensions.1.latest.js';
+// import { createRoot } from 'react-dom/client'; // react 18
+import ReactDom from 'react-dom';
 import { Alert, Col, Container, Row } from 'reactstrap';
 import flatHier from '../../images/FlatHier.jpeg';
 import recursiveHier from '../../images/RecursiveHier.jpeg';
@@ -272,6 +273,12 @@ function Configure(props: any) {
 }
 
 export default Configure;
+/* 
+react 18
 const container = document.getElementById('app') as HTMLElement;
 const root = createRoot(container);
-root.render(<Configure tab="configure" />);
+root.render(<Configure tab="configure" />); */
+ReactDom.render(
+	<Configure tab="configure" />
+	, document.getElementById('app')
+)
